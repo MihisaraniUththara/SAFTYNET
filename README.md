@@ -1,0 +1,3 @@
+Accident Managment System
+
+SafetyNET
