@@ -21,11 +21,22 @@ const LoginPage = () => {
 export default LoginPage; */
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../assets/css/LoginPage.css';
 import logo from '../assets/images/logo.png';
 import mainImage from '../assets/images/main.png';
+import {Link} from 'react-router-dom';
+
 
 const LoginPage = () => {
+
+  const navigate = useNavigate();
+
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    navigate('/traffic-police');
+  };
+
   return (
     <div className="login-page">
       <div className="background">
@@ -40,12 +51,13 @@ const LoginPage = () => {
           <form>
             <label htmlFor="email">Email</label>
             <input type="email" id="email" placeholder="Value" required />
-
             <label htmlFor="password">Password</label>
             <input type="password" id="password" placeholder="Value" required />
 
-            <button type="submit">Sign In</button>
+            <Link to="/traffic-police"><button type="submit">Sign In</button></Link>
+            
           </form>
+          <Link to="/traffic-police"><button>Sign In</button></Link>
           <a href="#forgot-password"><br></br>Forgot password?</a>
         </div>
       </div>

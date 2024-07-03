@@ -78,8 +78,8 @@ button:hover {
 }
 
 .main-image {
-    width: 100px;
-    height: 100px; 
+    width: 500%;
+    height: 500; 
     object-fit: auto;
 }
 
@@ -94,7 +94,7 @@ button:hover {
 }
 
 .image-section {
-    background-color: #f7b600;
+    background-color: #FBBE00;
     padding: 40px;
     display: flex;
     align-items: center;
@@ -111,7 +111,7 @@ button:hover {
 }
 
 h1 {
-    color: #f7b600;
+    color: #FBBE00;
     margin-bottom: 20px;
 }
 
@@ -135,7 +135,7 @@ input {
 
 button {
     padding: 10px;
-    background-color: #f7b600;
+    background-color: #FBBE00;
     color: white;
     border: none;
     border-radius: 5px;

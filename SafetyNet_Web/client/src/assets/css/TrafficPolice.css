@@ -1,0 +1,148 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .header {
+    background-color: #FBBE00;
+    padding: 10px;
+    display: flex;
+    
+    align-items: center;
+    width: 100%;
+  }
+
+  .logo {
+    height: 60px;
+    margin-bottom: 0px;
+    /* margin-right: 300px; */
+    margin-left: 5px;
+  }
+  
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-info span {
+    margin-right: 60px;
+    margin-top: 10px;
+  }
+  
+  .profile {
+    border-radius: 50%;
+    height: 40px;
+    margin: 0 10px;
+  }
+  
+  .logout {
+    background-color: transparent;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-right: 30px;
+  }
+  
+  .dashboard {
+    display: flex;
+    flex: 1;
+  }
+  
+  .sidebar {
+    background-color: #FBBE00;
+    width: 200px;
+    padding: 20px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  
+  .profile-pic {
+    margin-top: 10px;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    margin-left: 50px;
+    margin-right: 50px;
+  }
+  
+  .user-name {
+    margin-bottom: 20px;
+  }
+
+  .items{
+    display: flex;
+    flex-direction: column;
+}
+
+.link{
+    color: #D9D9D9;
+    text-decoration: none;
+    font-weight: 600px;
+    font-size: 20px;
+}
+.linkbutton {
+    padding: 19px 10px;
+    box-shadow: 1px 1px 15px #FBBE00;
+}
+.linkbutton2 {
+    padding: 19px 10px;
+    box-shadow: 1px 1px 15px #FDDE7F;
+}
+  
+  .menu {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .menu li {
+    padding: 10px 0;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+  }
+  
+  .menu li:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  .main-content {
+    padding: 20px;
+    width: 100%;
+  }
+  
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .stat-card {
+    background-color: #f7e7b5;
+    padding: 20px;
+    text-align: center;
+    width: 200px;
+  }
+  
+  .charts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  
+  .charts img {
+    width: 300px;
+    margin: 10px;
+  }
+  

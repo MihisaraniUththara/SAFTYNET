@@ -12,7 +12,7 @@
 }
 
 header {
-    background-color: #f7b600;
+    background-color: #FBBE00;
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;
@@ -79,7 +79,7 @@ main {
     display: block;
     margin-left: 150px;
     /*margin-right: auto; Centers the button */
-    background-color: #f7b600;
+    background-color: #FBBE00;
     border: none;
     font-size: 16px;
     cursor: pointer;
