@@ -7,6 +7,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow-y: auto;
   }
   
   .header {
@@ -74,31 +75,14 @@ body {
     margin-bottom: 10px;
     margin-left: 50px;
     margin-right: 50px;
+    
   }
   
-  .user-name {
+  /* .user-name {
     margin-bottom: 20px;
   }
 
-  .items{
-    display: flex;
-    flex-direction: column;
-}
 
-.link{
-    color: #D9D9D9;
-    text-decoration: none;
-    font-weight: 600px;
-    font-size: 20px;
-}
-.linkbutton {
-    padding: 19px 10px;
-    box-shadow: 1px 1px 15px #FBBE00;
-}
-.linkbutton2 {
-    padding: 19px 10px;
-    box-shadow: 1px 1px 15px #FDDE7F;
-}
   
   .menu {
     list-style: none;
@@ -111,6 +95,39 @@ body {
     text-align: left;
     width: 100%;
     cursor: pointer;
+  } */
+  .user-name {
+    color: #000;
+    font-weight: bold;
+    font-size: 1.2em; /* Adjust the font size as needed */
+    margin-bottom: 20px;
+  }
+  
+  .menu {
+    list-style: none;
+    padding: 10px;
+    width: 100%;
+  }
+  
+  .menu li {
+    padding: 15px 0;
+    text-align: center; /* Center the text within the box */
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    margin-bottom: 10px;
+    font-size: 1.2em; /* Add space between boxes */
+  }
+  
+  .menu li:first-child {
+    background-color: #FDDE7F; /* Red background for 'Dashboard' */
+    color: black;
+     /* Black font color */
+  }
+  
+  .menu li:not(:first-child) {
+    background-color: #FBBE00; /* Green background for other items */
+    color: black; /* Black font color */
   }
   
   .menu li:hover {
@@ -120,9 +137,10 @@ body {
   .main-content {
     padding: 20px;
     width: 100%;
+    flex-direction: column;
   }
   
-  .stats {
+  /*.stats {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
@@ -144,5 +162,47 @@ body {
   .charts img {
     width: 300px;
     margin: 10px;
+  } */
+
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
   }
+  
+  .stat-card {
+    background-color: #f7e7b5;
+    padding: 20px;
+    text-align: center;
+    width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    margin: 0 10px;
+    border-radius: 10px; /* Round corners */
+  }
+
+  .stat-title {
+    display: block; /* Ensure the title is on its own line */
+    font-size: 1em; /* Adjust font size as needed */
+  }
+  
+  .stat-number {
+    display: block; /* Ensure the number is on its own line */
+    font-size: 1.5em; /* Adjust font size as needed */
+    font-weight: bold;
+    margin-top: 10px; /* Add some space between title and number */
+  }
+  
+  .charts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  
+  .charts img {
+    width: 45%;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    border-radius: 10px; /* Round corners */
+  }
+  
   

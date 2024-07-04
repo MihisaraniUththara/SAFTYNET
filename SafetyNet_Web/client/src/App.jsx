@@ -4,6 +4,7 @@ import "./App.css";
 import HomePage from "./components/HomePage";
 import LoginPage from './components/LoginPage';
 import TrafficPolice from './components/TrafficPolice';
+import OnProgress from './components/OnProgress';
 
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/traffic-police" element={<TrafficPolice />} />
+      <Route path="/OnProgress" element={<OnProgress />} />
     </Routes>
   </Router>
   );
