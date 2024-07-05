@@ -8,13 +8,13 @@ import CustomButton from '../constants/components/CustomButton';
 
 export default function App() {
   return (
-    <SafeAreaView className="bg-secondary flex-1">
+    <SafeAreaView className="bg-primary flex-1 min-h-[85vh]">
       <StatusBar backgroundColor='#fbbe00' style="dark"/>
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView >
       
-        <View className="w-full flex-1 justify-center items-center bg-white">
-          <View className="w-full h-1/3 bg-secondary rounded-b-lg justify-center items-center">
+        <View className="w-full flex-1 justify-center items-center bg-white min-h-[85vh] mt-0">
+         <View className="w-full flex-1 justify-center items-center bg-secondary max-h-[45vh] mt-0 px-0 rounded-[30px]">
             <Image
               source={images.logo}
               className="w-40 h-40"
@@ -36,7 +36,7 @@ export default function App() {
               title="Sign In"
               handlePress={() => router.push('sign-in')}
               containerStyles="w-full bg-secondary py-3 rounded-full"
-              textStyles="text-center text-lg font-bold text-gray-800"
+              textStyles="text-center text-lg font-bold text-white"
             />
           </View>
         </View>
