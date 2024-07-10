@@ -2,6 +2,7 @@ import React from 'react';
 import '../assets/css/HomePage.css'; 
 import image from '../assets/images/img.png';
 import logo from '../assets/images/logo1.png';
+import {Link} from 'react-router-dom';
 
 
 const HomePage = () => {
@@ -21,7 +22,8 @@ const HomePage = () => {
             <h1>Increase Your Productivity!</h1>
             <p><br></br>Reporting and Analyzing data can be a complex. We are here to make it Simple and much Better.<br></br></p>
             
-            <br></br><button>Sign In</button>
+            <br></br>
+            <Link to="/login"><button>Sign In</button></Link>
           </div>
           <div className="image">
             <img src={image} alt="Police" />
