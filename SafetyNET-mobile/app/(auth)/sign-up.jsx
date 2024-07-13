@@ -1,132 +1,134 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import Checkbox from 'expo-checkbox';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from "react";
+import { Link, router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { View, Text, ScrollView,  Image } from "react-native";
 
-export default function SignupScreen() {
-  const [isChecked, setChecked] = React.useState(false);
+import { images } from "../../constants";
+import CustomButton from "../../components/CustomButton";
+import FormField from "../../components/FormField";
+
+
+const SignUp = () => {
+  
+  const [isSubmitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    email: "",
+    name:"",
+    nic:"",
+    license:"",
+    phone:"",
+    password: "",
+  });
+
+  const submit = ()=>{
+  }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
+    <SafeAreaView className="bg-primary h-full">
       <ScrollView>
-      <View style={{ flex: 1, paddingHorizontal: 20 }}>
-        {/* Back Arrow */}
-        {/* <TouchableOpacity style={{ marginTop: 20 }}>
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity> */}
-
-        {/* Progress Bar */}
-        <View style={{ marginTop: 5, alignItems: 'center' }}>
+        <View
+          className="w-full flex justify-center h-full px-4 my-6"
+          
+        >
+          <View style={{ marginTop: 5, alignItems: 'center' }}>
           <View style={{ width: '80%', height: 8, backgroundColor: '#E0E0E0', borderRadius: 4 }}>
             <View style={{ width: '25%', height: '100%', backgroundColor: '#fbbe00', borderRadius: 4 }} />
           </View>
         </View>
-
-        {/* Title and Subtitle */}
-        <View style={{ marginTop: 15}}>
-          <Text style={{ fontSize: 32, fontWeight: 'bold' }}>Hello there 👋</Text>
-          <Text style={{ fontSize: 16, color: '#7D7D7D' }}>Please enter your details to create an account.</Text>
-        </View>
-
-        {/* Input Fields */}
-        <View style={{ marginTop: 30 }}>
-          <Text style={{ fontSize: 16, color: '#7D7D7D', marginBottom: 5 }}>Full Name</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5, marginBottom: 20 }}>
-            <TextInput
-              placeholder="Full Name"
-              style={{ flex: 1, fontSize: 16, paddingVertical: 5 }}
-            />
-          </View>
-
-          <Text style={{ fontSize: 16, color: '#7D7D7D', marginBottom: 5 }}>Email</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 ,marginBottom: 20}}>
-            <TextInput
-              placeholder="Email"
-              style={{ flex: 1, fontSize: 16, paddingVertical: 5 }}
-            />
-            <Ionicons name="mail-outline" size={20} color="#7D7D7D" />
-          </View>
-
-          <Text style={{ fontSize: 16, color: '#7D7D7D', marginBottom: 5 }}>National ID Number</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5,marginBottom: 20 }}>
-            <TextInput
-              placeholder="National Id Number"
-              style={{ flex: 1, fontSize: 16, paddingVertical: 5 }}
-            />
-          </View>
-
-          <Text style={{ fontSize: 16, color: '#7D7D7D', marginBottom: 5 }}>Driver License Number</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 }}>
-            <TextInput
-              placeholder="Driver License Number"
-              style={{ flex: 1, fontSize: 16, paddingVertical: 5 }}
-            />
-          </View>
-
-          <Text style={{ fontSize: 16, color: '#7D7D7D', marginTop: 20, marginBottom: 5 }}>Phone Number</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 }}>
-            <TextInput
-              placeholder="Phone Number"
-              secureTextEntry
-              style={{ flex: 1, fontSize: 16, paddingVertical: 5 }}
-            />
-            <Ionicons name="call-outline" size={20} color="#7D7D7D" />
-          </View>
-          <Text style={{ fontSize: 16, color: '#7D7D7D', marginTop: 20, marginBottom: 5 }}>Password</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 }}>
-            <TextInput
-              placeholder="Password"
-              secureTextEntry
-              style={{ flex: 1, fontSize: 16, paddingVertical: 5 }}
-            />
-            <Ionicons name="eye-off-outline" size={20} color="#7D7D7D" />
-          </View>
-        </View>
-
-        {/* Terms and Conditions */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
-          <Checkbox
-            value={isChecked}
-            onValueChange={setChecked}
-            color={isChecked ? '#fbbe00' : undefined}
+          
+          <Text className="text-3xl font-semibold text-black mt-10 font-psemibold">
+          Hello there 👋 
+          </Text>
+          <Text className="text-lg font-semibold text-[#7D7D7D] mt-3">Please enter your details to create an account.</Text>
+          
+          <FormField
+            title="Full Name"
+            value={form.name}
+            handleChangeText={(e) => setForm({ ...form, name: e })}
+            otherStyles="mt-7"
+            keyboardType="name"
+            placeholder="Enter your full name"
+           
           />
-          <Text style={{ marginLeft: 8, fontSize: 16, color: '#7D7D7D' }}>I agree to SafetyNET <Text style={{ color: '#fba900' }}>Terms, & Privacy Policy.</Text></Text>
+
+          <FormField
+            title="Email"
+            value={form.email}
+            handleChangeText={(e) => setForm({ ...form, email: e })}
+            otherStyles="mt-7"
+            keyboardType="email-address"
+            placeholder="Enter your email"
+            iconName="mail-outline"
+          />
+
+          
+          <FormField
+            title="National Id Number"
+            value={form.nic}
+            handleChangeText={(e) => setForm({ ...form, nic: e })}
+            otherStyles="mt-7"
+            placeholder="Enter your National Id number"
+           
+          />
+
+        <FormField
+            title="Driver License"
+            value={form.license}
+            handleChangeText={(e) => setForm({ ...form, license: e })}
+            otherStyles="mt-7"
+            placeholder="Enter your driver license number"
+           
+          />
+
+      <FormField
+            title="Phone Number"
+            value={form.phone}
+            handleChangeText={(e) => setForm({ ...form, phone: e })}
+            otherStyles="mt-7"
+            placeholder="Enter your phone number"
+            iconName="call-outline"
+           
+          />
+
+      <FormField
+            title="Emergencty Contact Number"
+            value={form.emergencyno}
+            handleChangeText={(e) => setForm({ ...form, emergencyno: e })}
+            otherStyles="mt-7"
+            placeholder="Enter your emergency contact number"
+            iconName="call-outline"
+           
+          />
+
+          <FormField
+            title="Password"
+            value={form.password}
+            handleChangeText={(e) => setForm({ ...form, password: e })}
+            otherStyles="mt-7"
+          />
+
+          <CustomButton
+            title="Sign Un"
+            handlePress={submit}
+            containerStyles="mt-7"
+            isLoading={isSubmitting}
+          />
+
+          <View className="flex justify-center pt-5 flex-row gap-2">
+            <Text className="text-lg text-gray-100 font-pregular">
+              Already have an account?
+            </Text>
+            <Link
+              href="/sign-ip"
+              className="text-lg font-psemibold text-secondary"
+            >
+              Sign in
+            </Link>
+          </View>
         </View>
-
-        {/* Sign In Link */}
-        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-          <Text style={{ fontSize: 16, color: '#7D7D7D' }}>Already have an account? </Text>
-          <TouchableOpacity>
-            <Text style={{ fontSize: 16, color: '#fba900' }}>Sign in</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Social Media Sign In */}
-        {/* <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 30 }}>
-          <Text style={{ fontSize: 16, color: '#7D7D7D' }}>or continue with</Text>
-        </View> */}
-        {/* <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 20 }}>
-          <TouchableOpacity>
-            <Image source={require('../assets/google.png')} style={{ width: 50, height: 50 }} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image source={require('../assets/apple.png')} style={{ width: 50, height: 50 }} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image source={require('../assets/facebook.png')} style={{ width: 50, height: 50 }} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image source={require('../assets/twitter.png')} style={{ width: 50, height: 50 }} />
-          </TouchableOpacity>
-        </View> */}
-
-        {/* Sign Up Button */}
-        <TouchableOpacity style={{ backgroundColor: '#fbbe00', paddingVertical: 15, borderRadius: 8, marginTop: 30, marginBottom:40, alignItems: 'center' }}>
-          <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Sign up</Text>
-        </TouchableOpacity>
-      </View>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
+
+export default SignUp;

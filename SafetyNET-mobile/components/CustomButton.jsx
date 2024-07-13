@@ -9,8 +9,8 @@ const CustomButton = ({title, handlePress, containerStyles, textStyles, isLoadin
      className={`bg-primary rounded-xl min-h-[62px] justify-center items-center ${containerStyles}  ${isLoading ? 'opacity-50':''}`}
     style={[{
         backgroundColor: '#fbbe00', 
-        borderRadius: 10,
-        minHeight: 50,
+        borderRadius: 8,
+        minHeight: 60,
         minWidth:250,
         marginTop:10,
         justifyContent: 'center',
@@ -19,7 +19,7 @@ const CustomButton = ({title, handlePress, containerStyles, textStyles, isLoadin
       }, containerStyles]}
     disabled={isLoading}
     >
-      <Text style={[{ color: 'white', fontSize: 16, fontWeight: 'bold' }, textStyles]}>
+      <Text style={[{ color: 'white', fontSize: 20, fontWeight: 'bold' }, textStyles]}>
         {title}
       </Text>
     </TouchableOpacity>
