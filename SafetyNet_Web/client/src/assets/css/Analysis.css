@@ -1,0 +1,192 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    /* overflow-y: auto; */
+  }
+  
+  .header {
+    background-color: #FBBE00;
+    padding: 10px;
+    display: flex;
+    
+    align-items: center;
+    width: 100%;
+  }
+
+  .logo {
+    height: 60px;
+    margin-bottom: 0px;
+    /* margin-right: 300px; */
+    margin-left: 5px;
+  }
+  
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-info span {
+    margin-right: 60px;
+    margin-top: 10px;
+  }
+  
+  .profile {
+    border-radius: 50%;
+    height: 40px;
+    margin: 0 10px;
+  }
+  
+  .logout {
+    background-color: transparent;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-right: 30px;
+  }
+  
+  .dashboard {
+    display: flex;
+    flex: 1;
+  }
+  
+  .sidebar {
+    background-color: #FBBE00;
+    width: 200px;
+    padding: 20px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  
+  .profile-pic {
+    margin-top: 10px;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    margin-left: 50px;
+    margin-right: 50px;
+    
+  }
+  
+ 
+  .user-name {
+    color: #000;
+    font-weight: bold;
+    font-size: 1.2em; /* Adjust the font size as needed */
+    margin-bottom: 20px;
+  }
+  
+  .menu {
+    list-style: none;
+    padding: 10px;
+    width: 100%;
+  }
+  
+  .menu li {
+    padding: 15px 0;
+    text-align: center; /* Center the text within the box */
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    margin-bottom: 10px;
+    justify-content: center; /* Center content horizontally */
+  align-items: center;
+    font-size: 1.2em; /* Add space between boxes */
+  }
+  
+
+  .menu .dashboard {
+    
+    background-color: #FDDE7F; 
+  }
+
+
+  .menu li:not(.dashboard) {
+  background-color: #FBBE00; 
+}
+  .menu li:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+/*-----------main contengt-----------*/
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .charts-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .chart {
+    width: calc(33.33% - 20px);
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+  }
+
+  .filters {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .filter-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .filter-group select, .filter-group .filter-button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+  }
+  
+  .filter-button {
+    background-color: #FBBE00;
+    color: white;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .filter-button:hover {
+    background-color: #f1a500;
+  }
+  
+  @media (max-width: 768px) {
+    .chart {
+      width: calc(50% - 20px);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .chart {
+      width: calc(100% - 20px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .filter-group {
+      flex-direction: column;
+    }
+  }

@@ -26,8 +26,8 @@ const OnProgress = () => {
           <Link to="/traffic-police"><li>Dashboard</li></Link>
             <Link to="/OnProgress"><li className = "dashboard">Accidents on progress</li></Link>
             <Link to="/Accident"><li>Accident Details</li></Link>
-            <Link to="/traffic-police"><li>Reports</li></Link>
-            <Link to="/traffic-police"><li>Analysis</li></Link>
+            <Link to="/Report"><li>Reports</li></Link>
+            <Link to="/Analysis"><li>Analysis</li></Link>
           </ul>
         </aside>
 
