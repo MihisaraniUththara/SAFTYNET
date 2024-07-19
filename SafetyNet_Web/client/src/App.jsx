@@ -8,6 +8,10 @@ import OnProgress from './components/OnProgress';
 import Accident from './components/Accidents';
 import Report from './components/Report';
 import Analysis from './components/Analysis';
+import OICDasboad from './components/oic/Dashboad';
+import OICOnProgress from './components/oic/OnProgress';
+import OICAccident from './components/oic/Accidents';
+import OICReportApp from './components/oic/ReportApp';
 
 
 const App = () => {
@@ -21,6 +25,10 @@ const App = () => {
       <Route path="/Accident" element={<Accident />} />
       <Route path="/Report" element={<Report />} />
       <Route path="/Analysis" element={<Analysis />} />
+      <Route path="/oic/Dashboad" element={<OICDasboad />} />
+      <Route path="/oic/OnProgress" element={<OICOnProgress />} />
+      <Route path="/oic/Accident" element={<OICAccident />} />
+      <Route path="/oic/ReportApp" element={<OICReportApp />} />
     </Routes>
   </Router>
   );

@@ -175,20 +175,20 @@ body {
     margin-top: -10px;
   }
   
-  .accident-table {
+  .accident-table1 {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: -350px;
   }
   
-  .accident-table th,
-  .accident-table td {
+  .accident-table1 th,
+  .accident-table1 td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
   }
   
-  .accident-table th {
+  .accident-table1 th {
     background-color: #f4f4f4;
   }
   

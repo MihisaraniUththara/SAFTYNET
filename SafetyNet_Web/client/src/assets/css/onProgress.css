@@ -130,7 +130,7 @@ body {
     background-color: rgba(0, 0, 0, 0.1);
   }
   
-  .main-content {
+  /* .main-content {
     padding: 20px;
     width: 100%;
     overflow-y: auto;
@@ -163,8 +163,8 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
-    width: calc(100% - 40px); /* Full width minus padding */
-    margin-left: 20px; /* Align with sidebar */
+    width: calc(100% - 40px); 
+    margin-left: 20px; 
   }
   
   .ui-cell {
@@ -204,3 +204,83 @@ body {
     color: #000;
     margin-left: 5px;
   }
+
+
+ */
+
+ /* Existing CSS */
+/* Add these styles */
+
+.main-content {
+  padding: 20px;
+}
+
+/* Existing CSS */
+/* Add these styles */
+
+.notification-list {
+  padding: 20px;
+  margin-top: -250px;
+  margin-left: -450px;
+}
+
+.date-group {
+  margin-bottom: 20px;
+}
+
+.notification {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* background-color: #f7e7b5; */
+  background-color: #f0ead8;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  width: 150%;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 0 auto;
+}
+
+.notification p {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.notification-actions {
+  display: flex;
+  align-items: center;
+}
+
+.progress-bar-container {
+  width: 100px;
+  height: 20px;
+  margin-top: 5px;
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-right: 50px;
+  
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: rgb(29, 177, 12);
+}
+
+.details-button {
+  padding: 5px 10px;
+  /* background-color: #FBBE00; */
+  background-color: #060112;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.details-button:hover {
+  background-color: #5a5a58;
+}
+
