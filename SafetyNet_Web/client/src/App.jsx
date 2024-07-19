@@ -12,6 +12,8 @@ import OICDasboad from './components/oic/Dashboad';
 import OICOnProgress from './components/oic/OnProgress';
 import OICAccident from './components/oic/Accidents';
 import OICReportApp from './components/oic/ReportApp';
+import OICAnalysis from './components/oic/Analysis';
+import HeadDash from './components/headOffice/Dashboad';
 
 
 const App = () => {
@@ -29,6 +31,8 @@ const App = () => {
       <Route path="/oic/OnProgress" element={<OICOnProgress />} />
       <Route path="/oic/Accident" element={<OICAccident />} />
       <Route path="/oic/ReportApp" element={<OICReportApp />} />
+      <Route path="/oic/Analysis" element={<OICAnalysis />} />
+      <Route path="/HeadOffice" element={<HeadDash />} />
     </Routes>
   </Router>
   );

@@ -27,8 +27,8 @@ const ReportApp = () => {
             <Link to="/oic/OnProgress"><li>Accidents on progress</li></Link>
             <Link to="/oic/Accident"><li>Accident Details</li></Link>
             <Link to="/oic/ReportApp"><li className="dashboard">Report Approval</li></Link>
-            <Link to="/Report"><li>Reports</li></Link>
-            <Link to="/Analysis"><li>Analysis</li></Link>
+            <Link to="#"><li>Reports</li></Link>
+            <Link to="/oic/Analysis"><li>Analysis</li></Link>
             <Link to="#"><li>Duty List</li></Link>
           </ul>
           </aside>
