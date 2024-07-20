@@ -52,7 +52,7 @@ import logo from '../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
 import chart1 from '../assets/images/chart1.png';
 import chart2 from '../assets/images/chart2.png';
-import chart3 from '../assets/images/chart3.jpeg';
+import chart3 from '../assets/images/chart4.png';
 import map from '../assets/images/map.jpg';
 import {Link} from 'react-router-dom';
 
