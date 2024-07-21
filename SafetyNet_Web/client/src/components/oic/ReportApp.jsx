@@ -1,11 +1,11 @@
 import React from 'react';
-import '../assets/css/accident.css';
-import logo from '../assets/images/logo1.png'; // Adjust the path as needed
-import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
+import '../../assets/css/ReportApp.css';
+import logo from '../../assets/images/logo1.png'; // Adjust the path as needed
+import profilePicture from '../../assets/images/profile.png'; // Adjust the path as needed
 
 import {Link} from 'react-router-dom';
 
-const Accident = () => {
+const ReportApp = () => {
     return (
       <div className="dashboard-container">
         <header className="header">
@@ -23,26 +23,17 @@ const Accident = () => {
             <img src={profilePicture} alt="Profile" className="profile-pic" />
             <p className="user-name">A B C PERERA</p>
             <ul className="menu">
-            <Link to="/traffic-police"><li>Dashboard</li></Link>
-              <Link to="/OnProgress"><li>Accidents on progress</li></Link>
-              <Link to="/Accident"><li className = "dashboard">Accident Details</li></Link>
-              <Link to="/Report"><li>Reports</li></Link>
-              <Link to="/Analysis"><li>Analysis</li></Link>
-            </ul>
+          <Link to="/oic/Dashboad"><li>Dashboard</li></Link>
+            <Link to="/oic/OnProgress"><li>Accidents on progress</li></Link>
+            <Link to="/oic/Accident"><li>Accident Details</li></Link>
+            <Link to="/oic/ReportApp"><li className="dashboard">Report Approval</li></Link>
+            <Link to="#"><li>Reports</li></Link>
+            <Link to="/oic/Analysis"><li>Analysis</li></Link>
+            <Link to="#"><li>Duty List</li></Link>
+          </ul>
           </aside>
           <main className="main-content">
-          <div className="search-filter-container">
-            <input type="text" placeholder="Search by Accident Number" className="search-bar" />
-            <input type="text" placeholder="Search by Vehicle Number" className="search-bar" />
-            <div className="date-filter">
-              <label>From:</label>
-              <input type="date" />
-              <label>To:</label>
-              <input type="date" />
-            </div>
-            <button className="filter-btn">Filter</button>
-          </div>
-          <table className="accident-table">
+          <table className="accident-table1">
             <thead>
               <tr>
                 <th>Accident Number</th>
@@ -59,7 +50,8 @@ const Accident = () => {
                 <td>6.920265, 79.856830</td>
                 <td>Officer A</td>
                 <td>Minor</td>
-                <td><span className="status completed">Completed</span></td>
+                <td><button className="Approve">Approve</button>
+                <button className="Reject">Reject</button></td>
                 <td><button className="details-btn">Details</button></td>
               </tr>
               <tr>
@@ -67,7 +59,8 @@ const Accident = () => {
                 <td>6.920265, 79.856830</td>
                 <td>Officer B</td>
                 <td>Major</td>
-                <td><span className="status pending">Pending</span></td>
+                <td><button className="Approve">Approve</button>
+                <button className="Reject">Reject</button></td>
                 <td><button className="details-btn">Details</button></td>
               </tr>
               <tr>
@@ -75,15 +68,16 @@ const Accident = () => {
                 <td>6.920265, 79.856830</td>
                 <td>Officer C</td>
                 <td>Minor</td>
-                <td><span className="status in-progress">In Progress</span></td>
+                <td><button className="Approve">Approve</button>
+                <button className="Reject">Reject</button></td>
                 <td><button className="details-btn">Details</button></td>
               </tr>
             </tbody>
           </table>
-        </main>
-        </div>
+          </main>
+          </div>
       </div>
     );
   };
   
-  export default Accident;
+  export default ReportApp;

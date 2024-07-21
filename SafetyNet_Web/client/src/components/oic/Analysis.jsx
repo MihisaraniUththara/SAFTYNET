@@ -1,14 +1,14 @@
 import React from 'react';
-import '../assets/css/Analysis.css';
-import logo from '../assets/images/logo1.png'; // Adjust the path as needed
-import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
+import '../../assets/css/Analysis.css';
+import logo from '../../assets/images/logo1.png'; // Adjust the path as needed
+import profilePicture from '../../assets/images/profile.png'; // Adjust the path as needed
 
-import chart1 from '../assets/images/vehicle.png';
-import chart2 from '../assets/images/fetal.png';
-import chart3 from '../assets/images/pie.png';
-import chart4 from '../assets/images/chart1.png';
-import chart5 from '../assets/images/chart2.png';
-import chart6 from '../assets/images/chart3.jpeg';
+import chart1 from '../../assets/images/vehicle.png';
+import chart2 from '../../assets/images/fetal.png';
+import chart3 from '../../assets/images/pie.png';
+import chart4 from '../../assets/images/chart1.png';
+import chart5 from '../../assets/images/chart2.png';
+import chart6 from '../../assets/images/chart4.png';
 
 import {Link} from 'react-router-dom';
 
@@ -30,12 +30,14 @@ const Analysis = () => {
             <img src={profilePicture} alt="Profile" className="profile-pic" />
             <p className="user-name">A B C PERERA</p>
             <ul className="menu">
-            <Link to="/traffic-police"><li>Dashboard</li></Link>
-              <Link to="/OnProgress"><li>Accidents on progress</li></Link>
-              <Link to="/Accident"><li>Accident Details</li></Link>
-              <Link to="/Report"><li>Reports</li></Link>
-              <Link to="/Analysis"><li className = "dashboard">Analysis</li></Link>
-            </ul>
+          <Link to="/oic/Dashboad"><li>Dashboard</li></Link>
+            <Link to="/oic/OnProgress"><li>Accidents on progress</li></Link>
+            <Link to="/oic/Accident"><li>Accident Details</li></Link>
+            <Link to="/oic/ReportApp"><li>Report Approval</li></Link>
+            <Link to=""><li>Reports</li></Link>
+            <Link to="/oic/Analysis"><li className="dashboard">Analysis</li></Link>
+            <Link to="#"><li>Duty List</li></Link>
+          </ul>
           </aside>
           <main className="main-content">
 

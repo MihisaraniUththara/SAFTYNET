@@ -1,13 +1,15 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   
   .dashboard-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    overflow-y: auto;
+    /* overflow-y: auto; */
   }
   
   .header {
@@ -78,24 +80,7 @@ body {
     
   }
   
-  /* .user-name {
-    margin-bottom: 20px;
-  }
-
-
-  
-  .menu {
-    list-style: none;
-    padding: 0;
-    width: 100%;
-  }
-  
-  .menu li {
-    padding: 10px 0;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-  } */
+ 
   .user-name {
     color: #000;
     font-weight: bold;
@@ -116,103 +101,92 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
     margin-bottom: 10px;
-    font-size: 1.2em; /* Add space between boxes */
-    color: black; /* Black font color */
-    display: flex;
     justify-content: center; /* Center content horizontally */
-    align-items: center; /* Center content vertically */
+  align-items: center;
+    font-size: 1.2em; /* Add space between boxes */
   }
   
+
   .menu .dashboard {
-    background-color: #FDDE7F; /* Red background for 'Dashboard' */
+    
+    background-color: #FDDE7F; 
   }
-  
+
+
   .menu li:not(.dashboard) {
-    background-color: #FBBE00; /* Green background for other items */
-  }
-  
+  background-color: #FBBE00; 
+}
   .menu li:hover {
     background-color: rgba(0, 0, 0, 0.1);
   }
-  
-  
-  .main-content {
+
+/*-----------main contengt-----------*/
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
     padding: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .charts-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     width: 100%;
-    flex-direction: column;
   }
   
-  /*.stats {
+  .chart {
+    width: calc(33.33% - 20px);
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+  }
+
+  .filters {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     margin-bottom: 20px;
   }
   
-  .stat-card {
-    background-color: #f7e7b5;
-    padding: 20px;
-    text-align: center;
-    width: 200px;
-  }
-  
-  .charts {
+  .filter-group {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    gap: 10px;
   }
   
-  .charts img {
-    width: 300px;
-    margin: 10px;
-  } */
-
-  .stats {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
+  .filter-group select, .filter-group .filter-button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
   }
   
-  .stat-card {
-    background-color: #f7e7b5;
-    padding: 20px;
-    text-align: center;
-    width: 200px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
-    margin: 0 10px;
-    border-radius: 10px; /* Round corners */
-  }
-
-  .stat-title {
-    display: block; /* Ensure the title is on its own line */
-    font-size: 1em; /* Adjust font size as needed */
+  .filter-button {
+    background-color: #FBBE00;
+    color: white;
+    cursor: pointer;
+    border: none;
   }
   
-  .stat-number {
-    display: block; /* Ensure the number is on its own line */
-    font-size: 1.5em; /* Adjust font size as needed */
-    font-weight: bold;
-    margin-top: 10px; /* Add some space between title and number */
+  .filter-button:hover {
+    background-color: #f1a500;
   }
   
-  .charts {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+  @media (max-width: 768px) {
+    .chart {
+      width: calc(50% - 20px);
+    }
   }
   
-  .charts img {
-    width: 45%;
-    margin: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
-    border-radius: 10px; /* Round corners */
+  @media (max-width: 480px) {
+    .chart {
+      width: calc(100% - 20px);
+    }
   }
 
-  .charts imgs {
-    width: 45%;
-    height: 35%;
-    margin: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
-    border-radius: 10px; /* Round corners */
+  @media (max-width: 768px) {
+    .filter-group {
+      flex-direction: column;
+    }
   }
-  
-  

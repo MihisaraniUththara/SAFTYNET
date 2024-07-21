@@ -52,7 +52,7 @@ import logo from '../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
 import chart1 from '../assets/images/chart1.png';
 import chart2 from '../assets/images/chart2.png';
-import chart3 from '../assets/images/chart3.jpeg';
+import chart3 from '../assets/images/chart4.png';
 import map from '../assets/images/map.jpg';
 import {Link} from 'react-router-dom';
 
@@ -74,11 +74,11 @@ const TrafficPolice = () => {
           <img src={profilePicture} alt="Profile" className="profile-pic" />
           <p className="user-name">A B C PERERA</p>
           <ul className="menu">
-          <Link to="/traffic-police"><li>Dashboard</li></Link>
+          <Link to="/traffic-police"><li className="dashboard">Dashboard</li></Link>
             <Link to="/OnProgress"><li>Accidents on progress</li></Link>
-            <Link to="/traffic-police"><li>Accident Details</li></Link>
-            <Link to="/traffic-police"><li>Reports</li></Link>
-            <Link to="/traffic-police"><li>Analysis</li></Link>
+            <Link to="/Accident"><li>Accident Details</li></Link>
+            <Link to="/Report"><li>Reports</li></Link>
+            <Link to="/Analysis"><li>Analysis</li></Link>
           </ul>
         </aside>
 
