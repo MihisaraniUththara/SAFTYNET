@@ -46,11 +46,11 @@ const TabLayout = () => {
             }}
          />
          <Tabs.Screen 
-            name='setting3'
+            name='form'
             options={{
-                title: 'Setting3',
+                title: 'Form',
                 tabBarIcon: ({color, size}) => 
-                    <FontAwesome name="gear" size={size} color={color} />
+                    <FontAwesome name="file" size={size} color={color} />
             }}
          />
     </Tabs>
