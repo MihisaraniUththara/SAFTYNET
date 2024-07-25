@@ -2,8 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:safetynet_mobile/drivers/authentication/signup_screen.dart';
+import 'package:safetynet_mobile/drivers/pages/home.dart';
+import 'package:safetynet_mobile/police/policeHome.dart';
+
 
 
 class LoginScreen extends StatefulWidget {
@@ -17,6 +22,72 @@ var formkey = GlobalKey<FormState>();
 var emailController = TextEditingController();
 var passwordController =TextEditingController();
 var isObsecure = true.obs;
+
+Future<void> login() async {
+    if (formkey.currentState!.validate()) {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+
+        User? user = userCredential.user;
+        if (user != null) {
+          // Check if user is in the drivers collection
+          DocumentSnapshot driverDoc = await FirebaseFirestore.instance.collection('drivers').doc(user.uid).get();
+          if (driverDoc.exists) {
+            // User is a driver
+            Get.snackbar(
+              "Success",
+              "Driver login successful",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+            Get.off(() => DriverHomePage());
+            return;
+          }
+
+          // Check if user is in the police collection
+          DocumentSnapshot policeDoc = await FirebaseFirestore.instance.collection('police').doc(user.uid).get();
+          if (policeDoc.exists) {
+            // User is a police officer
+            Get.snackbar(
+              "Success",
+              "Police login successful",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+            Get.off(() => PoliceHomePage());
+            return;
+          }
+
+          // User is not found in either collection
+          Get.snackbar(
+            "Login Failed",
+            "User not found ",
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      } on FirebaseAuthException catch (e) {
+       // print("FirebaseAuthException: ${e.message}");
+        Get.snackbar(
+          "Login Failed",
+          "Incorect email password",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } catch (e) {
+        //print("Unknown Error: $e");
+        Get.snackbar(
+          "Login Failed",
+          "An unknown error occurred: $e",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +139,7 @@ var isObsecure = true.obs;
                       child: Column(
                       children: [
                         Text(
-                          "Welcome to SafetyNET!\n Create an account or sing in to join us.\n Let's work together for a safer tomorrow.",
+                          "Welcome to SafetyNET!\n Create an account or login to join us.\n Let's work together for a safer tomorrow.",
                           style: TextStyle(
                             fontSize: 16,
                             
@@ -196,7 +267,7 @@ var isObsecure = true.obs;
                                 child: InkWell(
                                   onTap: ()
                                   {
-                      
+                                    login();
                                   },
                       
                                   borderRadius: BorderRadius.circular(30),

@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -19,6 +20,70 @@ class _SignupScreenState extends State<SignupScreen> {
   var emergencyphoneNumberController = TextEditingController();
   var passwordController = TextEditingController();
   var isObsecure = true.obs;
+
+  Future<void> signup() async {
+  if (formKey.currentState!.validate()) {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      print("User signed up: ${userCredential.user!.uid}");
+
+      // Save additional user data to Firestore
+      await FirebaseFirestore.instance.collection('drivers').doc(userCredential.user!.uid).set({
+        'fullName': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'nationalId': nationalIdController.text.trim(),
+        'driverLicense': driverLicenseController.text.trim(),
+        'phoneNumber': phoneNumberController.text.trim(),
+        'emergencyContactName': emergencynameController.text.trim(),
+        'emergencyContactNumber': emergencyphoneNumberController.text.trim(),
+      });
+
+      print("User data saved to Firestore");
+
+      // Show success snackbar
+      Get.snackbar(
+        "Success",
+        "Account created successfully",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      // Navigate to login screen
+      Get.to(LoginScreen());
+    } on FirebaseAuthException catch (e) {
+      print("FirebaseAuthException: ${e.message}");
+      Get.snackbar(
+        "Signup Failed",
+        e.message!,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } on FirebaseException catch (e) {
+      print("FirebaseException: ${e.message}");
+      Get.snackbar(
+        "Signup Failed",
+        e.message!,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e, stackTrace) {
+      print("Unknown Error: $e");
+      print(stackTrace);
+      Get.snackbar(
+        "Signup Failed",
+        "An unknown error occurred: $e",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+}
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +384,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                               const SizedBox(height: 18),
 
-                               // Emergency Name
+                              // Emergency Name
                               TextFormField(
                                 controller: emergencynameController,
                                 validator: (val) => val == "" ? "Please enter emergency contact name" : null,
@@ -363,7 +428,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                               const SizedBox(height: 18),
 
-                              // Phone Number
+                              // Emergency Contact Number
                               TextFormField(
                                 controller: emergencyphoneNumberController,
                                 validator: (val) => val == "" ? "Please enter emergency contact number" : null,
@@ -470,11 +535,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 color: Color(0xfffbbe00),
                                 borderRadius: BorderRadius.circular(30),
                                 child: InkWell(
-                                  onTap: () {
-                                    if (formKey.currentState!.validate()) {
-                                      // Perform signup
-                                    }
-                                  },
+                                  onTap: signup,
                                   borderRadius: BorderRadius.circular(30),
                                   child: const Padding(
                                     padding: EdgeInsets.symmetric(
@@ -521,7 +582,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   const SizedBox(height: 20),
                 ],
-                
               ),
             ),
           );
