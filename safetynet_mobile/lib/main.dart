@@ -4,6 +4,7 @@ import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
 import 'package:safetynet_mobile/drivers/authentication/signup_screen.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:safetynet_mobile/police_119/home_page.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(DevicePreview(
@@ -22,14 +23,13 @@ class MyApp extends StatelessWidget {
       title: 'SafetyNET',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: FutureBuilder(future: null, builder: (context, dataSnapshot) { 
-     return LoginScreen(); 
-          } ,
-        ),
+        return HomePage(); 
+        } ,
+      ),
     );
   }
 }
