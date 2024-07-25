@@ -433,10 +433,12 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                     '1 Or,pedestrian crossing',
                     '2 Pedestrian crossing within 50 metres',
                     '3 Pedestrian crossing beyond 50 metres',
-                    '4 Slippery surface(mud,oil,garbage,leaves)',
-                    '9 Others',
-                    '0 Not known',
-        
+                    '4 Pedestrian over-pass bridge or under-pass tunnel within 50 metres',
+                    '5 Hit outside sidewalk',
+                    '6 Hit on sidewalk',
+                    '7 Hit on road without sidewalk',
+                    '9 Other',
+                    '0 Not known/NA',
                   ],
                   onSaved: (selectedValue) {
                     _selectedClass = selectedValue;

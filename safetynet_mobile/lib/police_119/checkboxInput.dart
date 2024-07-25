@@ -117,4 +117,3 @@ class _SingleChoiceCheckboxInputState extends State<SingleChoiceCheckboxInput> {
     widget.onSaved(_selectedLabel);
     super.dispose();
   }
-}
