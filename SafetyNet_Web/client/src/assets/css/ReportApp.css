@@ -218,25 +218,27 @@ body {
     border: none;
     color: #000;
     cursor: pointer;
+    
   }
 
-  .Reject {
+  .Reject-btn {
     padding: 5px 10px;
     border-radius: 5px;
-    background-color: red;
+    background-color: rgb(228, 51, 51);
     border: none;
     color: #000;
     cursor: pointer;
+    margin-left: 15px;
   }
 
-  .Approve {
+  .Approve-btn {
     padding: 5px 10px;
     border-radius: 5px;
-    background-color: green;
+    background-color: rgb(111, 205, 111);
     border: none;
     color: #000;
     cursor: pointer;
-    margin-right: 20px;
+    margin-left: 15px;
   }
 
 

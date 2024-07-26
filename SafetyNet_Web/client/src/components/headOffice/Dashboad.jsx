@@ -26,12 +26,12 @@ const HeadOffice = () => {
             <img src={profilePicture} alt="Profile" className="profile-pic" />
             <p className="user-name">A B C PERERA</p>
             <ul className="menu">
-          <Link to="/HeadOffice"><li className="dashboard">Dashboard</li></Link>
-            <Link to="#"><li>Accident Details</li></Link>
-            <Link to="#"><li>Report Approval</li></Link>
-            <Link to="#"><li>Reports</li></Link>
-            <Link to="#"><li>Analysis</li></Link>
-            <Link to="#"><li>Announcement</li></Link>
+          <Link to="/HeadOffice" style={{textDecoration: 'none'}}><li className="dashboard">Dashboard</li></Link>
+            <Link to="/HeadOffice/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
+            <Link to="/HeadOffice/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
+            <Link to="#" style={{textDecoration: 'none'}}><li>Reports</li></Link>
+            <Link to="#" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
+            <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link>
           </ul>
           </aside>
 

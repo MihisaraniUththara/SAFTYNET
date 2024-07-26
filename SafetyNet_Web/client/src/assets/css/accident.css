@@ -243,6 +243,20 @@ body {
     margin-right: 20px;
   }
 
+  
+  .main-content1{
+    button{
+      width: 200px;
+      height: 30px;
+      border: none;
+      background-color: #FBBE00;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+
+
 
 
   /*{
@@ -321,4 +335,6 @@ body {
         margin-left: 5px;
       }
   }*/
+
+
   
