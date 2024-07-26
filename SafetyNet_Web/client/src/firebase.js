@@ -6,7 +6,8 @@ import { getFirestore } from "firebase/firestore";
 
 
 const firebaseConfig = {
-apiKey: process.env.REACT_APP_FIREBASE_KEY,
+// apiKey: process.env.REACT_APP_FIREBASE_KEY,
+apiKey:"AIzaSyDyCvXs6DdN_uKnNa3tTGKPynFFxU_H1_A",
 
 
   authDomain: "safetynet-d1d2b.firebaseapp.com",

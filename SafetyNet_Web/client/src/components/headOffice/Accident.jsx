@@ -25,15 +25,21 @@ const Accident = () => {
           <Link to="/HeadOffice" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
             <Link to="/HeadOffice/Accident" style={{textDecoration: 'none'}}><li className="dashboard">Accident Details</li></Link>
             <Link to="/HeadOffice/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Reports</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link>
+            <Link to="" style={{textDecoration: 'none'}}><li>Reports</li></Link>
+            <Link to="/HeadOffice/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
+            {/* <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link> */}
           </ul>
           </aside>
           <main className="main-content">
           <div className="search-filter-container">
             <input type="text" placeholder="Search by Accident Number" className="search-bar" />
             <input type="text" placeholder="Search by Vehicle Number" className="search-bar" />
+            <select type="text" className="search-bar">
+            <option value="">Search By Status</option>
+                <option value="complete">Completed</option>
+                <option value="onProgress">On Progress</option>
+                <option value="pending">Pending</option>
+            </select>
             <div className="date-filter">
               <label>From:</label>
               <input type="date" />

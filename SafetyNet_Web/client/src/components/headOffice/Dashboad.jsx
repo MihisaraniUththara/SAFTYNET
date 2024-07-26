@@ -30,8 +30,8 @@ const HeadOffice = () => {
             <Link to="/HeadOffice/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
             <Link to="/HeadOffice/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
             <Link to="#" style={{textDecoration: 'none'}}><li>Reports</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link>
+            <Link to="/HeadOffice/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
+            {/* <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link> */}
           </ul>
           </aside>
 

@@ -17,6 +17,7 @@ import OICAnalysis from './components/oic/Analysis';
 import HeadDash from './components/headOffice/Dashboad';
 import HeadAccident from './components/headOffice/Accident';
 import HeadReportApp from './components/headOffice/ReportApp';
+import HeadAnalysis from './components/headOffice/Analysis';
 import AdminD from './components/Admin/Dashboad';
 
 
@@ -40,6 +41,7 @@ const App = () => {
       <Route path="/HeadOffice" element={<HeadDash />} />
       <Route path="/HeadOffice/Accident" element={<HeadAccident />} />
       <Route path="/HeadOffice/ReportApp" element={<HeadReportApp />} />
+      <Route path="/HeadOffice/Analysis" element={<HeadAnalysis/>} />
       <Route path="/Admin-Dashboard" element={<AdminD />} />
     </Routes>
   </Router>

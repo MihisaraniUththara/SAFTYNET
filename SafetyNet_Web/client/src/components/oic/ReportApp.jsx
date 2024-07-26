@@ -40,7 +40,6 @@ const ReportApp = () => {
                 <th>Location</th>
                 <th>Incharge</th>
                 <th>Accident Type</th>
-                <th>Status</th>
                 <th>Option</th>
               </tr>
             </thead>
@@ -50,27 +49,27 @@ const ReportApp = () => {
                 <td>6.920265, 79.856830</td>
                 <td>Officer A</td>
                 <td>Minor</td>
-                <td><button className="Approve">Approve</button>
-                <button className="Reject">Reject</button></td>
-                <td><button className="details-btn">Details</button></td>
+                <td><button className="Approve-btn">Approve</button>
+                <button className="Reject-btn">Reject</button>
+                <button className="details-btn">Details</button></td>
               </tr>
               <tr>
                 <td>A00025</td>
                 <td>6.920265, 79.856830</td>
                 <td>Officer B</td>
                 <td>Major</td>
-                <td><button className="Approve">Approve</button>
-                <button className="Reject">Reject</button></td>
-                <td><button className="details-btn">Details</button></td>
+                <td><button className="Approve-btn">Approve</button>
+                <button className="Reject-btn">Reject</button>
+                <button className="details-btn">Details</button></td>
               </tr>
               <tr>
                 <td>A00058</td>
                 <td>6.920265, 79.856830</td>
                 <td>Officer C</td>
                 <td>Minor</td>
-                <td><button className="Approve">Approve</button>
-                <button className="Reject">Reject</button></td>
-                <td><button className="details-btn">Details</button></td>
+                <td><button className="Approve-btn">Approve</button>
+                <button className="Reject-btn">Reject</button>
+                <button className="details-btn">Details</button></td>
               </tr>
             </tbody>
           </table>

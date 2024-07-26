@@ -26,13 +26,13 @@ const ReportApp = () => {
             <Link to="/HeadOffice/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
             <Link to="/HeadOffice/ReportApp" style={{textDecoration: 'none'}}><li className="dashboard">Report Approval</li></Link>
             <Link to="#" style={{textDecoration: 'none'}}><li>Reports</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link>
+            <Link to="/HeadOffice/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
+            {/* <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link> */}
           </ul>
           </aside>
           <main className="main-content">
           <div className="search-filter-container">
-            <input type="text" placeholder="Search by Accident Number" className="search-bar" />
+            <input type="text" placeholder="Search by Station" className="search-bar" />
             <input type="text" placeholder="Search by Vehicle Number" className="search-bar" />
             <div className="date-filter">
               <label>From:</label>
@@ -49,8 +49,8 @@ const ReportApp = () => {
                 <th>Location</th>
                 <th>Incharge</th>
                 <th>Station</th>
+                <th>Approved OIC</th>
                 <th>Accident Type</th>
-                <th>Status</th>
                 <th>Option</th>
               </tr>
             </thead>
@@ -60,8 +60,8 @@ const ReportApp = () => {
                 <td>6.920265, 79.856830</td>
                 <td>Officer A</td>
                 <td>Galle</td>
+                <td>A B C Perera</td>
                 <td>Minor</td>
-                <td><span className="status completed">Completed</span></td>
                 <td><button className="details-btn">Details</button>
                 <button className="Approve-btn">Approve</button>
                 <button className="Reject-btn">Reject</button></td>
@@ -71,8 +71,8 @@ const ReportApp = () => {
                 <td>6.920265, 79.856830</td>
                 <td>Officer B</td>
                 <td>Bambalapitiya</td>
+                <td>S R Ranathunge</td>
                 <td>Major</td>
-                <td><span className="status pending">Pending</span></td>
                 <td><button className="details-btn">Details</button>
                 <button className="Approve-btn">Approve</button>
                 <button className="Reject-btn">Reject</button></td>
@@ -82,8 +82,8 @@ const ReportApp = () => {
                 <td>6.920265, 79.856830</td>
                 <td>Officer C</td>
                 <td>Matara</td>
+                <td>S A Weerasinghe</td>
                 <td>Minor</td>
-                <td><span className="status in-progress">In Progress</span></td>
                 <td><button className="details-btn">Details</button>
                 <button className="Approve-btn">Approve</button>
                 <button className="Reject-btn">Reject</button></td>
