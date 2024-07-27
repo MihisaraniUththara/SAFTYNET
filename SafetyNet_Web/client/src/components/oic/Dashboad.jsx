@@ -32,7 +32,7 @@ const Dashboad = () => {
             <Link to="/oic/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
             <Link to="#" style={{textDecoration: 'none'}}><li>Reports</li></Link>
             <Link to="/oic/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Duty List</li></Link>
+            <Link to="/oic/Duty" style={{textDecoration: 'none'}}><li>Duty List</li></Link>
           </ul>
         </aside>
         <main className="main-content">
