@@ -15,6 +15,8 @@ import OICAccident from './components/oic/Accidents';
 import OICReportApp from './components/oic/ReportApp';
 import OICAnalysis from './components/oic/Analysis';
 import OICDuty from './components/oic/Duty';
+import OICDutyE from './components/oic/DutyE';
+import OICDutyN from './components/oic/DutyN';
 import HeadDash from './components/headOffice/Dashboad';
 import HeadAccident from './components/headOffice/Accident';
 import HeadReportApp from './components/headOffice/ReportApp';
@@ -40,6 +42,8 @@ const App = () => {
       <Route path="/oic/ReportApp" element={<OICReportApp />} />
       <Route path="/oic/Analysis" element={<OICAnalysis />} />
       <Route path="/oic/Duty" element={<OICDuty />} />
+      <Route path="/oic/DutyE" element={<OICDutyE />} />
+      <Route path="/oic/DutyN" element={<OICDutyN />} />
       <Route path="/HeadOffice" element={<HeadDash />} />
       <Route path="/HeadOffice/Accident" element={<HeadAccident />} />
       <Route path="/HeadOffice/ReportApp" element={<HeadReportApp />} />
