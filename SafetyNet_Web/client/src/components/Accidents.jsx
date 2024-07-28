@@ -31,6 +31,7 @@ const Accident = () => {
             </ul>
           </aside>
           <main className="main-content">
+            
           <div className="search-filter-container">
             <input type="text" placeholder="Search by Accident Number" className="search-bar" />
             <input type="text" placeholder="Search by Vehicle Number" className="search-bar" />

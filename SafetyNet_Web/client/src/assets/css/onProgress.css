@@ -95,7 +95,7 @@ body {
   }
   
   .menu li {
-    padding: 15px 0;
+    padding: 15px 10px;
     text-align: center; /* Center the text within the box */
     width: 100%;
     cursor: pointer;
@@ -212,7 +212,57 @@ body {
 /* Add these styles */
 
 .main-content {
-  padding: 20px;
+  padding: 5px;
+  width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.accident-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.accident-table th,
+.accident-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.accident-table th {
+  background-color: #f4f4f4;
+}
+
+.status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.status.completed {
+  background-color: green;
+}
+
+.status.pending {
+  background-color: red;
+}
+
+.status.in-progress {
+  background-color: orange;
+}
+
+.details-btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #87cefa;
+  border: none;
+  color: #000;
+  cursor: pointer;
 }
 
 /* Existing CSS */
@@ -254,15 +304,19 @@ body {
   align-items: center;
 }
 
+.progress-cell {
+  display: flex;
+  justify-content: center; /* Center the progress bar horizontally */
+  align-items: center; /* Center the progress bar vertically */
+}
+
 .progress-bar-container {
   width: 100px;
   height: 20px;
-  margin-top: 5px;
   background-color: #ddd;
   border-radius: 5px;
   overflow: hidden;
-  margin-right: 50px;
-  
+  display: flex;
 }
 
 .progress-bar {
@@ -270,7 +324,12 @@ body {
   background-color: rgb(29, 177, 12);
 }
 
-.details-button {
+
+.details-button:hover {
+  background-color: #5a5a58;
+}
+
+.notusedetails-button {
   padding: 5px 10px;
   /* background-color: #FBBE00; */
   background-color: #060112;
@@ -278,9 +337,5 @@ body {
   color: white;
   border-radius: 5px;
   cursor: pointer;
-}
-
-.details-button:hover {
-  background-color: #5a5a58;
 }
 

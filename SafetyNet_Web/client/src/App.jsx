@@ -6,6 +6,7 @@ import LoginPage from './pages/login';
 import SignUp from './pages/SignUp';
 import TrafficPolice from './components/TrafficPolice';
 import OnProgress from './components/OnProgress';
+import MyC from './components/myCases';
 import Accident from './components/Accidents';
 import Report from './components/Report';
 import Analysis from './components/Analysis';
@@ -33,6 +34,7 @@ const App = () => {
       <Route path="/SignUp" element={<SignUp />} />
       <Route path="/traffic-police" element={<TrafficPolice />} />
       <Route path="/OnProgress" element={<OnProgress />} />
+      <Route path="/OnProgress/my-cases" element={<MyC/>} />
       <Route path="/Accident" element={<Accident />} />
       <Route path="/Report" element={<Report />} />
       <Route path="/Analysis" element={<Analysis />} />

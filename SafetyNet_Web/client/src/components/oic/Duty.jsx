@@ -51,7 +51,7 @@ const ReportApp = () => {
             <tr>
                 <td>A B C Perera</td>
                 <td>12323</td>
-                <td><button className="Approve-btn">Assign to 119</button></td>
+                <td><button className="Approve1-btn">Assign to 119</button></td>
                 <td><button className="Suspend-btn">Suspend</button>
                 <button className="details-btn">Details</button></td>
               </tr>
@@ -72,7 +72,7 @@ const ReportApp = () => {
               <tr>
                 <td>D Perera</td>
                 <td>12323</td>
-                <td><button className="Approve-btn">Assign to 119</button></td>
+                <td><button className="Approve1-btn">Assign to 119</button></td>
                 <td><button className="Suspend-btn">Suspend</button>
                 <button className="details-btn">Details</button></td>
               </tr>
