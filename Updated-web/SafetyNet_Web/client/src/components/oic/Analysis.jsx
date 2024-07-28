@@ -1,0 +1,115 @@
+import React from 'react';
+import '../../assets/css/Analysis.css';
+import logo from '../../assets/images/logo1.png'; // Adjust the path as needed
+import profilePicture from '../../assets/images/profile.png'; // Adjust the path as needed
+
+import chart1 from '../../assets/images/vehicle.png';
+import chart2 from '../../assets/images/fetal.png';
+import chart3 from '../../assets/images/pie.png';
+import chart4 from '../../assets/images/chart1.png';
+import chart5 from '../../assets/images/chart2.png';
+import chart6 from '../../assets/images/chart4.png';
+
+import {Link} from 'react-router-dom';
+
+const Analysis = () => {
+    return (
+      <div className="dashboard-container">
+        <header className="header">
+          <img src={logo} alt="Logo" className="logo" />
+          <div className="user-info">
+            <span className="location">GALLE</span>
+            <img src={profilePicture} alt="Profile" className="profile" />
+            <button className="logout">Log Out</button>
+          </div>
+        </header>
+
+      <div className="dashboard">
+        <aside className="sidebar">
+            <img src={profilePicture} alt="Profile" className="profile-pic" />
+            <p className="user-name">A B C PERERA</p>
+            <ul className="menu">
+              <Link
+                to="/oic/Dashboard"
+                className={`menu-item ${location.pathname === '/oic/Dashboard' ? 'active' : ''}`}
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/oic/OnProgress"
+                className={`menu-item ${location.pathname === '/oic/OnProgress' ? 'active' : ''}`}
+              >
+                Accidents on Progress
+              </Link>
+              <Link
+                to="/oic/Accident"
+                className={`menu-item ${location.pathname === '/oic/Accident' ? 'active' : ''}`}
+              >
+                Accident Details
+              </Link>
+              <Link
+                to="/oic/ReportApp"
+                className={`menu-item ${location.pathname === '/oic/ReportApp' ? 'active' : ''}`}
+              >
+                Report Approval
+              </Link>
+              <Link
+                to="#"
+                className={`menu-item ${location.pathname === '#' ? 'active' : ''}`}
+              >
+                Reports
+              </Link>
+              <Link
+                to="/oic/Analysis"
+                className={`menu-item ${location.pathname === '/oic/Analysis' ? 'active' : ''}`}
+              >
+                Analysis
+              </Link>
+              <Link
+                to="#"
+                className={`menu-item ${location.pathname === '#' ? 'active' : ''}`}
+              >
+                Duty List
+              </Link>
+            </ul>
+          </aside>
+          <main className="main-content">
+
+          <div className="filters">
+    <div className="filter-group">
+      <select>
+        <option value="">Select One</option>
+        <option value="year">Year</option>
+        <option value="age">Age</option>
+        <option value="vehicleType">Vehicle Type</option>
+        <option value="time">Time</option>
+        <option value="day">Day</option>
+        <option value="location">Location</option>
+      </select>
+      <select>
+      <option value="">Select One</option>
+        <option value="accident">Accident</option>
+        <option value="accidentType">Accident Type</option>
+        <option value="deaths">Deaths</option>
+        <option value="courtCases">Court Cases</option>
+      </select>
+      <button className="filter-button">Filter</button>
+    </div>
+  </div>
+
+
+          <div className="charts-container">
+            <img src={chart1} alt="Chart 1" className="chart" />
+            <img src={chart2} alt="Chart 2" className="chart" />
+            <img src={chart3} alt="Chart 3" className="chart" />
+            <img src={chart4} alt="Chart 4" className="chart" />
+            <img src={chart5} alt="Chart 5" className="chart" />
+            <img src={chart6} alt="Chart 6" className="chart" />
+          </div>
+        </main>
+          </div>
+      </div>
+    );
+  };
+  
+  export default Analysis;

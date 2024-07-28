@@ -1,0 +1,244 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  overflow: hidden; /* Prevent body overflow */
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.header {
+  background-color: #FBBE00;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Ensure header stays on top */
+}
+
+.logo {
+  height: 60px;
+  margin-right: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.location {
+  margin-right: 20px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.profile {
+  border-radius: 50%;
+  height: 40px;
+  margin: 0 10px;
+}
+
+.logout {
+  background-color: transparent;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  margin-left: 20px;
+  font-size: 1em;
+}
+
+.dashboard {
+  display: flex;
+  flex: 1;
+  margin-top: 80px; /* Adjust based on header height */
+}
+
+.sidebar {
+  background-color: #FBBE00;
+  width: 250px;
+  padding: 20px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Enable vertical scrolling if needed */
+  overflow-x: hidden;
+  position: fixed;
+  top: 80px; /* Adjust based on header height */
+  bottom: 0;
+  left: 0;
+  z-index: 1000; /* Ensure sidebar stays on top */
+}
+
+.profile-pic {
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
+}
+
+.user-name {
+  color: #000;
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.menu-item {
+  display: block;
+  padding: 15px;
+  text-align: center;
+  width: 100%;
+  cursor: pointer;
+  text-decoration: none;
+  color: #000;
+  background-color: #fffb00;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 1.0em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.menu-item.active {
+  background-color: #FFFFFF; /* Highlight color for the active item */
+  color: #000; /* Text color for active item */
+}
+
+.menu-item.active.on-progress {
+  color: #000000; /* Set color to black for "Accidents on Progress" */
+  background-color: #ffffff; /* Set background color for "Accidents on Progress" */
+}
+
+.menu-item:hover {
+  background-color: #FDDE7F;
+}
+
+/* Main content */
+.main-content {
+  margin: 25px;
+  width: 100%;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  text-align: center;
+  background-color: #f4f4f4;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+.search-filter-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 40px;
+}
+
+.date-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 50px;
+}
+
+.filter-btn {
+  padding: 8px 10px;
+  border-radius: 5px;
+  background-color: #FDDE7F;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  margin-top: -10px;
+}
+
+.accident-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.accident-table th,
+.accident-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.accident-table th {
+  background-color: #f4f4f4;
+}
+
+.status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.status.completed {
+  background-color: green;
+}
+
+.status.pending {
+  background-color: red;
+}
+
+.status.in-progress {
+  background-color: orange;
+}
+
+.details-btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #87cefa;
+  border: none;
+  color: #000;
+  cursor: pointer;
+}
+
+.Reject {
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: red;
+  border: none;
+  color: #000;
+  cursor: pointer;
+}
+
+.Approve {
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: green;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  margin-right: 20px;
+}
