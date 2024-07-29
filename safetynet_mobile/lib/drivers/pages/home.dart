@@ -116,7 +116,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                   topRight: Radius.circular(16),
                 ),
                 child: Image.asset(
-                  'images/homedriver.png',
+                  'images/driverhome.png',
                   fit: BoxFit.cover,
                 ),
               ),
