@@ -2,7 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import "./App.css";
 import HomePage from "./components/HomePage";
-import LoginPage from './components/LoginPage';
+import LoginPage from './pages/login';
+import SignUp from './pages/SignUp';
 import TrafficPolice from './components/TrafficPolice';
 import OnProgress from './components/OnProgress';
 import Accident from './components/Accidents';
@@ -14,6 +15,7 @@ import OICAccident from './components/oic/Accidents';
 import OICReportApp from './components/oic/ReportApp';
 import OICAnalysis from './components/oic/Analysis';
 import HeadDash from './components/headOffice/Dashboad';
+import AdminD from './pages/Admin/Home';
 
 
 const App = () => {
@@ -22,6 +24,7 @@ const App = () => {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/SignUp" element={<SignUp />} />
       <Route path="/traffic-police" element={<TrafficPolice />} />
       <Route path="/OnProgress" element={<OnProgress />} />
       <Route path="/Accident" element={<Accident />} />
@@ -33,9 +36,25 @@ const App = () => {
       <Route path="/oic/ReportApp" element={<OICReportApp />} />
       <Route path="/oic/Analysis" element={<OICAnalysis />} />
       <Route path="/HeadOffice" element={<HeadDash />} />
+      <Route path="/Admin-Dashboard" element={<AdminD />} />
     </Routes>
   </Router>
+  
   );
 };
 
 export default App;
+
+
+// import React from 'react'
+// import Login from './pages/login';
+
+// const App = () => {
+//   return (
+//     <div>
+//       <Login/>
+//     </div>
+//   )
+// }
+
+// export default App

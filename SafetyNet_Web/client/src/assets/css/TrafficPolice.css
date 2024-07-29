@@ -107,6 +107,7 @@ body {
     list-style: none;
     padding: 10px;
     width: 100%;
+    text-decoration: none;
   }
   
   .menu li {
@@ -119,6 +120,7 @@ body {
     font-size: 1.2em; /* Add space between boxes */
     color: black; /* Black font color */
     display: flex;
+    text-decoration: none;
     justify-content: center; /* Center content horizontally */
     align-items: center; /* Center content vertically */
   }

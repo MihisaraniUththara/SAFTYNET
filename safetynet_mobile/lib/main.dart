@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:device_preview/device_preview.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';

@@ -24,6 +24,7 @@ const HomePage = () => {
             
             <br></br>
             <Link to="/login"><button>Sign In</button></Link>
+            <Link to="/SignUp"><button>Sign Up</button></Link>
           </div>
           <div className="image">
             <img src={image} alt="Police" />
