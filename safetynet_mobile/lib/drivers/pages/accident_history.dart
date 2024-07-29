@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
-import 'home.dart';
-import 'profile_screen.dart';
 import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
 
 void main() {
@@ -18,31 +16,9 @@ class AccidentHistoryPage extends StatefulWidget {
 }
 
 class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
-  int _selectedIndex = 2; // Start at History tab
+ 
 
-  void _onItemTapped(int index) {
-    if (_selectedIndex != index) {
-      setState(() {
-        _selectedIndex = index;
-      });
-
-      switch (index) {
-        case 0:
-          Get.to(() => DriverHomePage(fullName: 'John Doe')); // Replace with actual data
-          break;
-        case 1:
-          // Navigate to Activities Screen
-          // Get.to(() => ActivitiesScreen());
-          break;
-        case 2:
-          // Stay on Accident History Screen
-          break;
-        case 3:
-          Get.to(() => ProfileScreen());
-          break;
-      }
-    }
-  }
+  
 
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
@@ -55,15 +31,15 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
       appBar: AppBar(
         title: Text('Driver Accident History'),
         backgroundColor: Color(0xFFfbbe00),
-       actions: [
-          TextButton(
-            onPressed: _logout,
-            child: Icon(
-              Icons.logout,
-              color: Colors.black,
-            ),
-          ),
-        ],
+      //  actions: [
+      //     TextButton(
+      //       onPressed: _logout,
+      //       child: Icon(
+      //         Icons.logout,
+      //         color: Colors.black,
+      //       ),
+      //     ),
+      //   ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -134,31 +110,7 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_car),
-            label: 'Activities',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFFfbbe00),
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-      ),
+      
     );
   }
 
