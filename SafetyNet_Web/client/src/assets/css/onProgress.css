@@ -211,7 +211,7 @@ body {
  /* Existing CSS */
 /* Add these styles */
 
-.main-content {
+.m-content {
   padding: 5px;
   width: 100%;
   overflow-y: auto;
@@ -219,11 +219,19 @@ body {
   flex-direction: column;
 }
 
+/* .main-content {
+  padding: 5px;
+  width: 100%;
+  /* overflow-y: auto; */
+  /* display: inline-block;
+  flex-direction: column;
+} */
 
 .accident-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  margin-bottom: 50px;
 }
 
 .accident-table th,

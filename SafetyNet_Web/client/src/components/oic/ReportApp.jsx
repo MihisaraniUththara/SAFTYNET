@@ -33,7 +33,7 @@ const ReportApp = () => {
           </ul>
           </aside>
           <main className="main-content">
-          <table className="accident-table1">
+          <table className="accident-table1" style={{}}>
             <thead>
               <tr>
                 <th>Accident Number</th>
@@ -58,6 +58,24 @@ const ReportApp = () => {
                 <td>6.920265, 79.856830</td>
                 <td>Officer B</td>
                 <td>Major</td>
+                <td><button className="Approve-btn">Approve</button>
+                <button className="Reject-btn">Reject</button>
+                <button className="details-btn">Details</button></td>
+              </tr>
+              <tr>
+                <td>A00058</td>
+                <td>6.920265, 79.856830</td>
+                <td>Officer C</td>
+                <td>Minor</td>
+                <td><button className="Approve-btn">Approve</button>
+                <button className="Reject-btn">Reject</button>
+                <button className="details-btn">Details</button></td>
+              </tr>
+              <tr>
+                <td>A00058</td>
+                <td>6.920265, 79.856830</td>
+                <td>Officer C</td>
+                <td>Minor</td>
                 <td><button className="Approve-btn">Approve</button>
                 <button className="Reject-btn">Reject</button>
                 <button className="details-btn">Details</button></td>

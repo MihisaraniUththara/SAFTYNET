@@ -141,7 +141,7 @@ const SignUp = () => {
         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <input type="text" placeholder="NIC" value={nic} onChange={(e) => setNic(e.target.value)} required />
-        {/* <input type="text" placeholder="Police_ID" value={Police_ID} onChange={(e) => setid(e.target.value)} required /> */}
+        
         <input type="text" placeholder="Station" value={station} onChange={(e) => setStation(e.target.value)} required />
         <select value={role} onChange={(e) => setRole(e.target.value)} required>
           <option value="">Select Relevent Role</option>

@@ -78,19 +78,20 @@ button:hover {
 }
 
 .main-image {
-    width: 500%;
-    height: 500; 
+    width: 200px;
+    height: 100px; 
     object-fit: auto;
 }
 
 .login-container {
     display: flex;
     background-color: #fff;
-    border-radius: 20px;
+    /* border-radius: 20px; */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     position: relative;
     z-index: 1;
+    height: 390px;
 }
 
 .image-section {
@@ -102,7 +103,7 @@ button:hover {
 }
 
 .image-section img {
-    width: 250px;
+    width: 300px;
 }
 
 .form-section {

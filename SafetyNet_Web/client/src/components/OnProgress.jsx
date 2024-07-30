@@ -1,5 +1,5 @@
 import React from 'react';
-import '../assets/css/onProgress.css';
+import '../assets/css/new.css';
 import logo from '../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
 
@@ -31,7 +31,7 @@ const OnProgress = () => {
           </ul>
         </aside>
 
-        <main className="main-content">
+        <main className="m-content">
   {/* <div className="notification-list">
     <div className="date-group">
       <h3>Today</h3>
@@ -81,7 +81,7 @@ const OnProgress = () => {
     
   </div> */}
 
-<div className="topnav">
+<div className="nav">
       <a href="/OnProgress"  className='select-one'>All</a>
       <a href="/OnProgress/my-cases">My Cases</a>
     </div>

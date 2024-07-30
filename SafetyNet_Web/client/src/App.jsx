@@ -24,9 +24,12 @@ import HeadReportApp from './components/headOffice/ReportApp';
 import HeadAnalysis from './components/headOffice/Analysis';
 import AdminD from './components/Admin/Dashboad';
 
+import { UserProvider } from './context/UserContext';
+
 
 const App = () => {
   return (
+    <UserProvider>
     <Router>
     <Routes>
       <Route path="/" element={<HomePage />} />
@@ -53,6 +56,7 @@ const App = () => {
       <Route path="/Admin-Dashboard" element={<AdminD />} />
     </Routes>
   </Router>
+  </UserProvider>
   
   );
 };
