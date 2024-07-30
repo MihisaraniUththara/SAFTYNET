@@ -102,6 +102,7 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
+import "./signup.css";
 import { setDoc, doc } from "firebase/firestore";
 
 const SignUp = () => {
@@ -109,7 +110,7 @@ const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("OON");
+  const [role, setRole] = useState("");
   const [station, setStation] = useState("");
   const [nic, setNic] = useState("");
   const [error, setError] = useState("");
@@ -140,15 +141,16 @@ const SignUp = () => {
         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <input type="text" placeholder="NIC" value={nic} onChange={(e) => setNic(e.target.value)} required />
+        
         <input type="text" placeholder="Station" value={station} onChange={(e) => setStation(e.target.value)} required />
         <select value={role} onChange={(e) => setRole(e.target.value)} required>
-          <option value="OON">OON</option>
-          <option value="OONH">OONH</option>
-          <option value="Traffic">Traffic</option>
-          <option value="TrafficH">TrafficH</option>
+          <option value="">Select Relevent Role</option>
+          <option value="OONH">119 Head Office</option>
+          <option value="Traffic">Traffic Police Unit</option>
+          <option value="TrafficH">Traffic Police Head Office</option>
           <option value="OIC">OIC</option>
+          <option value="OON">119 Unit</option>
           <option value="Other">Other</option>
-          <option value="Admin">Admin</option>
         </select>
         <button type="submit">Sign Up</button>
         {error && <span className="error">{error}</span>}

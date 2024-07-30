@@ -1,14 +1,14 @@
 import React from 'react';
-import '../assets/css/Analysis.css';
-import logo from '../assets/images/logo1.png'; // Adjust the path as needed
-import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
+import '../../assets/css/Analysis.css';
+import logo from '../../assets/images/logo1.png'; // Adjust the path as needed
+import profilePicture from '../../assets/images/profile.png'; // Adjust the path as needed
 
-import chart1 from '../assets/images/vehicle.png';
-import chart2 from '../assets/images/fetal.png';
-import chart3 from '../assets/images/pie.png';
-import chart4 from '../assets/images/chart1.png';
-import chart5 from '../assets/images/chart2.png';
-import chart6 from '../assets/images/chart3.jpeg';
+import chart1 from '../../assets/images/vehicle.png';
+import chart2 from '../../assets/images/fetal.png';
+import chart3 from '../../assets/images/pie.png';
+import chart4 from '../../assets/images/chart1.png';
+import chart5 from '../../assets/images/chart2.png';
+import chart6 from '../../assets/images/chart4.png';
 
 import {Link} from 'react-router-dom';
 
@@ -18,7 +18,6 @@ const Analysis = () => {
         <header className="header">
         <img src={logo} alt="Logo" className="logo" />
           <div className="user-info">
-            <span>GALLE</span>
             <img src={profilePicture} alt="Profile" className="profile" />
             <button className="logout">Log Out</button>
           </div>
@@ -30,12 +29,13 @@ const Analysis = () => {
             <img src={profilePicture} alt="Profile" className="profile-pic" />
             <p className="user-name">A B C PERERA</p>
             <ul className="menu">
-            <Link to="/traffic-police" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
-              <Link to="/OnProgress" style={{textDecoration: 'none'}}><li>Accidents on progress</li></Link>
-              <Link to="/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
-              <Link to="/Report" style={{textDecoration: 'none'}}><li>Reports</li></Link>
-              <Link to="/Analysis" style={{textDecoration: 'none'}}><li className = "dashboard">Analysis</li></Link>
-            </ul>
+          <Link to="/HeadOffice" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
+            <Link to="/HeadOffice/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
+            <Link to="/HeadOffice/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
+            <Link to="#" style={{textDecoration: 'none'}}><li>Reports</li></Link>
+            <Link to="/HeadOffice/Analysis" style={{textDecoration: 'none'}}><li className="dashboard">Analysis</li></Link>
+            {/* <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link> */}
+          </ul>
           </aside>
           <main className="main-content">
 

@@ -23,13 +23,13 @@ const OICOnProgress = () => {
           <img src={profilePicture} alt="Profile" className="profile-pic" />
           <p className="user-name">A B C PERERA</p>
           <ul className="menu">
-          <Link to="/oic/Dashboad"><li>Dashboard</li></Link>
-            <Link to="/oic/OnProgress"><li className="dashboard">Accidents on progress</li></Link>
-            <Link to="/oic/Accident"><li>Accident Details</li></Link>
-            <Link to="/oic/ReportApp"><li>Report Approval</li></Link>
-            <Link to="#"><li>Reports</li></Link>
-            <Link to="/oic/Analysis"><li>Analysis</li></Link>
-            <Link to="#"><li>Duty List</li></Link>
+          <Link to="/oic/Dashboad" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
+            <Link to="/oic/OnProgress" style={{textDecoration: 'none'}}><li className="dashboard">Accidents on progress</li></Link>
+            <Link to="/oic/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
+            <Link to="/oic/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
+            <Link to="#" style={{textDecoration: 'none'}}><li>Reports</li></Link>
+            <Link to="/oic/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
+            <Link to="/oic/Duty" style={{textDecoration: 'none'}}><li>Duty List</li></Link>
           </ul>
         </aside>
 
@@ -90,54 +90,71 @@ const OICOnProgress = () => {
 </main> */}
 
 <main className="main-content">
-  <div className="notification-list">
-    <div className="date-group">
-      <h3>Today</h3>
-      <div className="notification">
-        <p>A1108 accident has happened on 6.920265, 79.856830 location</p>
-        <div className="notification-actions">
-          <div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: '50%' }}></div>
-          </div>
-          <button className="details-button">Details</button>
-        </div>
-      </div>
-      <br></br>
-      <div className="notification">
-        <p>A1108 accident has happened on 6.920265, 79.856830 location</p>
-        <div className="notification-actions">
-          <div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: '60%' }}></div>
-          </div>
-          <button className="details-button">Details</button>
-        </div>
-      </div>
-      <br></br>
-      <div className="notification">
-        <p>A1105 accident has happened on 6.920265, 79.856830 location</p>
-        <div className="notification-actions">
-          <div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: '80%' }}></div>
-          </div>
-          <button className="details-button">Details</button>
-        </div>
-      </div>
-    </div>
-    <div className="date-group">
-      <h3>Yesterday</h3>
-      <div className="notification">
-        <p>A1109 accident has happened on 6.920265, 79.856830 location</p>
-        <div className="notification-actions">
-          <div className="progress-bar-container">
+<table className="accident-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Accident ID</th>
+                <th>Incharge Officer</th>
+                <th>Status</th>
+                <th>Progress</th>
+                <th>Option</th>
+              </tr>
+            </thead>
+            <tbody>
+             <tr>
+              <td>27/07/2024</td>
+              <td>A2341</td>
+              <td>A B C Perera</td>
+              <td><span className="status pending">Pending</span></td>
+              <td> <div className='progress-cell'><div className="progress-bar-container">
+            <div className="progress-bar" style={{ width: '40%' }}></div>
+          </div></div></td>
+              <td><button className="details-btn">Details</button></td>
+             </tr>
+             <tr>
+              <td>27/07/2024</td>
+              <td>A2241</td>
+              <td>K Perera</td>
+              <td><span className="status pending">Pending</span></td>
+              <td> <div className='progress-cell'><div className="progress-bar-container">
             <div className="progress-bar" style={{ width: '30%' }}></div>
-          </div>
-          <button className="details-button">Details</button>
-        </div>
-      </div>
-      
-    </div>
-    
-  </div>
+          </div></div></td>
+              <td><button className="details-btn">Details</button></td>
+             </tr>
+             <tr>
+              <td>27/07/2024</td>
+              <td>A2111</td>
+              <td>w Hasaranga</td>
+              <td><span className="status in-progress">In Progress</span></td>
+              <td> <div className='progress-cell'><div className="progress-bar-container">
+            <div className="progress-bar" style={{ width: '50%' }}></div>
+          </div></div></td>
+              <td><button className="details-btn">Details</button></td>
+             </tr>
+             <tr>
+              <td>26/07/2024</td>
+              <td>A1917</td>
+              <td>K Perera</td>
+              <td><span className="status completed">Completed</span></td>
+              <td> <div className='progress-cell'><div className="progress-bar-container">
+            <div className="progress-bar" style={{ width: '100%' }}></div>
+          </div></div></td>
+              <td><button className="details-btn">Details</button></td>
+             </tr>
+             <tr>
+              <td>26/07/2024</td>
+              <td>A1817</td>
+              <td>A B C Perera</td>
+              <td><span className="status completed">Completed</span></td>
+              <td> <div className='progress-cell'><div className="progress-bar-container">
+            <div className="progress-bar" style={{ width: '100%' }}></div>
+          </div></div></td>
+              <td><button className="details-btn">Details</button></td>
+             </tr>
+            </tbody>
+            </table>
+
 </main>
 
 

@@ -30,13 +30,13 @@ const Analysis = () => {
             <img src={profilePicture} alt="Profile" className="profile-pic" />
             <p className="user-name">A B C PERERA</p>
             <ul className="menu">
-          <Link to="/oic/Dashboad"><li>Dashboard</li></Link>
-            <Link to="/oic/OnProgress"><li>Accidents on progress</li></Link>
-            <Link to="/oic/Accident"><li>Accident Details</li></Link>
-            <Link to="/oic/ReportApp"><li>Report Approval</li></Link>
-            <Link to=""><li>Reports</li></Link>
-            <Link to="/oic/Analysis"><li className="dashboard">Analysis</li></Link>
-            <Link to="#"><li>Duty List</li></Link>
+          <Link to="/oic/Dashboad" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
+            <Link to="/oic/OnProgress" style={{textDecoration: 'none'}}><li>Accidents on progress</li></Link>
+            <Link to="/oic/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
+            <Link to="/oic/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
+            <Link to="" style={{textDecoration: 'none'}}><li>Reports</li></Link>
+            <Link to="/oic/Analysis" style={{textDecoration: 'none'}}><li className="dashboard">Analysis</li></Link>
+            <Link to="/oic/Duty" style={{textDecoration: 'none'}}><li>Duty List</li></Link>
           </ul>
           </aside>
           <main className="main-content">

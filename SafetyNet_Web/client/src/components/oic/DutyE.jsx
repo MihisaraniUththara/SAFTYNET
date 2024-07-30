@@ -1,11 +1,11 @@
 import React from 'react';
-import '../../assets/css/ReportApp.css';
+import '../../assets/css/Duty.css';
 import logo from '../../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../../assets/images/profile.png'; // Adjust the path as needed
 
 import {Link} from 'react-router-dom';
 
-const ReportApp = () => {
+const DutyE = () => {
     return (
       <div className="dashboard-container">
         <header className="header">
@@ -26,67 +26,63 @@ const ReportApp = () => {
           <Link to="/oic/Dashboad" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
             <Link to="/oic/OnProgress" style={{textDecoration: 'none'}}><li>Accidents on progress</li></Link>
             <Link to="/oic/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
-            <Link to="/oic/ReportApp" style={{textDecoration: 'none'}}><li className="dashboard">Report Approval</li></Link>
+            <Link to="/oic/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
             <Link to="#" style={{textDecoration: 'none'}}><li>Reports</li></Link>
             <Link to="/oic/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Duty List</li></Link>
+            <Link to="/oic/Duty" style={{textDecoration: 'none'}}><li className="dashboard">Duty List</li></Link>
           </ul>
           </aside>
           <main className="main-content">
-          <table className="accident-table1" style={{}}>
+          <div className="topnav">
+      <a href="/oic/Duty">Morning Shift</a>
+      <a href="/oic/DutyE" className='select-one'>Evening Shift</a>
+      <a href="/oic/DutyN">Night Shift</a>
+    </div>
+          <table className="accident-table1">
             <thead>
               <tr>
-                <th>Accident Number</th>
-                <th>Location</th>
-                <th>Incharge</th>
-                <th>Accident Type</th>
+                <th>Officer Name</th>
+                <th>Officer Id</th>
+                <th>NIC</th>
+                <th>Duty</th>
                 <th>Option</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>A00158</td>
-                <td>6.920265, 79.856830</td>
-                <td>Officer A</td>
-                <td>Minor</td>
-                <td><button className="Approve-btn">Approve</button>
-                <button className="Reject-btn">Reject</button>
+            <tr>
+                <td>A B C Perera</td>
+                <td>12323</td>
+                <td>199548517526</td>
+                <td><button className="Approve-btn">Assign to 119</button></td>
+                <td><button className="Suspend-btn">Suspend</button>
                 <button className="details-btn">Details</button></td>
               </tr>
               <tr>
-                <td>A00025</td>
-                <td>6.920265, 79.856830</td>
-                <td>Officer B</td>
-                <td>Major</td>
-                <td><button className="Approve-btn">Approve</button>
-                <button className="Reject-btn">Reject</button>
+                <td>A K weerasinghe</td>
+                <td>56248</td>
+                <td><button className="Approve-btn">Assign to 119</button></td>
+                <td><button className="Suspend-btn">Suspend</button>
                 <button className="details-btn">Details</button></td>
               </tr>
               <tr>
-                <td>A00058</td>
-                <td>6.920265, 79.856830</td>
-                <td>Officer C</td>
-                <td>Minor</td>
-                <td><button className="Approve-btn">Approve</button>
-                <button className="Reject-btn">Reject</button>
+                <td>A S Wickramasinghe</td>
+                <td>78452</td>
+                <td><button className="Approve-btn">Assign to 119</button></td>
+                <td><button className="Suspend-btn">Suspend</button>
                 <button className="details-btn">Details</button></td>
               </tr>
               <tr>
-                <td>A00058</td>
-                <td>6.920265, 79.856830</td>
-                <td>Officer C</td>
-                <td>Minor</td>
-                <td><button className="Approve-btn">Approve</button>
-                <button className="Reject-btn">Reject</button>
+                <td>D Perera</td>
+                <td>12323</td>
+                <td><button className="Approve-btn">Assign to 119</button></td>
+                <td><button className="Suspend-btn">Suspend</button>
                 <button className="details-btn">Details</button></td>
               </tr>
               <tr>
-                <td>A00058</td>
-                <td>6.920265, 79.856830</td>
-                <td>Officer C</td>
-                <td>Minor</td>
-                <td><button className="Approve-btn">Approve</button>
-                <button className="Reject-btn">Reject</button>
+                <td>K Mendis</td>
+                <td>12323</td>
+                <td><button className="Approve-btn">Assign to 119</button></td>
+                <td><button className="Suspend-btn">Suspend</button>
                 <button className="details-btn">Details</button></td>
               </tr>
             </tbody>
@@ -97,4 +93,4 @@ const ReportApp = () => {
     );
   };
   
-  export default ReportApp;
+  export default DutyE;

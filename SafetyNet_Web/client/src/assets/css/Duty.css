@@ -2,7 +2,7 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: NONE;
   }
   
   .dashboard-container {
@@ -37,7 +37,6 @@ body {
   .user-info span {
     margin-right: 60px;
     margin-top: 10px;
-    font-size: 1.0em;
   }
   
   .profile {
@@ -52,13 +51,6 @@ body {
     color: #000;
     cursor: pointer;
     margin-right: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-size: 1.0em;
-    padding: 5px 5px;
-  }
-
-  .logout:hover {
-    background-color: #FDDE7F;
   }
   
   .dashboard {
@@ -103,7 +95,7 @@ body {
   }
   
   .menu li {
-    padding: 15px 0px;
+    padding: 15px 0;
     text-align: center; /* Center the text within the box */
     width: 100%;
     cursor: pointer;
@@ -137,24 +129,20 @@ body {
   .menu li:hover {
     background-color: rgba(0, 0, 0, 0.1);
   }
-
-  .a{
-    text-decoration: 'none'
-  }
   
  
 /* --main content-- */
 
 
   .main-content {
-    padding: 5px;
+    padding: 20px;
     width: 100%;
     overflow-y: auto;
+    overflow-y: NONE;
     display: flex;
     flex-direction: column;
   }
-
- 
+  
   .search-filter-container {
     display: flex;
     justify-content: flex-end;
@@ -188,20 +176,21 @@ body {
     margin-top: -10px;
   }
   
-  .accident-table {
+  .accident-table1 {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 10px;
+    
   }
   
-  .accident-table th,
-  .accident-table td {
+  .accident-table1 th,
+  .accident-table1 td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
   }
   
-  .accident-table th {
+  .accident-table1 th {
     background-color: #f4f4f4;
   }
   
@@ -210,6 +199,7 @@ body {
     padding: 5px 10px;
     border-radius: 5px;
     color: #fff;
+    width: 100px;
   }
   
   .status.completed {
@@ -225,46 +215,99 @@ body {
   }
   
   .details-btn {
-    padding: 5px 10px;
+    padding: 8px 10px;
     border-radius: 5px;
     background-color: #87cefa;
     border: none;
     color: #000;
     cursor: pointer;
+    width: 80px;
+    margin-left: 15px;
+    
   }
 
-  .Reject {
-    padding: 5px 10px;
+  .Reject-btn {
+    padding: 8px 10px;
+    border-radius: 5px;
+    background-color: rgb(228, 51, 51);
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-left: 15px;
+    width: 80px;
+  }
+
+  .Approve-btn {
+    padding: 10px 10px;
+    border-radius: 5px;
+    background-color: rgb(111, 205, 111);
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-left: 15px;
+    width: 100PX;
+  }
+
+  .Approve1-btn {
+    padding: 10px 10px;
+    border-radius: 5px;
+    background-color: #ddd;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-left: 15px;
+    width: 100PX;
+  }
+
+  .Suspend-btn {
+    padding: 8px 10px;
     border-radius: 5px;
     background-color: red;
     border: none;
     color: #000;
     cursor: pointer;
+    margin-left: 15px;
+    width: 80px;
   }
 
-  .Approve {
-    padding: 5px 10px;
-    border-radius: 5px;
-    background-color: green;
-    border: none;
-    color: #000;
-    cursor: pointer;
-    margin-right: 20px;
-  }
 
+  /* TopNav.css */
+.topnav {
+  background-color: #333;
+  overflow: hidden;
+  width: 100%;
+  margin-bottom: 50px;
+  margin-top: -300PX;
   
-  .main-content1{
-    button{
-      width: 200px;
-      height: 30px;
-      border: none;
-      background-color: #FBBE00;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 56px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.select-one {
+    background-color: #FDDE7F;
+    color: black;
   }
 
+/* Create a right-aligned (split) link inside the navigation bar */
+.topnav a.split {
+  float: right;
+  background-color: #04AA6D;
+  color: white;
+}
 
 
 
@@ -344,6 +387,4 @@ body {
         margin-left: 5px;
       }
   }*/
-
-
   

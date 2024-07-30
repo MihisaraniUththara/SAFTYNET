@@ -1,11 +1,11 @@
 import React from 'react';
-import '../assets/css/new.css';
+import '../assets/css/onProgress.css';
 import logo from '../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
 
 import {Link} from 'react-router-dom';
 
-const OnProgress = () => {
+const myCases = () => {
   return (
     <div className="dashboard-container">
       <header className="header">
@@ -31,7 +31,7 @@ const OnProgress = () => {
           </ul>
         </aside>
 
-        <main className="m-content">
+        <main className="main-content">
   {/* <div className="notification-list">
     <div className="date-group">
       <h3>Today</h3>
@@ -81,9 +81,9 @@ const OnProgress = () => {
     
   </div> */}
 
-<div className="nav">
-      <a href="/OnProgress"  className='select-one'>All</a>
-      <a href="/OnProgress/my-cases">My Cases</a>
+<div className="topnav">
+      <a href="/OnProgress" >All</a>
+      <a href="/OnProgress/my-cases" className='select-one'>My Cases</a>
     </div>
 
     <table className="accident-table">
@@ -91,7 +91,6 @@ const OnProgress = () => {
               <tr>
                 <th>Date</th>
                 <th>Accident ID</th>
-                <th>Incharge Officer</th>
                 <th>Status</th>
                 <th>Progress</th>
                 <th>Option</th>
@@ -101,17 +100,6 @@ const OnProgress = () => {
              <tr>
               <td>27/07/2024</td>
               <td>A2341</td>
-              <td>A B C Perera</td>
-              <td><span className="status pending">Pending</span></td>
-              <td> <div className='progress-cell'><div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: '40%' }}></div>
-          </div></div></td>
-              <td><button className="details-btn">Details</button></td>
-             </tr>
-             <tr>
-              <td>27/07/2024</td>
-              <td>A2241</td>
-              <td>K Perera</td>
               <td><span className="status pending">Pending</span></td>
               <td> <div className='progress-cell'><div className="progress-bar-container">
             <div className="progress-bar" style={{ width: '30%' }}></div>
@@ -119,29 +107,8 @@ const OnProgress = () => {
               <td><button className="details-btn">Details</button></td>
              </tr>
              <tr>
-              <td>27/07/2024</td>
-              <td>A2111</td>
-              <td>w Hasaranga</td>
-              <td><span className="status in-progress">In Progress</span></td>
-              <td> <div className='progress-cell'><div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: '50%' }}></div>
-          </div></div></td>
-              <td><button className="details-btn">Details</button></td>
-             </tr>
-             <tr>
-              <td>26/07/2024</td>
-              <td>A1917</td>
-              <td>K Perera</td>
-              <td><span className="status completed">Completed</span></td>
-              <td> <div className='progress-cell'><div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: '100%' }}></div>
-          </div></div></td>
-              <td><button className="details-btn">Details</button></td>
-             </tr>
-             <tr>
               <td>26/07/2024</td>
               <td>A1817</td>
-              <td>A B C Perera</td>
               <td><span className="status completed">Completed</span></td>
               <td> <div className='progress-cell'><div className="progress-bar-container">
             <div className="progress-bar" style={{ width: '100%' }}></div>
@@ -158,4 +125,4 @@ const OnProgress = () => {
   );
 };
 
-export default OnProgress;
+export default myCases;

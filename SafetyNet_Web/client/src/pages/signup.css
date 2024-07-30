@@ -1,4 +1,4 @@
-.login{
+.signup{
     height: 100vh;
     display: flex;
     align-items: center;
@@ -11,13 +11,19 @@
 
       input{
         width: 300px;
-        height: 40px;
+        height: 30px;
+        margin: 10px;
+      }
+
+      select{
+        width: 310px;
+        height: 30px;
         margin: 10px;
       }
 
       button{
         width: 310px;
-        height: 40px;
+        height: 30px;
         border: none;
         background-color: #FBBE00;
         color: white;
@@ -25,10 +31,6 @@
         cursor: pointer;
       }
 
-      span{
-        font-size: 12px;
-        color: red;
-        margin-top: 10px;
-      }
+      
     }
 }
