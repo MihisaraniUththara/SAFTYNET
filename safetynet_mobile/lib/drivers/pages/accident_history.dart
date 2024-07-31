@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-
 import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
 
 void main() {
@@ -16,10 +15,6 @@ class AccidentHistoryPage extends StatefulWidget {
 }
 
 class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
- 
-
-  
-
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
     Get.off(LoginScreen()); // Redirect to login screen after logout
@@ -31,15 +26,16 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
       appBar: AppBar(
         title: Text('Driver Accident History'),
         backgroundColor: Color(0xFFfbbe00),
-      //  actions: [
-      //     TextButton(
-      //       onPressed: _logout,
-      //       child: Icon(
-      //         Icons.logout,
-      //         color: Colors.black,
-      //       ),
-      //     ),
-      //   ],
+        // Uncomment the following lines if you want to add a logout button
+        // actions: [
+        //   TextButton(
+        //     onPressed: _logout,
+        //     child: Icon(
+        //       Icons.logout,
+        //       color: Colors.black,
+        //     ),
+        //   ),
+        // ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -55,8 +51,8 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
                   style: TextStyle(fontSize: 16),
                 ),
                 DropdownButton<String>(
-                  value: 'Van',
-                  items: <String>['Van', 'Truck', 'Car'].map((String value) {
+                  value: 'KH9024',
+                  items: <String>['KH9024', 'CAA1789', 'ND4957'].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -74,33 +70,29 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
                 children: [
                   _buildAccidentCard(
                     date: '2023-01-01',
-                    division: 'Division A',
-                    station: 'Station X',
-                    arNo: 'AR12345',
+                    time: '14:30',
+                    location: '1st Lane, Kirulapone',
                     status: 'Fatal',
                     color: Colors.red,
                   ),
                   _buildAccidentCard(
                     date: '2022-12-15',
-                    division: 'Division B',
-                    station: 'Station Y',
-                    arNo: 'AR54321',
+                    time: '09:15',
+                    location: 'Highlevel Road, Nugegoda',
                     status: 'Grievous',
                     color: Colors.orange,
                   ),
                   _buildAccidentCard(
                     date: '2021-11-10',
-                    division: 'Division C',
-                    station: 'Station Z',
-                    arNo: 'AR67890',
+                    time: '17:45',
+                    location: 'Market St, Homagama',
                     status: 'Non Grievous',
-                    color:  Color(0xFFfbbe00),
+                    color: Color(0xFFfbbe00),
                   ),
                   _buildAccidentCard(
                     date: '2020-10-05',
-                    division: 'Division D',
-                    station: 'Station W',
-                    arNo: 'AR09876',
+                    time: '08:00',
+                    location: '5th Ave, Maharagama',
                     status: 'Damage Only',
                     color: Colors.green,
                   ),
@@ -110,15 +102,13 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
           ],
         ),
       ),
-      
     );
   }
 
   Widget _buildAccidentCard({
     required String date,
-    required String division,
-    required String station,
-    required String arNo,
+    required String time,
+    required String location,
     required String status,
     required Color color,
   }) {
@@ -144,15 +134,12 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Division: $division',
+                    'Time: $time',
                     style: TextStyle(fontSize: 14),
                   ),
+                  SizedBox(height: 8),
                   Text(
-                    'Station: $station',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  Text(
-                    'AR No: $arNo',
+                    'Location: $location',
                     style: TextStyle(fontSize: 14),
                   ),
                 ],

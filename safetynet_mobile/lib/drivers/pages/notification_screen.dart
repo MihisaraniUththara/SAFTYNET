@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safetynet_mobile/drivers/pages/activity_screen.dart';
 import 'package:safetynet_mobile/drivers/pages/home.dart';
 import 'package:safetynet_mobile/drivers/pages/profile_screen.dart';
@@ -12,26 +14,44 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   int _selectedIndex = 2; // Start at Notifications tab
 
-  void _onItemTapped(int index) {
+  Future<String> _fetchUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('drivers')
+          .doc(user.uid)
+          .get();
+      if (userDoc.exists) {
+        return userDoc['fullName'];
+      }
+    }
+    return 'Unknown Driver';
+  }
+
+  void _onItemTapped(int index) async {
     if (_selectedIndex != index) {
+      if (index == 0) {
+        // Fetch user data from Firestore
+        final fullName = await _fetchUserName();
+
+        Get.to(() => DriverHomePage(fullName: fullName));
+      } else {
+        switch (index) {
+          case 1:
+            Get.to(() => ActivitiesPage());
+            break;
+          case 2:
+            // Stay on Notifications Screen
+            break;
+          case 3:
+            Get.to(() => ProfileScreen());
+            break;
+        }
+      }
+
       setState(() {
         _selectedIndex = index;
       });
-
-      switch (index) {
-        case 0:
-          Get.to(() => DriverHomePage(fullName: 'Mihirada')); // Replace with actual data
-          break;
-        case 1:
-          Get.to(() => ActivitiesPage());
-          break;
-        case 2:
-          // Stay on Notifications Screen
-          break;
-        case 3:
-          Get.to(() => ProfileScreen());
-          break;
-      }
     }
   }
 
@@ -84,7 +104,7 @@ class _NotificationPageState extends State<NotificationPage> {
             ),
             SizedBox(height: 16),
             Text(
-              '28 Jul 2024',
+              '30 Jul 2024',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             _buildNotificationCard(
@@ -96,7 +116,7 @@ class _NotificationPageState extends State<NotificationPage> {
             ),
             SizedBox(height: 16),
             Text(
-              '25 Jul 2024',
+              '28 Jul 2024',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             _buildNotificationCard(
@@ -115,7 +135,7 @@ class _NotificationPageState extends State<NotificationPage> {
             ),
             SizedBox(height: 16),
             Text(
-              '24 Jul 2024',
+              '26 Jul 2024',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             _buildNotificationCard(
