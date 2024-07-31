@@ -17,6 +17,7 @@ class _ReportAccidentPageState extends State<ReportAccidentPage> {
   final _descriptionController = TextEditingController();
   String _location = 'Fetching location...';
   DateTime _dateTime = DateTime.now();
+  bool _informEmergencyContacts = false; // State to track checkbox
 
   @override
   void initState() {
@@ -58,6 +59,11 @@ class _ReportAccidentPageState extends State<ReportAccidentPage> {
 
   void _reportAccident() {
     // Logic to report the accident, e.g., send data to a server or call an emergency number
+    if (_informEmergencyContacts) {
+      // Logic to inform emergency contacts
+      print("Informing emergency contacts...");
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Accident reported successfully!'),
       backgroundColor: Colors.green,
@@ -104,6 +110,18 @@ class _ReportAccidentPageState extends State<ReportAccidentPage> {
               ),
               maxLines: 3,
             ),
+            SizedBox(height: 16),
+            CheckboxListTile(
+              title: Text("Inform Emergency Contacts"),
+              value: _informEmergencyContacts,
+              onChanged: (newValue) {
+                setState(() {
+                  _informEmergencyContacts = newValue!;
+                });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+              activeColor: Color(0xFFfbbe00),
+            ),
             SizedBox(height: 24),
             Center(
               child: ElevatedButton(
@@ -116,7 +134,6 @@ class _ReportAccidentPageState extends State<ReportAccidentPage> {
                   textStyle: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    
                   ),
                 ),
               ),

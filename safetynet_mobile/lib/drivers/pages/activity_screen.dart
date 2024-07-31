@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:safetynet_mobile/drivers/pages/notification_screen.dart';
-
 import 'home.dart';
 import 'profile_screen.dart';
 import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
@@ -22,26 +22,44 @@ class ActivitiesPage extends StatefulWidget {
 class _ActivitiesPageState extends State<ActivitiesPage> {
   int _selectedIndex = 1; // Start at Activities tab
 
-  void _onItemTapped(int index) {
+  Future<String> _fetchUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('drivers')
+          .doc(user.uid)
+          .get();
+      if (userDoc.exists) {
+        return userDoc['fullName'];
+      }
+    }
+    return 'Unknown Driver';
+  }
+
+  void _onItemTapped(int index) async {
     if (_selectedIndex != index) {
+      if (index == 0) {
+        // Fetch user data from Firestore
+        final fullName = await _fetchUserName();
+
+        Get.to(() => DriverHomePage(fullName: fullName));
+      } else {
+        switch (index) {
+          case 1:
+            // Stay on Activities Screen
+            break;
+          case 2:
+            Get.to(() => NotificationPage());
+            break;
+          case 3:
+            Get.to(() => ProfileScreen());
+            break;
+        }
+      }
+
       setState(() {
         _selectedIndex = index;
       });
-
-      switch (index) {
-        case 0:
-          Get.to(() => DriverHomePage(fullName: 'Mihirada')); // Replace with actual data
-          break;
-        case 1:
-          // Stay on Activities Screen
-          break;
-        case 2:
-          Get.to(() => NotificationPage());
-          break;
-        case 3:
-          Get.to(() => ProfileScreen());
-          break;
-      }
     }
   }
 
@@ -77,9 +95,9 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
             ),
             SizedBox(height: 8),
             _buildOngoingActivityCard(
-              date: '2024-07-25',
+              date: '2024-08-01',
               startLocation: 'Location A',
-              endLocation: 'Location B',
+              //endLocation: 'Location B',
               status: 'In Progress',
             ),
             SizedBox(height: 16),
@@ -92,19 +110,19 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
               child: ListView(
                 children: [
                   _buildActivityCard(
-                    date: '2024-07-24',
+                    date: '2024-07-30',
                     startLocation: 'Location C',
                     endLocation: 'Location D',
                     status: 'Completed',
                   ),
                   _buildActivityCard(
-                    date: '2024-07-23',
+                    date: '2024-07-28',
                     startLocation: 'Location E',
                     endLocation: 'Location F',
                     status: 'Completed',
                   ),
                   _buildActivityCard(
-                    date: '2024-07-22',
+                    date: '2024-07-26',
                     startLocation: 'Location G',
                     endLocation: 'Location H',
                     status: 'Completed',
@@ -146,7 +164,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
   Widget _buildOngoingActivityCard({
     required String date,
     required String startLocation,
-    required String endLocation,
+    //required String endLocation,
     required String status,
   }) {
     return Card(
@@ -174,10 +192,10 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                     'Start Location: $startLocation',
                     style: TextStyle(fontSize: 14),
                   ),
-                  Text(
-                    'End Location: $endLocation',
-                    style: TextStyle(fontSize: 14),
-                  ),
+                  // Text(
+                  //   'End Location: $endLocation',
+                  //   style: TextStyle(fontSize: 14),
+                  // ),
                 ],
               ),
             ),
