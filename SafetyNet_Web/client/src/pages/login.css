@@ -10,14 +10,14 @@
       align-items: center;
 
       input{
-        width: 200px;
-        height: 30px;
+        width: 300px;
+        height: 40px;
         margin: 10px;
       }
 
       button{
-        width: 200px;
-        height: 30px;
+        width: 310px;
+        height: 40px;
         border: none;
         background-color: #FBBE00;
         color: white;

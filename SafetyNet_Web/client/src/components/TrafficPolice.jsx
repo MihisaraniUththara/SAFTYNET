@@ -56,7 +56,13 @@ import chart3 from '../assets/images/chart4.png';
 import map from '../assets/images/map.jpg';
 import {Link} from 'react-router-dom';
 
+import Logout from '../logout';
+
+import { useUser } from '../context/UserContext';
+
 const TrafficPolice = () => {
+  const { user } = useUser();
+
   return (
     <div className="dashboard-container">
       <header className="header">
@@ -64,7 +70,7 @@ const TrafficPolice = () => {
         <div className="user-info">
           <span>GALLE</span>
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout" onClick={Logout}>Log Out</button>
         </div>
       </header>
 

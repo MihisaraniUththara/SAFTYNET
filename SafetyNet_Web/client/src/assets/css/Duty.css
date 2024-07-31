@@ -1,0 +1,390 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow-y: auto;
+    overflow-x: NONE;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    /* overflow-y: auto; */
+  }
+  
+  .header {
+    background-color: #FBBE00;
+    padding: 10px;
+    display: flex;
+    
+    align-items: center;
+    width: 100%;
+  }
+
+  .logo {
+    height: 60px;
+    margin-bottom: 0px;
+    /* margin-right: 300px; */
+    margin-left: 5px;
+  }
+  
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-info span {
+    margin-right: 60px;
+    margin-top: 10px;
+  }
+  
+  .profile {
+    border-radius: 50%;
+    height: 40px;
+    margin: 0 10px;
+  }
+  
+  .logout {
+    background-color: transparent;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-right: 30px;
+  }
+  
+  .dashboard {
+    display: flex;
+    flex: 1;
+  }
+  
+  .sidebar {
+    background-color: #FBBE00;
+    width: 200px;
+    padding: 20px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  
+  .profile-pic {
+    margin-top: 10px;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    margin-left: 50px;
+    margin-right: 50px;
+    
+  }
+  
+ 
+  .user-name {
+    color: #000;
+    font-weight: bold;
+    font-size: 1.2em; /* Adjust the font size as needed */
+    margin-bottom: 20px;
+  }
+  
+  .menu {
+    list-style: none;
+    padding: 10px;
+    width: 100%;
+  }
+  
+  .menu li {
+    padding: 15px 0;
+    text-align: center; /* Center the text within the box */
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    margin-bottom: 10px;
+    justify-content: center; /* Center content horizontally */
+  align-items: center;
+    font-size: 1.2em; /* Add space between boxes */
+  }
+  
+ /*  .menu li:first-child {
+    background-color: #FDDE7F; 
+    color: black;
+    
+  } */
+
+  .menu .dashboard {
+    
+    background-color: #FDDE7F; /* Red background for 'Dashboard' */
+  }
+  
+/*   .menu li:not(:first-child) {
+    background-color: #FBBE00; 
+    color: black;
+  } */
+
+
+  .menu li:not(.dashboard) {
+  background-color: #FBBE00; /* Green background for other items */
+}
+  .menu li:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  
+ 
+/* --main content-- */
+
+
+  .main-content {
+    padding: 20px;
+    width: 100%;
+    overflow-y: auto;
+    overflow-y: NONE;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .search-filter-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    margin-top: -300px;
+  }
+  
+  .search-bar {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 40px;
+  }
+  
+  .date-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 50px;
+  }
+
+  .filter-btn {
+    padding: 8px 10px;
+    border-radius: 5px;
+    background-color: #FDDE7F;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-top: -10px;
+  }
+  
+  .accident-table1 {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    
+  }
+  
+  .accident-table1 th,
+  .accident-table1 td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .accident-table1 th {
+    background-color: #f4f4f4;
+  }
+  
+  .status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+    width: 100px;
+  }
+  
+  .status.completed {
+    background-color: green;
+  }
+  
+  .status.pending {
+    background-color: red;
+  }
+  
+  .status.in-progress {
+    background-color: orange;
+  }
+  
+  .details-btn {
+    padding: 8px 10px;
+    border-radius: 5px;
+    background-color: #87cefa;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    width: 80px;
+    margin-left: 15px;
+    
+  }
+
+  .Reject-btn {
+    padding: 8px 10px;
+    border-radius: 5px;
+    background-color: rgb(228, 51, 51);
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-left: 15px;
+    width: 80px;
+  }
+
+  .Approve-btn {
+    padding: 10px 10px;
+    border-radius: 5px;
+    background-color: rgb(111, 205, 111);
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-left: 15px;
+    width: 100PX;
+  }
+
+  .Approve1-btn {
+    padding: 10px 10px;
+    border-radius: 5px;
+    background-color: #ddd;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-left: 15px;
+    width: 100PX;
+  }
+
+  .Suspend-btn {
+    padding: 8px 10px;
+    border-radius: 5px;
+    background-color: red;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-left: 15px;
+    width: 80px;
+  }
+
+
+  /* TopNav.css */
+.topnav {
+  background-color: #333;
+  overflow: hidden;
+  width: 100%;
+  margin-bottom: 50px;
+  margin-top: -300PX;
+  
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 56px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.select-one {
+    background-color: #FDDE7F;
+    color: black;
+  }
+
+/* Create a right-aligned (split) link inside the navigation bar */
+.topnav a.split {
+  float: right;
+  background-color: #04AA6D;
+  color: white;
+}
+
+
+
+  /*{
+    .main-content {
+        padding: 20px;
+        width: 100%;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      
+    
+      .ui-design {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .date-group {
+        margin-bottom: 20px;
+        width: 100%;
+      }
+    
+      .date-group h3 {
+        text-align: right;
+      }
+      
+      .ui-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f7e7b5;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+        width: calc(100% - 40px); // Full width minus padding
+        margin-left: 20px; //Align with sidebar
+      }
+      
+      .ui-cell {
+        flex: 1;
+        text-align: center;
+      }
+      
+      .ui-status {
+        padding: 5px 10px;
+        border-radius: 5px;
+      }
+      
+      .n-a {
+        background-color: #00ff00;
+        color: #000;
+      }
+      
+      .pending {
+        background-color: #ffd700;
+        color: #000;
+      }
+      
+      .completed {
+        background-color: #00ff00;
+        color: #000;
+      }
+      
+      .approved {
+        background-color: #00ff00;
+        color: #000;
+      }
+      
+      .ui-action {
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: #87cefa;
+        color: #000;
+        margin-left: 5px;
+      }
+  }*/
+  
