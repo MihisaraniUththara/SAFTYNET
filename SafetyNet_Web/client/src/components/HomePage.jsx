@@ -23,8 +23,7 @@ const HomePage = () => {
             <p><br></br>Reporting and Analyzing data can be a complex. We are here to make it Simple and much Better.<br></br></p>
             
             <br></br>
-            <Link to="/login"><button>Sign In</button></Link>
-            <Link to="/SignUp"><button>Sign Up</button></Link>
+            <Link to="/login" style={{textDecoration: 'none'}}><button>Sign In</button></Link>
           </div>
           <div className="image">
             <img src={image} alt="Police" />

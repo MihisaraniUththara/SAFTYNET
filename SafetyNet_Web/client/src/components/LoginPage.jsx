@@ -137,13 +137,7 @@ const LoginPage = () => {
         </div>
         <div className="form-section">
           <h1><center>LOGIN</center></h1>
-          {/* <form onSubmit={handleSignIn}>
-            <label htmlFor="email">Email</label>
-            <input type="email" id="email" placeholder="Enter your email" value={email} onChange={onChange} required />
-            <label htmlFor="password">Password</label>
-            <input type="password" id="password" placeholder="Enter your password" value={password} onChange={onChange} required />
-            <button type="submit">Sign In</button>
-          </form> */}
+        
 
           <form>
             <input type="email" placeholder="email"/>

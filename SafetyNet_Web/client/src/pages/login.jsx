@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import "./login.css";
+import "../assets/css/LoginPage.css";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { getDoc, doc } from "firebase/firestore";
+import logo from '../assets/images/logo.png';
+import mainImage from '../assets/images/main.png';
 
 const Login = () => {
   const [error, setError] = useState(false);
@@ -58,13 +60,26 @@ const Login = () => {
   };
 
   return (
-    <div className="login">
+    <div className="login-page">
+      <div className="background">
+      <img src={mainImage} alt="Background" className="main-image" />
+      </div>
+      <div className="login-container">
+        <div className="image-section">
+          <img src={logo} alt="SafetyNet Logo" />
+        </div>
+        <div className="form-section">
+          <h1><center>LOGIN</center></h1>
       <form onSubmit={handleLogin}>
         {error && <span className="error">Wrong email or password</span>}
         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <button type="submit">Login</button>
       </form>
+      <br></br>
+      <a href="#forgot-password">Forgot password?</a>
+      </div>
+      </div>
     </div>
   );
 };

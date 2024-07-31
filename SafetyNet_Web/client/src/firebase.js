@@ -1,13 +1,16 @@
 
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 
 const firebaseConfig = {
+// apiKey: process.env.REACT_APP_FIREBASE_KEY,
+apiKey:"AIzaSyDyCvXs6DdN_uKnNa3tTGKPynFFxU_H1_A",
 
-apiKey: "AIzaSyDyCvXs6DdN_uKnNa3tTGKPynFFxU_H1_A",
+
+
 
   authDomain: "safetynet-d1d2b.firebaseapp.com",
   databaseURL: "https://safetynet-d1d2b-default-rtdb.firebaseio.com",
@@ -20,8 +23,10 @@ apiKey: "AIzaSyDyCvXs6DdN_uKnNa3tTGKPynFFxU_H1_A",
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 
 export const db = getFirestore(app);
 export const auth = getAuth();
 // export const storage = getStorage(app);
+
+

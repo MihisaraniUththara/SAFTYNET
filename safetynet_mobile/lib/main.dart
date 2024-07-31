@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:device_preview/device_preview.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
+import 'package:safetynet_mobile/police_119/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,4 +31,4 @@ class MyApp extends StatelessWidget {
       home: LoginScreen(),
     );
   }
-}
+} 

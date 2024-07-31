@@ -1,118 +1,121 @@
-// import React, { useState } from 'react';
-// import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-// import { getFirestore, doc, setDoc } from 'firebase/firestore';
-// import { app } from '../firebase';
+
+
+// import { useState } from "react";
+// import { createUserWithEmailAndPassword } from "firebase/auth";
+// import { auth, db } from "../firebase";
+// import "./signup.css";
+// import { setDoc, doc } from "firebase/firestore";
+// import logo from '../assets/images/logo1.png';
+// import profilePicture from '../assets/images/profile.png';
+// import {Link} from 'react-router-dom';
 
 // const SignUp = () => {
-//   const [form, setForm] = useState({
-//     name: '',
-//     email: '',
-//     password: '',
-//     mobile_number: '',
-//     nic: '',
-//     police_id: '',
-//     role: '',
-//     station: '',
-//     status: ''
-//   });
 
-//   const auth = getAuth(app);
-//   const db = getFirestore(app);
+//   const [name, setName] = useState("");
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [role, setRole] = useState("");
+//   const [station, setStation] = useState("");
+//   const [nic, setNic] = useState("");
+//   const [error, setError] = useState("");
 
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setForm({ ...form, [name]: value });
-//   };
-
-//   const handleSubmit = async (e) => {
+//   const handleSignup = async (e) => {
 //     e.preventDefault();
 //     try {
-//       const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+//       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 //       const user = userCredential.user;
-
-//       await setDoc(doc(db, 'users', user.uid), {
-//         name: form.name,
-//         email: form.email,
-//         mobile_number: form.mobile_number,
-//         nic: form.nic,
-//         police_id: form.police_id,
-//         role: form.role,
-//         station: form.station,
-//         status: form.status
+//       // Save additional user info in Firestore
+//       await setDoc(doc(db, "police", user.uid), {
+//         name,
+//         email,
+//         role,
+//         station,
+//         nic
 //       });
-
-//       alert('User signed up successfully');
-//     } catch (error) {
-//       alert(error.message);
+//       console.log("User created with role:", role);
+//     } catch (err) {
+//       setError(err.message);
 //     }
 //   };
-
+  
 //   return (
-//     <form onSubmit={handleSubmit}>
-//       <div>
-//         <label>Name:</label>
-//         <input type="text" name="name" value={form.name} onChange={handleChange} required />
-//       </div>
-//       <div>
-//         <label>Email:</label>
-//         <input type="email" name="email" value={form.email} onChange={handleChange} required />
-//       </div>
-//       <div>
-//         <label>Password:</label>
-//         <input type="password" name="password" value={form.password} onChange={handleChange} required />
-//       </div>
-//       <div>
-//         <label>Mobile Number:</label>
-//         <input type="text" name="mobile_number" value={form.mobile_number} onChange={handleChange} required />
-//       </div>
-//       <div>
-//         <label>NIC:</label>
-//         <input type="text" name="nic" value={form.nic} onChange={handleChange} required />
-//       </div>
-//       <div>
-//         <label>Police ID:</label>
-//         <input type="text" name="police_id" value={form.police_id} onChange={handleChange} required />
-//       </div>
-//       <div>
-//         <label>Role:</label>
-//         <select name="role" value={form.role} onChange={handleChange} required>
-//           <option value="OneOne">OneOne</option>
-//           <option value="OneOneHead">OneOneHead</option>
-//           <option value="Traffic">Traffic</option>
-//           <option value="TrafficHead">TrafficHead</option>
+
+//     <div className="dashboard-container">
+//       <header className="header">
+//       <img src={logo} alt="Logo" className="logo" />
+//         <div className="user-info">
+//           <span>GALLE</span>
+//           <img src={profilePicture} alt="Profile" className="profile" />
+//           <button className="logout">Log Out</button>
+//         </div>
+//       </header>
+//       <div className="dashboard">
+//         <aside className="sidebar">
+          
+//           <img src={profilePicture} alt="Profile" className="profile-pic" />
+//           <p className="user-name">A B C PERERA</p>
+//           <ul className="menu">
+//           <Link to="/" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
+//             <Link to="/" style={{textDecoration: 'none'}}><li className="dashboard">Officer Registration</li></Link>
+//             <Link to="/" style={{textDecoration: 'none'}}><li>Officers</li></Link>
+//             <Link to="/" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
+//             {/* <Link to="/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link> */}
+//           </ul>
+//         </aside>
+
+//         <main className="main-content">
+
+//     <div className="signup">
+//       <form onSubmit={handleSignup}>
+//         <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+//         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+//         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+//         <input type="text" placeholder="NIC" value={nic} onChange={(e) => setNic(e.target.value)} required />
+        
+//         <input type="text" placeholder="Station" value={station} onChange={(e) => setStation(e.target.value)} required />
+//         <select value={role} onChange={(e) => setRole(e.target.value)} required>
+//           <option value="">Select Relevent Role</option>
+//           <option value="OON">119 Unit</option>
+//           <option value="OONH">119 Head Office</option>
+//           <option value="Traffic">Traffic Police Unit</option>
+//           <option value="TrafficH">Traffic Police Head Office</option>
 //           <option value="OIC">OIC</option>
-//           <option value="Other">Other</option>
+          
 //         </select>
-//       </div>
-//       <div>
-//         <label>Station:</label>
-//         <input type="text" name="station" value={form.station} onChange={handleChange} required />
-//       </div>
-//       <div>
-//         <label>Status:</label>
-//         <input type="text" name="status" value={form.status} onChange={handleChange} required />
-//       </div>
-//       <button type="submit">Sign Up</button>
-//     </form>
+//         <button type="submit">Sign Up</button>
+//         {error && <span className="error">{error}</span>}
+//       </form>
+//     </div>
+//     </main>
+//     </div>
+//     </div>
 //   );
 // };
 
-// export default SignUp;
+// export default SignUp
+
 
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
+import "./signup.css";
 import { setDoc, doc } from "firebase/firestore";
+import logo from '../assets/images/logo1.png';
+import profilePicture from '../assets/images/profile.png';
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("OON");
+  const [role, setRole] = useState("");
   const [station, setStation] = useState("");
   const [nic, setNic] = useState("");
+  const [badgeNumber, setBadgeNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -125,36 +128,68 @@ const SignUp = () => {
         email,
         role,
         station,
-        nic
+        nic,
+        badgeNumber,
+        phoneNumber
       });
-      console.log("User created with role:", role);
+      setSuccess("Register Successful");
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000); // Reloads the page after 2 seconds
     } catch (err) {
       setError(err.message);
     }
   };
-  
+
   return (
-    <div className="signup">
-      <form onSubmit={handleSignup}>
-        <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <input type="text" placeholder="NIC" value={nic} onChange={(e) => setNic(e.target.value)} required />
-        <input type="text" placeholder="Station" value={station} onChange={(e) => setStation(e.target.value)} required />
-        <select value={role} onChange={(e) => setRole(e.target.value)} required>
-          <option value="OON">OON</option>
-          <option value="OONH">OONH</option>
-          <option value="Traffic">Traffic</option>
-          <option value="TrafficH">TrafficH</option>
-          <option value="OIC">OIC</option>
-          <option value="Other">Other</option>
-          <option value="Admin">Admin</option>
-        </select>
-        <button type="submit">Sign Up</button>
-        {error && <span className="error">{error}</span>}
-      </form>
+    <div className="dashboard-container">
+      <header className="header">
+        <img src={logo} alt="Logo" className="logo" />
+        <div className="user-info">
+          <span>GALLE</span>
+          <img src={profilePicture} alt="Profile" className="profile" />
+          <button className="logout">Log Out</button>
+        </div>
+      </header>
+      <div className="dashboard">
+        <aside className="sidebar">
+          <img src={profilePicture} alt="Profile" className="profile-pic" />
+          <p className="user-name">A B C PERERA</p>
+          <ul className="menu">
+            <Link to="/" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
+            <Link to="/" style={{textDecoration: 'none'}}><li className="dashboard">Officer Registration</li></Link>
+            <Link to="/" style={{textDecoration: 'none'}}><li>Officers</li></Link>
+            <Link to="/" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
+            {/* <Link to="/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link> */}
+          </ul>
+        </aside>
+        <main className="main-content">
+          <div className="signup">
+            <form onSubmit={handleSignup}>
+              <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+              <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <input type="text" placeholder="NIC" value={nic} onChange={(e) => setNic(e.target.value)} required />
+              <input type="text" placeholder="Badge Number" value={badgeNumber} onChange={(e) => setBadgeNumber(e.target.value)} required pattern="[0-9]*" />
+              <input type="text" placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
+              <input type="text" placeholder="Station" value={station} onChange={(e) => setStation(e.target.value)} required />
+              <select value={role} onChange={(e) => setRole(e.target.value)} required>
+                <option value="">Select Relevant Role</option>
+                <option value="OON">119 Unit</option>
+                <option value="OONH">119 Head Office</option>
+                <option value="Traffic">Traffic Police Unit</option>
+                <option value="TrafficH">Traffic Police Head Office</option>
+                <option value="OIC">OIC</option>
+              </select>
+              <button type="submit">Sign Up</button>
+              {error && <span className="error">{error}</span>}
+              {success && <span className="success">{success}</span>}
+            </form>
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
 
-export default SignUp
+export default SignUp;
