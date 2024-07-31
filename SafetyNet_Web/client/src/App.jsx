@@ -9,6 +9,8 @@ import OnProgress from './components/OnProgress';
 import MyC from './components/myCases';
 import Accident from './components/Accidents';
 import Report from './components/Report';
+import ReportDeath from './components/ReportDeath';
+import ReportCourt from './components/ReportCourt';
 import Analysis from './components/Analysis';
 import OICDasboad from './components/oic/Dashboad';
 import OICOnProgress from './components/oic/OnProgress';
@@ -23,6 +25,7 @@ import HeadAccident from './components/headOffice/Accident';
 import HeadReportApp from './components/headOffice/ReportApp';
 import HeadAnalysis from './components/headOffice/Analysis';
 import AdminD from './components/Admin/Dashboad';
+import AdminOfficer from './components/Admin/Adminofficers';
 
 import { UserProvider } from './context/UserContext';
 
@@ -40,6 +43,8 @@ const App = () => {
       <Route path="/OnProgress/my-cases" element={<MyC/>} />
       <Route path="/Accident" element={<Accident />} />
       <Route path="/Report" element={<Report />} />
+      <Route path="/Report/type" element={<ReportDeath />} />
+      <Route path="/Report/type/type" element={<ReportCourt />} />
       <Route path="/Analysis" element={<Analysis />} />
       <Route path="/oic/Dashboad" element={<OICDasboad />} />
       <Route path="/oic/OnProgress" element={<OICOnProgress />} />
@@ -54,6 +59,7 @@ const App = () => {
       <Route path="/HeadOffice/ReportApp" element={<HeadReportApp />} />
       <Route path="/HeadOffice/Analysis" element={<HeadAnalysis/>} />
       <Route path="/Admin-Dashboard" element={<AdminD />} />
+      <Route path="/Admin/officer" element={<AdminOfficer />} />
     </Routes>
   </Router>
   </UserProvider>

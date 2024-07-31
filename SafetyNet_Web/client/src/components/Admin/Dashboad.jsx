@@ -7,6 +7,9 @@ import profilePicture from '../../assets/images/profile.png'; // Adjust the path
 // import chart3 from '../assets/images/chart4.png';
 // import map from '../assets/images/map.jpg';
 import {Link} from 'react-router-dom';
+import AnimatedBarChart from './barchart';
+import AnimatedPieChart from './piechart';
+import AnimatedBarChart1 from './barchart2';
 
 const Dashboad = () => {
   return (
@@ -14,7 +17,7 @@ const Dashboad = () => {
       <header className="header">
       <img src={logo} alt="Logo" className="logo" />
         <div className="user-info">
-          <span>GALLE</span>
+          {/* <span>GALLE</span> */}
           <img src={profilePicture} alt="Profile" className="profile" />
           <button className="logout">Log Out</button>
         </div>
@@ -28,9 +31,9 @@ const Dashboad = () => {
           <ul className="menu">
           <Link to="/Admin-Dashboard" style={{textDecoration: 'none'}}><li className="dashboard" >Dashboard</li></Link>
             <Link to="/SignUp" style={{textDecoration: 'none'}}><li>Officer Registration</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Complaint Handling</li></Link>
-            <Link to="/Report" style={{textDecoration: 'none'}}><li>Reports</li></Link>
-            <Link to="/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
+            <Link to="#" style={{textDecoration: 'none'}}><li>Officers</li></Link>
+            <Link to="/Report" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
+      
           </ul>
         </aside>
 
@@ -54,10 +57,13 @@ const Dashboad = () => {
 </div>
   </div>
   <div className="charts">
-  {/* <img src={chart3} alt="Chart 3" />
-  <img src={map} alt="Map" />
-    <img src={chart1} alt="Chart 1" />
-    <img src={chart2} alt="Chart 2" /> */}
+  
+  <h2 style={{marginTop: 20}}>Accidents</h2>
+            <AnimatedBarChart/>
+            <h2 style={{marginTop: 20}}>Types of Vehicles in Accidents</h2>
+            <AnimatedPieChart/>
+            <h2 style={{marginTop: 20}}>Severity of Accidents</h2>
+            <AnimatedBarChart1/>
     
   </div>
 </main>

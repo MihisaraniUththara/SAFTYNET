@@ -1,6 +1,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    overflow: hidden;
   }
   
   .dashboard-container {
@@ -136,84 +137,9 @@ body {
   .menu li:hover {
     background-color: rgba(0, 0, 0, 0.1);
   }
-  
-  
+
   .main-content {
     padding: 20px;
-    width: 100%;
-    flex-direction: column;
+    background-color: #f4f4f4;
+    flex: 1; /* Ensure it takes up the remaining space */
   }
-  
-  /*.stats {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-  }
-  
-  .stat-card {
-    background-color: #f7e7b5;
-    padding: 20px;
-    text-align: center;
-    width: 200px;
-  }
-  
-  .charts {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-  }
-  
-  .charts img {
-    width: 300px;
-    margin: 10px;
-  } */
-
-  .stats {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-  }
-  
-  .stat-card {
-    background-color: #f7e7b5;
-    padding: 20px;
-    text-align: center;
-    width: 200px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
-    margin: 0 10px;
-    border-radius: 10px; /* Round corners */
-  }
-
-  .stat-title {
-    display: block; /* Ensure the title is on its own line */
-    font-size: 1em; /* Adjust font size as needed */
-  }
-  
-  .stat-number {
-    display: block; /* Ensure the number is on its own line */
-    font-size: 1.5em; /* Adjust font size as needed */
-    font-weight: bold;
-    margin-top: 10px; /* Add some space between title and number */
-  }
-
-  .charts {
-    background: #FFFFFF;
-    border-radius: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-around;
-  }
-  
-  .chart-img {
-    width: 45%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .map-img {
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  

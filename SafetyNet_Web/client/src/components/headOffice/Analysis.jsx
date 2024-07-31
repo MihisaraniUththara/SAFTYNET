@@ -12,6 +12,7 @@ import chart6 from '../../assets/images/chart4.png';
 
 import {Link} from 'react-router-dom';
 
+
 const Analysis = () => {
     return (
       <div className="dashboard-container">

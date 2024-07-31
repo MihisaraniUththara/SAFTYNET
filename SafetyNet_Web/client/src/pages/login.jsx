@@ -29,7 +29,7 @@ const Login = () => {
             navigate("/Admin-Dashboard");
             break;
           case "OON":
-            navigate("/traffic-police");
+            navigate("/../components/HomePage");
             break;
           case "OONH":
             navigate("/../components/HomePage");

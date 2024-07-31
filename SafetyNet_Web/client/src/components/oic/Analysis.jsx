@@ -20,7 +20,7 @@ const Analysis = () => {
           <div className="user-info">
             <span>GALLE</span>
             <img src={profilePicture} alt="Profile" className="profile" />
-            <button className="logout">Log Out</button>
+            <button className="logout" onClick={Logout}>Log Out</button>
           </div>
         </header>
   
