@@ -8,6 +8,7 @@ import chart3 from '../../assets/images/chart4.png';
 import map from '../../assets/images/map1.png';
 
 import {Link} from 'react-router-dom';
+import Logout from '../../logout';
 
 const HeadOffice = () => {
     return (
@@ -16,7 +17,7 @@ const HeadOffice = () => {
         <img src={logo} alt="Logo" className="logo" />
           <div className="user-info">
             <img src={profilePicture} alt="Profile" className="profile" />
-            <button className="logout">Log Out</button>
+            <button className="logout" onClick={Logout}>Log Out</button>
           </div>
         </header>
   

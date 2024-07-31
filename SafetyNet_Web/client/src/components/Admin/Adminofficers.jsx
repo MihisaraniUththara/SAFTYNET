@@ -4,6 +4,7 @@ import './officer.css';
 import logo from '../../assets/images/logo1.png';
 import profilePicture from '../../assets/images/profile.png';
 import OfficersData from './officersData';
+import Logout from '../../logout';
 
 const AdminOfficers = () => {
 
@@ -14,7 +15,7 @@ const AdminOfficers = () => {
         <div className="user-info">
           {/* <span>GALLE</span> */}
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout" onClick={Logout}>Log Out</button>
         </div>
       </header>
 

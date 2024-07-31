@@ -10,6 +10,7 @@ import {Link} from 'react-router-dom';
 import AnimatedBarChart from './barchart';
 import AnimatedPieChart from './piechart';
 import AnimatedBarChart1 from './barchart2';
+import Logout from '../../logout';
 
 const Dashboad = () => {
   return (
@@ -19,7 +20,7 @@ const Dashboad = () => {
         <div className="user-info">
           {/* <span>GALLE</span> */}
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout" onClick={Logout}>Log Out</button>
         </div>
       </header>
 

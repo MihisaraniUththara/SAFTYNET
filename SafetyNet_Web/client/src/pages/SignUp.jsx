@@ -103,6 +103,7 @@ import { setDoc, doc } from "firebase/firestore";
 import logo from '../assets/images/logo1.png';
 import profilePicture from '../assets/images/profile.png';
 import { Link } from 'react-router-dom';
+import Logout from '../logout';
 
 const SignUp = () => {
 
@@ -148,7 +149,7 @@ const SignUp = () => {
         <div className="user-info">
           <span>GALLE</span>
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout" onClick={Logout}>Log Out</button>
         </div>
       </header>
       <div className="dashboard">
