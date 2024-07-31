@@ -4,6 +4,9 @@ import logo from '../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
 
 import {Link} from 'react-router-dom';
+<style>
+  
+</style>
 
 const OnProgress = () => {
   return (
@@ -81,7 +84,7 @@ const OnProgress = () => {
     
   </div> */}
 
-<div className="nav">
+<div className="nav-bar">
       <a href="/OnProgress"  className='select-one'>All</a>
       <a href="/OnProgress/my-cases">My Cases</a>
     </div>
