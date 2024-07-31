@@ -1,12 +1,11 @@
-import React from 'react';
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom';
 import './officer.css';
 import logo from '../../assets/images/logo1.png';
 import profilePicture from '../../assets/images/profile.png';
 import OfficersData from './officersData';
 
-const AdminOfficers = () => {
-
+const AdminDrivers = () => {
   return (
     <div className="dashboard-container">
       <header className="header">
@@ -39,4 +38,4 @@ const AdminOfficers = () => {
   );
 };
 
-export default AdminOfficers;
+export default AdminDrivers
