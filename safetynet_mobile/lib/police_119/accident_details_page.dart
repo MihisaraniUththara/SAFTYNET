@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safetynet_mobile/police_119/accident_report.dart';
+import 'package:safetynet_mobile/police_119/map_toaccident.dart';
 
 class AccidentDetailsPage extends StatelessWidget {
   final VoidCallback accept;
@@ -12,7 +13,9 @@ class AccidentDetailsPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Accident Details', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          title: const Text('Accident Details',
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           backgroundColor: const Color(0xfffbbe00),
           bottom: TabBar(
             tabs: [
@@ -38,13 +41,13 @@ class AccidentDetailsPage extends StatelessWidget {
 class TabNew extends StatelessWidget {
   final VoidCallback accept;
 
-const TabNew({super.key, required this.accept});
+  const TabNew({super.key, required this.accept});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: 5,
-     // Assume there are 5 new accidents for example
+      // Assume there are 5 new accidents for example
       itemBuilder: (context, index) {
         return Card(
           shape: RoundedRectangleBorder(
@@ -57,7 +60,6 @@ const TabNew({super.key, required this.accept});
             subtitle: Text('Time: ${DateTime.now()}'),
             trailing: ElevatedButton(
               autofocus: true,
-  
               onPressed: () {
                 showDialog(
                   context: context,
@@ -73,7 +75,12 @@ const TabNew({super.key, required this.accept});
                       actions: [
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            // Navigate to accident location view map
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => StartRidePage()),
+                            );
                             accept();
                           },
                           child: const Text('Submit'),
