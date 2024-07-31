@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
 //class to handle multiple choice checkbox input
@@ -378,4 +380,60 @@ class _IntegerInputFieldsState extends State<IntegerInputFields> {
       ],
     );
   }
+}
+
+class ImagePickerFormField extends FormField<File> {
+  ImagePickerFormField({
+    Key? key,
+    FormFieldSetter<File>? onSaved,
+    FormFieldValidator<File>? validator,
+    File? initialValue,
+    bool autoValidate = false,
+    required String label,
+  }) : super(
+          key: key,
+          onSaved: onSaved,
+          validator: validator,
+          initialValue: initialValue,
+          builder: (FormFieldState<File> state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () async {
+                    final picker = ImagePicker();
+                    final pickedFile = await picker.pickImage(
+                      source: ImageSource.gallery,
+                    );
+                    if (pickedFile != null) {
+                      state.didChange(File(pickedFile.path));
+                    }
+                  },
+                  child: Container(
+                    height: 150,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: state.value != null
+                        ? Image.file(state.value!, fit: BoxFit.cover)
+                        : Icon(Icons.add_a_photo, color: Colors.grey[800]),
+                  ),
+                ),
+                if (state.hasError)
+                  Text(
+                    state.errorText!,
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+              ],
+            );
+          },
+        );
 }

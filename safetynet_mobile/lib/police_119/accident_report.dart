@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -48,6 +50,7 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                     Tab(text: 'ACCIDENT DETAILS'),
                     Tab(text: 'ELEMENT DETAILS'),
                     Tab(text: 'CASUALTY DETAILS'),
+                    //Tab(text: 'OTHER DETAILS'),
                   ],
                 ),
               ],
@@ -59,8 +62,9 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
           //controller: _tabController,
           children: [
             TabAccident(),
-            TabElement(),
-            TabCasualty(),
+            const TabElement(),
+            const TabCasualty(),
+            //const TabOther(),
           ],
         ),
       ),
@@ -72,10 +76,11 @@ class TabAccident extends StatefulWidget {
   @override
   State<TabAccident> createState() => _TabAccidentState();
 }
+
 class _TabAccidentState extends State<TabAccident> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-   Map<String, String> formData = {};
+  Map<String, String> formData = {};
   final List<GlobalKey<SingleChoiceCheckboxInputState>> _checkboxKeys = [];
 
   void saveInputValue(String key, String value) {
@@ -222,7 +227,7 @@ class _TabAccidentState extends State<TabAccident> {
     });
   }*/
 
-  final Set<String> _selectedClasses = {};
+  /*final Set<String> _selectedClasses = {};
   String? _selectedClass;
 
   // Define the variables to store the form data
@@ -262,7 +267,7 @@ class _TabAccidentState extends State<TabAccident> {
   String? A2a;
   int? A2b;
   int? A5c;
-  int? A5d;
+  int? A5d;*/
 
   Widget _buildTextField(String label,
       {String hintText = '', required int maxchars}) {
@@ -306,7 +311,7 @@ class _TabAccidentState extends State<TabAccident> {
     );
   }
 
-  Widget _buildNumericField(String label, 
+  Widget _buildNumericField(String label,
       {String hintText = '', required int maxchars}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,7 +338,7 @@ class _TabAccidentState extends State<TabAccident> {
             hintText: hintText,
             //floatingLabelBehavior: FloatingLabelBehavior.auto,
           ),
-            onSaved: (value) {
+          onSaved: (value) {
             saveInputValue(label, value!);
           },
           validator: (value) {
@@ -378,7 +383,8 @@ class _TabAccidentState extends State<TabAccident> {
       for (var key in _checkboxKeys) {
         final state = key.currentState;
         if (state != null && state.selectedValue != null) {
-          saveInputValue(state.widget.topic, state.selectedValue!.split(' ')[0]);
+          saveInputValue(
+              state.widget.topic, state.selectedValue!.split(' ')[0]);
         }
       }
       print('Form saved: $formData');
@@ -386,7 +392,6 @@ class _TabAccidentState extends State<TabAccident> {
       print("Form validation failed");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -402,41 +407,30 @@ class _TabAccidentState extends State<TabAccident> {
               Row(
                 children: [
                   Expanded(
-                    child: _buildTextField(
-                        'A1 Division',
-                        maxchars: 30),
+                    child: _buildTextField('A1 Division', maxchars: 30),
                   ),
                   SizedBox(width: 10),
                   Expanded(
-                    child: _buildNumericField(
-                        'no', 
-                        maxchars: 2),
+                    child: _buildNumericField('no', maxchars: 2),
                   ),
                 ],
               ),
               Row(
                 children: [
                   Expanded(
-                    child: _buildTextField('A2 Station', 
-                        maxchars: 30),
+                    child: _buildTextField('A2 Station', maxchars: 30),
                   ),
                   SizedBox(width: 10),
                   Expanded(
-                    child: _buildNumericField(
-                        'no', 
-                        maxchars: 2),
+                    child: _buildNumericField('no', maxchars: 2),
                   ),
                 ],
               ),
-              _buildTextField('A3 Date',
-                  hintText: 'YYYY-MM-DD', maxchars: 10),
-              _buildTextField(
-                  'A4 Time of accident',
+              _buildTextField('A3 Date', hintText: 'YYYY-MM-DD', maxchars: 10),
+              _buildTextField('A4 Time of accident',
                   hintText: 'HH:MM', maxchars: 5),
               _buildTextField(
                 'A5 Unique ID Number',
-                
-              
                 hintText: 'Division, Station, AR no, Year',
                 maxchars: 50,
               ),
@@ -506,35 +500,18 @@ class _TabAccidentState extends State<TabAccident> {
                   filled: true,
                 ),
               ),
-              _buildTextField('A10 Road Number',
-                  maxchars: 4),
-              _buildTextField(
-                  'A11 Road/Street Name', 
-                  maxchars: 50),
-              _buildNumericField('A12 Nearest,lower Km post',
-                 
+              _buildTextField('A10 Road Number', maxchars: 4),
+              _buildTextField('A11 Road/Street Name', maxchars: 50),
+              _buildNumericField('A12 Nearest,lower Km post', maxchars: 3),
+              _buildNumericField('A13 Distance from Nearest Lower Km Post',
                   maxchars: 3),
-              _buildNumericField(
-                  'A13 Distance from Nearest Lower Km Post',
-                  
-                  maxchars: 3),
-              _buildNumericField('A14 Node number',
-                  
-                  maxchars: 6),
-              _buildTextField('A15 Link number',
-                  maxchars: 7),
-              _buildNumericField(
-                  'A16 Distance from Node in metres',
-                  
+              _buildNumericField('A14 Node number', maxchars: 6),
+              _buildTextField('A15 Link number', maxchars: 7),
+              _buildNumericField('A16 Distance from Node in metres',
                   maxchars: 5),
-              _buildNumericField('A17 East co-ordinate',
-                 
-                  maxchars: 6),
-              _buildNumericField('A18 North co-ordinate',
-                  
-                  maxchars: 6),
+              _buildNumericField('A17 East co-ordinate', maxchars: 6),
+              _buildNumericField('A18 North co-ordinate', maxchars: 6),
               _buildNumericField('A19 Collision type',
-                 
                   hintText: 'See separate Appendix', maxchars: 4),
               SingleChoiceCheckboxInput(
                 topic: 'A20 Any second collision occurance',
@@ -545,7 +522,6 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Others',
                   '0 Not Applicable',
                 ],
-              
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A21 Road surface condition',
@@ -557,7 +533,6 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Others',
                   '0 Not known',
                 ],
-                
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A22 Weather',
@@ -569,7 +544,6 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Others',
                   '0 Not known',
                 ],
-                
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A23 Light condition',
@@ -581,7 +555,6 @@ class _TabAccidentState extends State<TabAccident> {
                   '5 Night,good street lighting',
                   '0 Not known',
                 ],
-                
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A24 Type of location',
@@ -597,7 +570,6 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Others',
                   '0 Not known/NA',
                 ],
-                
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A25 Type of location when pedestrian/s is/are involved',
@@ -612,7 +584,6 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Other',
                   '0 Not known/NA',
                 ],
-                
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A26 Traffic control',
@@ -626,7 +597,6 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Other',
                   '0 Not known/NA',
                 ],
-               
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A27 Posted speed limit signs',
@@ -634,15 +604,12 @@ class _TabAccidentState extends State<TabAccident> {
                   '1 Yes',
                   '2 No',
                 ],
-                
               ),
               _buildNumericField(
                   'A28 Gazetted speed limit for light vehicles(kmph)',
-                  
                   maxchars: 3),
               _buildNumericField(
                   'A29 Gazetted speed limit for heavy vehicles(kmph)',
-                 
                   maxchars: 3),
               SingleChoiceCheckboxInput(
                 topic: 'A30 Action taken by police',
@@ -653,22 +620,14 @@ class _TabAccidentState extends State<TabAccident> {
                   '4 Offender unknown',
                   '0 Not known/NA',
                 ],
-                
               ),
-              _buildNumericField('A31 Case number',
-                 
-                  maxchars: 10),
-              _buildNumericField(
-                  'A32 B report', 
-                  maxchars: 10),
+              _buildNumericField('A31 Case number', maxchars: 10),
+              _buildNumericField('A32 B report', maxchars: 10),
               SingleChoiceCheckboxInput(
                 topic: 'A33 Casualties',
                 labels: ['1 Fatal', '2 Grievous', '3 Non Grievous'],
-               
               ),
-              _buildTextField(
-                  'A34 For research purpose', 
-                  maxchars: 2),
+              _buildTextField('A34 For research purpose', maxchars: 2),
 
               SizedBox(height: 50.0),
               Container(
@@ -682,7 +641,6 @@ class _TabAccidentState extends State<TabAccident> {
                     ),
                   ),
                   onPressed: _saveForm,
-                    
                 ),
               )
             ],
@@ -1193,6 +1151,8 @@ class TabCasualty extends StatefulWidget {
 
 class _TabCasualtyState extends State<TabCasualty> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  File? _pickedImage;
+  File? _collisionSketch;
 
   // Store the checkbox states for each section
   final List<List<List<bool>>> _checkboxStates = [
@@ -1335,6 +1295,31 @@ class _TabCasualtyState extends State<TabCasualty> {
                 onCheckboxChanged: (rowIndex, columnIndex) =>
                     _toggleCheckbox(4, rowIndex, columnIndex),
               ),
+              Row(
+                children: [
+                  ImagePickerFormField(
+                    label: 'Collision Sketch',
+                    onSaved: (file) => _collisionSketch = file,
+                    validator: (file) {
+                      if (file == null) {
+                        return 'Please attach an image';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(width: 20),
+                  ImagePickerFormField(
+                    label: 'Add Picture',
+                    onSaved: (file) => _pickedImage = file,
+                    validator: (file) {
+                      if (file == null) {
+                        return 'Please attach an image';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -1351,11 +1336,118 @@ class _TabCasualtyState extends State<TabCasualty> {
                 child: Text('Add Traffic Element'),
               ),
               SizedBox(height: 50.0),
+              Row(
+                children: [
+                  Container(
+                    width: 150,
+                    child: ElevatedButton(
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          _formKey.currentState?.save();
+                          print('Form saved: $formData');
+                        } else {
+                          print("Error");
+                          return;
+                        }
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 30.0),
+                  Container(
+                    width: 150,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFfbbe00) , // Add your desired color here
+                      ),
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          _formKey.currentState?.save();
+                          print('Form saved: $formData');
+                        } else {
+                          print("Error");
+                          return;
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class TabOther extends StatefulWidget {
+  const TabOther({super.key});
+
+  @override
+  State<TabOther> createState() => TabOtherState();
+}
+
+class TabOtherState extends State<TabOther> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  File? _pickedImage;
+  File? _collisionSketch;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        margin: EdgeInsets.all(24.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: [
+                  ImagePickerFormField(
+                    label: 'Collision Sketch',
+                    onSaved: (file) => _collisionSketch = file,
+                    validator: (file) {
+                      if (file == null) {
+                        return 'Please attach an image';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(width: 10),
+                  ImagePickerFormField(
+                    label: 'Add Picture',
+                    onSaved: (file) => _pickedImage = file,
+                    validator: (file) {
+                      if (file == null) {
+                        return 'Please attach an image';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 50.0),
               Container(
                 width: 150,
                 child: ElevatedButton(
                   child: Text(
-                    'Save',
+                    'Submit',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16.0,
