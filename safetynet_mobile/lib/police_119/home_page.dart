@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:get/get.dart';
+import '../drivers/authentication/login_screen.dart';
 import 'accident_report.dart';
 import 'accident_details_page.dart';
 
@@ -9,36 +12,34 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xfffbbe00),
-        leading: Row(
+        backgroundColor: const Color(0xFFfbbe00),
+        leadingWidth:
+            150, // Increase leading width to allow the title to be on the left
+        titleSpacing: 0, // Reduce title spacing to align with the left
+        automaticallyImplyLeading: false,
+        title: Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.menu, color: Colors.black),
-              onPressed: () {},
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'images/smallLogo.png', // Add your image here
+                width: 120,
+                height: 60,
+                fit: BoxFit.contain,
+              ),
             ),
-            /*Image.asset(
-              'images/smallLogo.png', // Path to your logo asset
-              height: 100.0,
-              width: 40.0,
-              fit: BoxFit.contain,
-            ),*/
           ],
         ),
-        title: const Text(
-          'SafetyNet',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.black),
-            onPressed: () {},
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_vert, color: Colors.black),
+        actions: [
+          TextButton(
+            onPressed: _logout,
+            child: const Icon(
+              Icons.logout,
+              color: Colors.black,
+            ),
           ),
         ],
-        elevation: 10.0,
+        //elevation: 10.0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -46,6 +47,11 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _logout() async {
+  await FirebaseAuth.instance.signOut();
+  Get.off(LoginScreen()); // Redirect to login screen after logout
 }
 
 class AccidentView extends StatefulWidget {
@@ -105,8 +111,7 @@ class _AccidentViewState extends State<AccidentView> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        AccidentDetailsPage(accept: () {
+                    builder: (context) => AccidentDetailsPage(accept: () {
                           setState(() {
                             _isAlerting = false;
                             _stopNotificationSound();
@@ -145,7 +150,8 @@ class _AccidentViewState extends State<AccidentView> {
                     children: [
                       ListTile(
                         leading: Icon(Icons.warning,
-                            color: _newNotification ? Colors.white : Colors.white),
+                            color:
+                                _newNotification ? Colors.white : Colors.white),
                         title: Text(
                             _newNotification
                                 ? 'New Accident Reported'
