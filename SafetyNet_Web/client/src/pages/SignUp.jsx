@@ -159,7 +159,7 @@ const SignUp = () => {
             <Link to="/Admin-Dashboard" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
             <Link to="/SignUp" style={{textDecoration: 'none'}}><li className="dashboard">Officer Registration</li></Link>
             <Link to="/Admin/officer" style={{textDecoration: 'none'}}><li>Officers</li></Link>
-            <Link to="/" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
+            <Link to="/Admin/Driver" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
             {/* <Link to="/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link> */}
           </ul>
         </aside>

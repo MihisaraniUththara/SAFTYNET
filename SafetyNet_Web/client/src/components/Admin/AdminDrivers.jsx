@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import './officer.css';
 import logo from '../../assets/images/logo1.png';
 import profilePicture from '../../assets/images/profile.png';
-import OfficersData from './officersData';
+import DriverData from './DriverData';
 
 const AdminDrivers = () => {
   return (
@@ -31,7 +31,7 @@ const AdminDrivers = () => {
           </ul>
         </aside>
         
-          <OfficersData/>
+          <DriverData/>
 
       </div>
     </div>

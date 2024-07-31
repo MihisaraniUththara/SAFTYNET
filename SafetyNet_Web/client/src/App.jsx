@@ -26,6 +26,7 @@ import HeadReportApp from './components/headOffice/ReportApp';
 import HeadAnalysis from './components/headOffice/Analysis';
 import AdminD from './components/Admin/Dashboad';
 import AdminOfficer from './components/Admin/Adminofficers';
+import AdminDriver from './components/Admin/AdminDrivers';
 
 import { UserProvider } from './context/UserContext';
 
@@ -60,6 +61,7 @@ const App = () => {
       <Route path="/HeadOffice/Analysis" element={<HeadAnalysis/>} />
       <Route path="/Admin-Dashboard" element={<AdminD />} />
       <Route path="/Admin/officer" element={<AdminOfficer />} />
+      <Route path="/Admin/Driver" element={<AdminDriver />} />
     </Routes>
   </Router>
   </UserProvider>

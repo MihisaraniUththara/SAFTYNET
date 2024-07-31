@@ -27,7 +27,7 @@ const AdminOfficers = () => {
           <Link to="/Admin-Dashboard" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
             <Link to="/SignUp" style={{textDecoration: 'none'}}><li>Officer Registration</li></Link>
             <Link to="/Admin/officer" style={{textDecoration: 'none'}}><li className="dashboard">Officers</li></Link>
-            <Link to="/Report" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
+            <Link to="/Admin/Driver" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
       
           </ul>
         </aside>

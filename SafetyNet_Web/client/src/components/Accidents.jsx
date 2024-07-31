@@ -5,6 +5,7 @@ import profilePicture from '../assets/images/profile.png'; // Adjust the path as
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import Logout from '../logout';
 
 const Accident = () => {
   const [accidents, setAccidents] = useState([]);
@@ -27,7 +28,7 @@ const Accident = () => {
         <div className="user-info">
           <span>GALLE</span>
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout" onClick={Logout}>Log Out</button>
         </div>
       </header>
 

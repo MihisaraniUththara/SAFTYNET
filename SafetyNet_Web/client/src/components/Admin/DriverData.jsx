@@ -1,59 +1,76 @@
-import React from 'react'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, TableSortLabel, IconButton, Tooltip, Chip } from '@mui/material';
+import React from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, TableSortLabel, IconButton, Tooltip } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 
-const generateVariedData = () => {
-  const ranks = ['Constable', 'Sergeant', 'Inspector', 'Captain', 'Chief'];
-  const departments = ['Traffic', 'Criminal Investigation', 'Special Forces', 'Cyber Crime'];
-  const names = [
-    { firstName: 'Janaka', lastName: 'Perera' },
-    { firstName: 'Kumara', lastName: 'Fernando' },
-    { firstName: 'Nimal', lastName: 'Rajapakse' },
-    { firstName: 'Chamara', lastName: 'Silva' },
-    { firstName: 'Saman', lastName: 'Gunaratne' },
-    { firstName: 'Suhaila', lastName: 'Mendis' },
-    { firstName: 'Indika', lastName: 'Kumarasinghe' },
-    { firstName: 'Kavinda', lastName: 'Gamage' },
-    { firstName: 'Nadeesha', lastName: 'Jayasundara' },
-    { firstName: 'Ruwan', lastName: 'Seneviratne' },
-    { firstName: 'Dulani', lastName: 'Bandara' },
-    { firstName: 'Ravi', lastName: 'Rathnayake' },
-    { firstName: 'Ayesha', lastName: 'Jeyarathnam' },
-    { firstName: 'Nuwan', lastName: 'Dissanayake' },
-    { firstName: 'Anushka', lastName: 'Tharanga' },
-    { firstName: 'Haritha', lastName: 'Weerasinghe' },
-    { firstName: 'Lakshman', lastName: 'Ariyadasa' },
+const generateDriverData = () => {
+  const drivers = [
+    { name: 'John Doe', nic: '123456789V', email: 'john.doe@example.com', numOfVehicles: 3, phone: '0771234567', emergencyContact: '0777654321' },
+    { name: 'Jane Smith', nic: '987654321V', email: 'jane.smith@example.com', numOfVehicles: 2, phone: '0777654321', emergencyContact: '0771234567' },
+    // Add more driver data here...
   ];
 
-  const data = [];
-
-  for (let i = 1; i <= names.length; i++) {
-    const name = names[i % names.length];
-    data.push({
-      id: i,
-      firstName: name.firstName,
-      lastName: name.lastName,
-      rank: ranks[i % ranks.length],
-      department: departments[i % departments.length],
-      badgeNumber: `${1000 + i}`,
-      email: `${name.firstName.toLowerCase()}.${name.lastName.toLowerCase()}${i}@police.lk`,
-      phone: `077${(1000000 + i).toString().slice(-7)}`,
-    });
-  }
-
-  return data;
+  return drivers;
 };
 
-const officers = generateVariedData();
-
-
-
-
+const drivers = generateDriverData();
 
 const DriverData = () => {
   return (
-    <div>DriverData</div>
-  )
-}
+    <TableContainer component={Paper} sx={{ padding: 4, background: '#fdfdfd' }}>
+      <Typography variant="h4" align="center" sx={{ mb: 2, fontWeight: 'bold', background: '#fdfdfd' }}>
+        Registered Drivers
+      </Typography>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>
+              <TableSortLabel>Name</TableSortLabel>
+            </TableCell>
+            <TableCell>
+              <TableSortLabel>NIC</TableSortLabel>
+            </TableCell>
+            <TableCell>
+              <TableSortLabel>Email</TableSortLabel>
+            </TableCell>
+            <TableCell>
+              <TableSortLabel>No of Vehicles</TableSortLabel>
+            </TableCell>
+            <TableCell>
+              <TableSortLabel>Phone</TableSortLabel>
+            </TableCell>
+            <TableCell>
+              <TableSortLabel>Emergency Contact</TableSortLabel>
+            </TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {drivers.map((driver, index) => (
+            <TableRow key={index}>
+              <TableCell>{driver.name}</TableCell>
+              <TableCell>{driver.nic}</TableCell>
+              <TableCell>{driver.email}</TableCell>
+              <TableCell>{driver.numOfVehicles}</TableCell>
+              <TableCell>{driver.phone}</TableCell>
+              <TableCell>{driver.emergencyContact}</TableCell>
+              <TableCell>
+                <Tooltip title="Edit">
+                  <IconButton color="primary" sx={{ mr: 1 }}>
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete">
+                  <IconButton color="error">
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
 
-export default DriverData
+export default DriverData;

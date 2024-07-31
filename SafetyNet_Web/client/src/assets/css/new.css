@@ -231,6 +231,35 @@ body {
     margin-bottom: 50px;
     height: 50px;
   }
+
+  .nav-bar a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 56px;
+    text-decoration: none;
+    font-size: 17px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+  
+  /* Change the color of links on hover */
+  .nav-bar a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+  
+  .nav-bar a.select-one {
+      background-color: #FDDE7F;
+      color: black;
+    }
+  
+  /* Create a right-aligned (split) link inside the navigation bar */
+  .nav-bar a.split {
+    float: right;
+    background-color: #04AA6D;
+    color: white;
+  }
   
   /* Style the links inside the navigation bar */
   
