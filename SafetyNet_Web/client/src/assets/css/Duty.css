@@ -245,7 +245,7 @@ body {
     color: #000;
     cursor: pointer;
     margin-left: 15px;
-    width: 100PX;
+    width: 130PX;
   }
 
   .Approve1-btn {
@@ -256,7 +256,12 @@ body {
     color: #000;
     cursor: pointer;
     margin-left: 15px;
-    width: 100PX;
+    width: 130PX;
+  }
+
+  .Approve1-btn.green {
+    background-color: green;
+    color: white;
   }
 
   .Suspend-btn {
@@ -277,7 +282,7 @@ body {
   overflow: hidden;
   width: 100%;
   margin-bottom: 50px;
-  margin-top: -300PX;
+  margin-top: -100PX;
   
 }
 
@@ -289,6 +294,7 @@ body {
   padding: 14px 56px;
   text-decoration: none;
   font-size: 17px;
+  margin-top: 0px;
 }
 
 /* Change the color of links on hover */

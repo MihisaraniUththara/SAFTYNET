@@ -1,10 +1,10 @@
 import React from 'react';
-import '../assets/css/report.css';
+import '../../assets/css/report.css';
 import logo from '../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
 
 import { Link } from 'react-router-dom';
-import StatCard from './StatCard';
+import StatCard from '../StatCard';
 
 const Report = () => {
 

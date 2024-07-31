@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import '../assets/css/report.css';
 import logo from '../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
@@ -6,8 +6,7 @@ import profilePicture from '../assets/images/profile.png'; // Adjust the path as
 import { Link } from 'react-router-dom';
 import StatCard from './StatCard';
 
-const Report = () => {
-
+const ReportDeath = () => {
   return (
     <div className="dashboard-container">
       <header className="header">
@@ -41,21 +40,23 @@ const Report = () => {
             </Link>
           </ul>
         </aside>
+
+
         <main className='major-container'>
           <div className="topnav1">
-            <a href="/Report" className='select-one'>No Of Accidents</a>
-            <a href="/Report/type">No Of Deaths</a>
+            <a href="/Report">No Of Accidents</a>
+            <a href="/Report/type" className='select-one'>No Of Deaths</a>
             <a href="/Report/type/type">Court Cases</a>
           </div>
-<center>
-          <div className="stat-cards-container">
-          <StatCard title="Police ID">
+
+           <div className="stat-cards-container">
+          {/* <StatCard title="Police ID">
               <input type="text" placeholder="Type a string (e.g., 14856)" />
             </StatCard>
 
             <StatCard title="Vehicle Number">
               <input type="text" placeholder="Type a string (e.g., PG4014)" />
-            </StatCard>
+            </StatCard>  */}
 
           
             <StatCard title="Year">
@@ -81,16 +82,16 @@ const Report = () => {
               </select>
             </StatCard>
 
-            <StatCard title="Accident Class">
+            {/* <StatCard title="Accident Class">
               <select className='choice'>
                 <option value="class1">Fatal</option>
                 <option value="class2">Grievous</option>
                 <option value="class3">Non-Grievous</option>
                 <option value="class4">Damage Only</option>
               </select>
-            </StatCard>
+            </StatCard> */}
 
-            <StatCard title="Vehicle Type">
+            <StatCard title="Road Users">
               <select className='choice'>
                 <option value="car">Car</option>
                 <option value="dual-purpose">Dual Purpose Vehicle</option>
@@ -98,8 +99,9 @@ const Report = () => {
                 <option value="cycle">Cycle</option>
                 <option value="motor-cycle">Motor Cycle</option>
                 <option value="three-wheeler">Three Wheeler</option>
-                <option value="sltb-bus">SLTB Bus</option>
-                <option value="private-bus">Private Bus</option>
+                <option value="bus">Bus</option>
+                <option value="pedestrain">Pedestrains</option>
+                <option value="other">Other</option>
               </select>
             </StatCard>
 
@@ -177,7 +179,7 @@ const Report = () => {
               </select>
               
             </StatCard>
-
+{/* 
             <StatCard title="Reason For Accident">
               <select className='choice'>
                 <option value="sunday">Speeding</option>
@@ -192,12 +194,12 @@ const Report = () => {
                 <option value="road">Road Condition</option>
                 <option value="michanical">Poor mechanical Condition</option>
               </select>
-            </StatCard>
+            </StatCard> */}
             
             
           </div>
 
-          </center>
+          
           
         </main>
       </div>
@@ -205,4 +207,4 @@ const Report = () => {
   );
 };
 
-export default Report;
+export default ReportDeath
