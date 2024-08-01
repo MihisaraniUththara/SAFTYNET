@@ -11,6 +11,7 @@ import chart5 from '../../assets/images/chart2.png';
 import chart6 from '../../assets/images/chart4.png';
 
 import {Link} from 'react-router-dom';
+import Logout from '../../logout';
 
 const Analysis = () => {
     return (

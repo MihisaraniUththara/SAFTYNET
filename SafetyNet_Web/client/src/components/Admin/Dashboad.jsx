@@ -10,6 +10,7 @@ import {Link} from 'react-router-dom';
 import AnimatedBarChart from './barchart';
 import AnimatedPieChart from './piechart';
 import AnimatedBarChart1 from './barchart2';
+import Logout from '../../logout';
 
 
 
@@ -21,7 +22,7 @@ const Dashboad = () => {
         <div className="user-info">
           {/* <span>GALLE</span> */}
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout" onClick={Logout}>Log Out</button>
         </div>
       </header>
 
@@ -33,8 +34,8 @@ const Dashboad = () => {
           <ul className="menu">
           <Link to="/Admin-Dashboard" style={{textDecoration: 'none'}}><li className="dashboard" >Dashboard</li></Link>
             <Link to="/SignUp" style={{textDecoration: 'none'}}><li>Officer Registration</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Officers</li></Link>
-            <Link to="/Report" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
+            <Link to="/Admin/officer" style={{textDecoration: 'none'}}><li>Officers</li></Link>
+            <Link to="/Admin/Driver" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
       
           </ul>
         </aside>

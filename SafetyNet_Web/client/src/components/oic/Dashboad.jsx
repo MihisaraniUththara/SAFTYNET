@@ -7,6 +7,7 @@ import chart2 from '../../assets/images/chart2.png';
 import chart3 from '../../assets/images/chart3.jpeg';
 import map from '../../assets/images/map.jpg';
 import {Link} from 'react-router-dom';
+import Logout from '../../logout';
 
 const Dashboad = () => {
   return (
@@ -16,7 +17,7 @@ const Dashboad = () => {
         <div className="user-info">
           <span>GALLE</span>
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout" onClick={Logout}>Log Out</button>
         </div>
       </header>
 

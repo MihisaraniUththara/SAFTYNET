@@ -7,7 +7,6 @@ import 'package:safetynet_mobile/drivers/pages/activity_screen.dart';
 import 'package:safetynet_mobile/drivers/pages/notification_screen.dart';
 
 import 'home.dart'; // Import the Home Page
-// Import other screens such as ActivitiesScreen and NotificationsScreen
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -77,7 +76,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        
       }
     }
   }
@@ -103,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           break;
         case 2:
           // Navigate to Notifications Screen
-           Get.to(() => NotificationPage());
+          Get.to(() => NotificationPage());
           break;
         case 3:
           // Stay on Profile Screen
@@ -133,31 +131,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Form(
           key: _formKey,
           child: ListView(
-           
             children: [
               SizedBox(height: 16),
               _buildTextFormField(
                 controller: _nameController,
                 labelText: 'Full Name',
                 validatorMessage: 'Please enter your full name',
+                readOnly: true,
               ),
               SizedBox(height: 16),
               _buildTextFormField(
                 controller: _emailController,
                 labelText: 'Email',
                 validatorMessage: 'Please enter your email',
+                readOnly: true, // Make this field read-only
               ),
               SizedBox(height: 16),
               _buildTextFormField(
                 controller: _nationalIdController,
                 labelText: 'National ID',
                 validatorMessage: 'Please enter your national ID',
+                readOnly: true, // Make this field read-only
               ),
               SizedBox(height: 16),
               _buildTextFormField(
                 controller: _driverLicenseController,
                 labelText: 'Driver License',
                 validatorMessage: 'Please enter your driver license',
+                readOnly: true, // Make this field read-only
               ),
               SizedBox(height: 16),
               _buildTextFormField(
@@ -179,19 +180,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(height: 24),
               ElevatedButton(
-              onPressed: _saveUserData,
-              child: Text('Save'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFfbbe00), // Button background color
-                padding: EdgeInsets.symmetric(vertical: 16), // Padding for button
-                textStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                onPressed: _saveUserData,
+                child: Text('Save'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFfbbe00), // Button background color
+                  padding: EdgeInsets.symmetric(vertical: 16), // Padding for button
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  foregroundColor: Colors.white, // Explicitly set the text color
                 ),
-                foregroundColor: Colors.white, // Explicitly set the text color
               ),
-            ),
-
             ],
           ),
         ),
@@ -228,9 +228,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required TextEditingController controller,
     required String labelText,
     required String validatorMessage,
+    bool readOnly = false, // Added readOnly parameter
   }) {
     return TextFormField(
       controller: controller,
+      readOnly: readOnly, // Set the readOnly property
       decoration: InputDecoration(
         labelText: labelText,
         border: OutlineInputBorder(),
@@ -241,6 +243,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
       validator: (value) => value!.isEmpty ? validatorMessage : null,
     );
   }
-
- 
 }

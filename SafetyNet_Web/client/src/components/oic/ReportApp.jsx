@@ -4,6 +4,7 @@ import logo from '../../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../../assets/images/profile.png'; // Adjust the path as needed
 
 import {Link} from 'react-router-dom';
+import Logout from '../../logout';
 
 
 const ReportApp = () => {
@@ -14,7 +15,7 @@ const ReportApp = () => {
           <div className="user-info">
             <span>GALLE</span>
             <img src={profilePicture} alt="Profile" className="profile" />
-            <button className="logout">Log Out</button>
+            <button className="logout" onClick={Logout}>Log Out</button>
           </div>
         </header>
   
