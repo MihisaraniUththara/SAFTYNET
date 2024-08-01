@@ -103,6 +103,7 @@ import { setDoc, doc } from "firebase/firestore";
 import logo from '../assets/images/logo1.png';
 import profilePicture from '../assets/images/profile.png';
 import { Link } from 'react-router-dom';
+import Logout from '../logout';
 
 const SignUp = () => {
 
@@ -148,7 +149,7 @@ const SignUp = () => {
         <div className="user-info">
           <span>GALLE</span>
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout" onClick={Logout}>Log Out</button>
         </div>
       </header>
       <div className="dashboard">
@@ -156,10 +157,10 @@ const SignUp = () => {
           <img src={profilePicture} alt="Profile" className="profile-pic" />
           <p className="user-name">A B C PERERA</p>
           <ul className="menu">
-            <Link to="/" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
-            <Link to="/" style={{textDecoration: 'none'}}><li className="dashboard">Officer Registration</li></Link>
-            <Link to="/" style={{textDecoration: 'none'}}><li>Officers</li></Link>
-            <Link to="/" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
+            <Link to="/Admin-Dashboard" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
+            <Link to="/SignUp" style={{textDecoration: 'none'}}><li className="dashboard">Officer Registration</li></Link>
+            <Link to="/Admin/officer" style={{textDecoration: 'none'}}><li>Officers</li></Link>
+            <Link to="/Admin/Driver" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
             {/* <Link to="/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link> */}
           </ul>
         </aside>

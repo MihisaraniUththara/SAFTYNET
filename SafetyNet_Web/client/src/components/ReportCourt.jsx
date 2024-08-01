@@ -5,6 +5,7 @@ import profilePicture from '../assets/images/profile.png'; // Adjust the path as
 
 import { Link } from 'react-router-dom';
 import StatCard from './StatCard';
+import Logout from '../logout';
 
 const ReportCourt = () => {
   return (
@@ -14,7 +15,7 @@ const ReportCourt = () => {
         <div className="user-info">
           <span>GALLE</span>
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout" onClick={Logout}>Log Out</button>
         </div>
       </header>
 

@@ -103,6 +103,7 @@ import profilePicture from '../../assets/images/profile.png'; // Adjust the path
 import { Link } from 'react-router-dom';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase';
+import Logout from '../../logout';
 
 const ReportApp = () => {
   const [officers, setOfficers] = useState([]);
@@ -138,7 +139,7 @@ const ReportApp = () => {
         <div className="user-info">
           <span>GALLE</span>
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout">Log Out onClick={Logout}</button>
         </div>
       </header>
 

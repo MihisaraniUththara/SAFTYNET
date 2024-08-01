@@ -1,96 +1,41 @@
 import React from 'react';
-import '../assets/css/new.css';
-import logo from '../assets/images/logo1.png'; // Adjust the path as needed
-import profilePicture from '../assets/images/profile.png'; // Adjust the path as needed
+import { Link, useLocation } from 'react-router-dom';
+import './call.css';
+import logo from '../../assets/images/logo1.png';
+import profilePicture from '../../assets/images/profile.png';
+import Logout from '../../logout';
 
-import {Link} from 'react-router-dom';
-import Logout from '../logout';
-<style>
+const AccidentDetails = () => {
+  const location = useLocation();
+
+
   
-</style>
-
-const OnProgress = () => {
   return (
     <div className="dashboard-container">
       <header className="header">
-      <img src={logo} alt="Logo" className="logo" />
+        <img src={logo} alt="Logo" className="logo" />
         <div className="user-info">
-          <span>GALLE</span>
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout" onClick={Logout}>Log Out</button>
+          <button className="logout"onClick={Logout}>Log Out</button>
         </div>
       </header>
 
       <div className="dashboard">
         <aside className="sidebar">
-          
           <img src={profilePicture} alt="Profile" className="profile-pic" />
           <p className="user-name">A B C PERERA</p>
           <ul className="menu">
-          <Link to="/traffic-police" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
-            <Link to="/OnProgress" style={{textDecoration: 'none'}}><li className = "dashboard">Accidents on Progress</li></Link>
-            <Link to="/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
-            <Link to="/Report" style={{textDecoration: 'none'}}><li>Reports</li></Link>
-            <Link to="/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
+          <Link to="/Manage" style={{textDecoration: 'none'}}><li>Manage Accidents</li></Link>
+            <Link to="/All" style={{textDecoration: 'none'}}><li className="dashboard">Accident Details</li></Link>
+            {/* <Link to="/HeadOffice/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
+            <Link to="" style={{textDecoration: 'none'}}><li>Reports</li></Link>
+            <Link to="/HeadOffice/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link> */}
+            {/* <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link> */}
           </ul>
         </aside>
 
-        <main className="m-content">
-  {/* <div className="notification-list">
-    <div className="date-group">
-      <h3>Today</h3>
-      <div className="notification">
-        <p>A1108 accident has happened on 6.920265, 79.856830 location</p>
-        <div className="notification-actions">
-          <div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: '50%' }}></div>
-          </div>
-          <button className="details-button">Details</button>
-        </div>
-      </div>
-      <br></br>
-      <div className="notification">
-        <p>A1108 accident has happened on 6.920265, 79.856830 location</p>
-        <div className="notification-actions">
-          <div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: '60%' }}></div>
-          </div>
-          <button className="details-button">Details</button>
-        </div>
-      </div>
-      <br></br>
-      <div className="notification">
-        <p>A1105 accident has happened on 6.920265, 79.856830 location</p>
-        <div className="notification-actions">
-          <div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: '80%' }}></div>
-          </div>
-          <button className="details-button">Details</button>
-        </div>
-      </div>
-    </div>
-    <div className="date-group">
-      <h3>Yesterday</h3>
-      <div className="notification">
-        <p>A1109 accident has happened on 6.920265, 79.856830 location</p>
-        <div className="notification-actions">
-          <div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: '30%' }}></div>
-          </div>
-          <button className="details-button">Details</button>
-        </div>
-      </div>
-      
-    </div>
-    
-  </div> */}
-
-<div className="nav-bar">
-      <a href="/OnProgress"  className='select-one'>All</a>
-      <a href="/OnProgress/my-cases">My Cases</a>
-    </div>
-
-    <table className="accident-table">
+        <main className="main-content">
+        <table className="accident-table">
             <thead>
               <tr>
                 <th>Date</th>
@@ -154,12 +99,10 @@ const OnProgress = () => {
              </tr>
             </tbody>
             </table>
-
-</main>
-
+        </main>
       </div>
     </div>
   );
 };
 
-export default OnProgress;
+export default AccidentDetails;

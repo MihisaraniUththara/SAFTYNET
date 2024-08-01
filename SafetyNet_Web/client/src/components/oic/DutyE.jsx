@@ -4,6 +4,7 @@ import logo from '../../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../../assets/images/profile.png'; // Adjust the path as needed
 
 import {Link} from 'react-router-dom';
+import Logout from '../../logout';
 
 const DutyE = () => {
     return (
@@ -13,7 +14,7 @@ const DutyE = () => {
           <div className="user-info">
             <span>GALLE</span>
             <img src={profilePicture} alt="Profile" className="profile" />
-            <button className="logout">Log Out</button>
+            <button className="logout" onClick={Logout}>Log Out</button>
           </div>
         </header>
   
@@ -43,7 +44,7 @@ const DutyE = () => {
               <tr>
                 <th>Officer Name</th>
                 <th>Officer Id</th>
-                <th>NIC</th>
+            
                 <th>Duty</th>
                 <th>Option</th>
               </tr>
@@ -52,7 +53,7 @@ const DutyE = () => {
             <tr>
                 <td>A B C Perera</td>
                 <td>12323</td>
-                <td>199548517526</td>
+                
                 <td><button className="Approve-btn">Assign to 119</button></td>
                 <td><button className="Suspend-btn">Suspend</button>
                 <button className="details-btn">Details</button></td>

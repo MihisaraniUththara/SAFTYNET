@@ -1,13 +1,12 @@
-import React from 'react';
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom';
 import './officer.css';
 import logo from '../../assets/images/logo1.png';
 import profilePicture from '../../assets/images/profile.png';
-import OfficersData from './officersData';
+import DriverData from './DriverData';
 import Logout from '../../logout';
 
-const AdminOfficers = () => {
-
+const AdminDrivers = () => {
   return (
     <div className="dashboard-container">
       <header className="header">
@@ -27,17 +26,17 @@ const AdminOfficers = () => {
           <ul className="menu">
           <Link to="/Admin-Dashboard" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
             <Link to="/SignUp" style={{textDecoration: 'none'}}><li>Officer Registration</li></Link>
-            <Link to="/Admin/officer" style={{textDecoration: 'none'}}><li className="dashboard">Officers</li></Link>
-            <Link to="/Admin/Driver" style={{textDecoration: 'none'}}><li>Drivers</li></Link>
+            <Link to="/Admin/officer" style={{textDecoration: 'none'}}><li>Officers</li></Link>
+            <Link to="/Report" style={{textDecoration: 'none'}}><li className="dashboard">Drivers</li></Link>
       
           </ul>
         </aside>
         
-          <OfficersData/>
+          <DriverData/>
 
       </div>
     </div>
   );
 };
 
-export default AdminOfficers;
+export default AdminDrivers

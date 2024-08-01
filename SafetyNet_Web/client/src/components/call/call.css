@@ -1,15 +1,13 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    overflow-y: auto;
-    overflow-x: hidden;
   }
   
   .dashboard-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    /* overflow-y: auto; */
+    overflow-y: auto;
   }
   
   .header {
@@ -80,7 +78,24 @@ body {
     
   }
   
- 
+  /* .user-name {
+    margin-bottom: 20px;
+  }
+
+
+  
+  .menu {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .menu li {
+    padding: 10px 0;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+  } */
   .user-name {
     color: #000;
     font-weight: bold;
@@ -92,58 +107,41 @@ body {
     list-style: none;
     padding: 10px;
     width: 100%;
+    text-decoration: none;
   }
   
   .menu li {
-    padding: 15px 10px;
+    padding: 15px 0;
     text-align: center; /* Center the text within the box */
     width: 100%;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
     margin-bottom: 10px;
-    justify-content: center; /* Center content horizontally */
-  align-items: center;
     font-size: 1.2em; /* Add space between boxes */
+    color: black; /* Black font color */
+    display: flex;
+    text-decoration: none;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
   }
   
- /*  .menu li:first-child {
-    background-color: #FDDE7F; 
-    color: black;
-    
-  } */
-
   .menu .dashboard {
-    
     background-color: #FDDE7F; /* Red background for 'Dashboard' */
   }
   
-/*   .menu li:not(:first-child) {
-    background-color: #FBBE00; 
-    color: black;
-  } */
-
-
   .menu li:not(.dashboard) {
-  background-color: #FBBE00; /* Green background for other items */
-}
+    background-color: #FBBE00; /* Green background for other items */
+  }
+  
   .menu li:hover {
     background-color: rgba(0, 0, 0, 0.1);
   }
-  
-  .m-content {
-    flex-direction: column;
-    display: inline-block;
-    width: 100%;
-    margin-left: 20px;
-    margin-right: 20px;
-  }
-
 
   .accident-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    margin-bottom: 0px;
+    margin-bottom: 50px;
   }
   
   .accident-table th,
@@ -185,7 +183,44 @@ body {
     cursor: pointer;
   }
   
-
+  /* Existing CSS */
+  /* Add these styles */
+  
+  .notification-list {
+    padding: 20px;
+    margin-top: -250px;
+    margin-left: -450px;
+  }
+  
+  .date-group {
+    margin-bottom: 20px;
+  }
+  
+  .notification {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* background-color: #f7e7b5; */
+    background-color: #f0ead8;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    width: 150%;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 0 auto;
+  }
+  
+  .notification p {
+    margin: 0;
+    flex-grow: 1;
+  }
+  
+  .notification-actions {
+    display: flex;
+    align-items: center;
+  }
   
   .progress-cell {
     display: flex;
@@ -221,45 +256,3 @@ body {
     border-radius: 5px;
     cursor: pointer;
   }
-  
-  
-
-.nav-bar {
-    background-color: #333;
-    overflow: hidden;
-    width: 100%;
-    margin-bottom: 50px;
-    height: 50px;
-  }
-
-  .nav-bar a {
-    float: left;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 56px;
-    text-decoration: none;
-    font-size: 17px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-  }
-  
-  /* Change the color of links on hover */
-  .nav-bar a:hover {
-    background-color: #ddd;
-    color: black;
-  }
-  
-  .nav-bar a.select-one {
-      background-color: #FDDE7F;
-      color: black;
-    }
-  
-  /* Create a right-aligned (split) link inside the navigation bar */
-  .nav-bar a.split {
-    float: right;
-    background-color: #04AA6D;
-    color: white;
-  }
-  
-  /* Style the links inside the navigation bar */
-  

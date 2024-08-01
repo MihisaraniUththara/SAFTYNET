@@ -4,6 +4,7 @@ import logo from '../../assets/images/logo1.png'; // Adjust the path as needed
 import profilePicture from '../../assets/images/profile.png'; // Adjust the path as needed
 
 import {Link} from 'react-router-dom';
+import Logout from '../../logout';
 
 const Accident = () => {
     return (
@@ -12,7 +13,7 @@ const Accident = () => {
         <img src={logo} alt="Logo" className="logo" />
           <div className="user-info">
             <img src={profilePicture} alt="Profile" className="profile" />
-            <button className="logout">Log Out</button>
+            <button className="logout" onClick={Logout}>Log Out</button>
           </div>
         </header>
   
@@ -25,7 +26,7 @@ const Accident = () => {
           <Link to="/HeadOffice" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
             <Link to="/HeadOffice/Accident" style={{textDecoration: 'none'}}><li className="dashboard">Accident Details</li></Link>
             <Link to="/HeadOffice/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
-            <Link to="" style={{textDecoration: 'none'}}><li>Reports</li></Link>
+            <Link to="/HeadOffice/Report" style={{textDecoration: 'none'}}><li>Reports</li></Link>
             <Link to="/HeadOffice/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
             {/* <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link> */}
           </ul>
