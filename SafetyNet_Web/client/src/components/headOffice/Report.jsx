@@ -25,13 +25,12 @@ const Report = () => {
           <img src={profilePicture} alt="Profile" className="profile-pic" />
           <p className="user-name">A B C PERERA</p>
           <ul className="menu">
-            <Link to="/oic/Dashboad" style={{ textDecoration: 'none' }}><li>Dashboard</li></Link>
-            <Link to="/oic/OnProgress" style={{ textDecoration: 'none' }}><li>Accidents on progress</li></Link>
-            <Link to="/oic/Accident" style={{ textDecoration: 'none' }}><li>Accident Details</li></Link>
-            <Link to="/oic/ReportApp" style={{ textDecoration: 'none' }}><li>Report Approval</li></Link>
-            <Link to="oic/Report" style={{ textDecoration: 'none' }}><li  className="dashboard">Reports</li></Link>
-            <Link to="/oic/Analysis" style={{ textDecoration: 'none' }}><li>Analysis</li></Link>
-            <Link to="/oic/Duty" style={{ textDecoration: 'none' }}><li>Duty List</li></Link>
+          <Link to="/HeadOffice" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
+            <Link to="/HeadOffice/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
+            <Link to="/HeadOffice/ReportApp" style={{textDecoration: 'none'}}><li className="dashboard">Report Approval</li></Link>
+            <Link to="/oic/Report" style={{textDecoration: 'none'}}><li>Reports</li></Link>
+            <Link to="/HeadOffice/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link>
+            {/* <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link> */}
           </ul>
         </aside>
         <main className='major-container'>

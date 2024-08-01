@@ -16,6 +16,7 @@ import OICDasboad from './components/oic/Dashboad';
 import OICOnProgress from './components/oic/OnProgress';
 import OICAccident from './components/oic/Accidents';
 import OICReportApp from './components/oic/ReportApp';
+import OICReport from './components/oic/Report';
 import OICAnalysis from './components/oic/Analysis';
 import OICDuty from './components/oic/Duty';
 import OICDutyE from './components/oic/DutyE';
@@ -23,10 +24,12 @@ import OICDutyN from './components/oic/DutyN';
 import HeadDash from './components/headOffice/Dashboad';
 import HeadAccident from './components/headOffice/Accident';
 import HeadReportApp from './components/headOffice/ReportApp';
+import HeadReport from './components/headOffice/Report';
 import HeadAnalysis from './components/headOffice/Analysis';
 import AdminD from './components/Admin/Dashboad';
 import AdminOfficer from './components/Admin/Adminofficers';
 import AdminDriver from './components/Admin/AdminDrivers';
+import Call from './components/call/ManageAccidents';
 
 import { UserProvider } from './context/UserContext';
 
@@ -51,6 +54,7 @@ const App = () => {
       <Route path="/oic/OnProgress" element={<OICOnProgress />} />
       <Route path="/oic/Accident" element={<OICAccident />} />
       <Route path="/oic/ReportApp" element={<OICReportApp />} />
+      <Route path="/oic/Report" element={<OICReport />} />
       <Route path="/oic/Analysis" element={<OICAnalysis />} />
       <Route path="/oic/Duty" element={<OICDuty />} />
       <Route path="/oic/DutyE" element={<OICDutyE />} />
@@ -58,10 +62,12 @@ const App = () => {
       <Route path="/HeadOffice" element={<HeadDash />} />
       <Route path="/HeadOffice/Accident" element={<HeadAccident />} />
       <Route path="/HeadOffice/ReportApp" element={<HeadReportApp />} />
+      <Route path="/HeadOffice/Report" element={<HeadReport />} />
       <Route path="/HeadOffice/Analysis" element={<HeadAnalysis/>} />
       <Route path="/Admin-Dashboard" element={<AdminD />} />
       <Route path="/Admin/officer" element={<AdminOfficer />} />
       <Route path="/Admin/Driver" element={<AdminDriver />} />
+      <Route path="/Manage" element={<Call />} />
     </Routes>
   </Router>
   </UserProvider>

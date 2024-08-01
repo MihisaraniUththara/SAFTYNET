@@ -44,7 +44,7 @@ const DutyE = () => {
               <tr>
                 <th>Officer Name</th>
                 <th>Officer Id</th>
-                <th>NIC</th>
+            
                 <th>Duty</th>
                 <th>Option</th>
               </tr>
@@ -53,7 +53,7 @@ const DutyE = () => {
             <tr>
                 <td>A B C Perera</td>
                 <td>12323</td>
-                <td>199548517526</td>
+                
                 <td><button className="Approve-btn">Assign to 119</button></td>
                 <td><button className="Suspend-btn">Suspend</button>
                 <button className="details-btn">Details</button></td>
