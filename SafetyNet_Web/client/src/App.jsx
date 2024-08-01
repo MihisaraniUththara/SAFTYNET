@@ -30,6 +30,7 @@ import AdminD from './components/Admin/Dashboad';
 import AdminOfficer from './components/Admin/Adminofficers';
 import AdminDriver from './components/Admin/AdminDrivers';
 import Call from './components/call/ManageAccidents';
+import CallA from './components/call/AccidentDetails';
 
 import { UserProvider } from './context/UserContext';
 
@@ -68,6 +69,7 @@ const App = () => {
       <Route path="/Admin/officer" element={<AdminOfficer />} />
       <Route path="/Admin/Driver" element={<AdminDriver />} />
       <Route path="/Manage" element={<Call />} />
+      <Route path="/All" element={<CallA />} />
     </Routes>
   </Router>
   </UserProvider>

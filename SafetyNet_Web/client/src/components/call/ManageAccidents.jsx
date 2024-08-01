@@ -5,6 +5,7 @@ import logo from '../../assets/images/logo1.png';
 import profilePicture from '../../assets/images/profile.png';
 import { Container, Snackbar, Alert, Typography, Box } from '@mui/material';
 import CardView from './CardView';
+import Logout from '../../logout';
 
 const ManageAccidents = () => {
   const [selectedStation, setSelectedStation] = useState(null); // State for selected station
@@ -51,7 +52,7 @@ const ManageAccidents = () => {
         <img src={logo} alt="Logo" className="logo" />
         <div className="user-info">
           <img src={profilePicture} alt="Profile" className="profile" />
-          <button className="logout">Log Out</button>
+          <button className="logout" onClick={Logout}>Log Out</button>
         </div>
       </header>
 
@@ -60,8 +61,8 @@ const ManageAccidents = () => {
           <img src={profilePicture} alt="Profile" className="profile-pic" />
           <p className="user-name">A B C PERERA</p>
           <ul className="menu">
-          <Link to="/HeadOffice" style={{textDecoration: 'none'}}><li className="dashboard">Manage Accidents</li></Link>
-            <Link to="/HeadOffice/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
+          <Link to="/Manage" style={{textDecoration: 'none'}}><li className="dashboard">Manage Accidents</li></Link>
+            <Link to="/All" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
             {/* <Link to="/HeadOffice/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
             <Link to="" style={{textDecoration: 'none'}}><li>Reports</li></Link>
             <Link to="/HeadOffice/Analysis" style={{textDecoration: 'none'}}><li>Analysis</li></Link> */}

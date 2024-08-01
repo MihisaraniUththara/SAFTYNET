@@ -32,7 +32,7 @@ const Login = () => {
             navigate("/../components/HomePage");
             break;
           case "OONH":
-            navigate("/../components/HomePage");
+            navigate("/Manage");
             break;
           case "Traffic":
             navigate("/traffic-police");

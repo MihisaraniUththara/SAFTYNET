@@ -34,7 +34,7 @@ const Analysis = () => {
           <Link to="/HeadOffice" style={{textDecoration: 'none'}}><li>Dashboard</li></Link>
             <Link to="/HeadOffice/Accident" style={{textDecoration: 'none'}}><li>Accident Details</li></Link>
             <Link to="/HeadOffice/ReportApp" style={{textDecoration: 'none'}}><li>Report Approval</li></Link>
-            <Link to="#" style={{textDecoration: 'none'}}><li>Reports</li></Link>
+            <Link to="/HeadOffice/Report" style={{textDecoration: 'none'}}><li>Reports</li></Link>
             <Link to="/HeadOffice/Analysis" style={{textDecoration: 'none'}}><li className="dashboard">Analysis</li></Link>
             {/* <Link to="#" style={{textDecoration: 'none'}}><li>Announcement</li></Link> */}
           </ul>
