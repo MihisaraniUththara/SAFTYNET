@@ -1,4 +1,4 @@
-import React from "react";
+/*{import React from "react";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import "./App.css";
 import HomePage from "./components/HomePage";
@@ -77,7 +77,22 @@ const App = () => {
   );
 };
 
-export default App;
+export default App;}*/
+
+
+// import React from "react";
+// import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+// import "./App.css";
+// import HomePage from "./components/HomePage";
+// import LoginPage from './pages/login';
+
+// export default function App() {
+//   return (
+//     <h1 className="text-3xl font-bold underline">
+//       Hello world!
+//     </h1>
+//   )
+// }
 
 
 // import React from 'react'
@@ -92,3 +107,23 @@ export default App;
 // }
 
 // export default App
+
+
+import React from 'react'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import "./App.css";
+import HomePage from "./components/HomePage";
+import LoginPage from './pages/login';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    </Router>
+  )
+}
+
+export default App
