@@ -437,3 +437,18 @@ class ImagePickerFormField extends FormField<File> {
           },
         );
 }
+
+Map<String, String> formData = {};
+
+void saveInputValue(String prefix, int index, String value) {
+  String key = '$prefix${String.fromCharCode(65 + index)}'; // e.g., E1A, E1B
+  formData[key] = value;
+  print('Saved: $key = $value');
+}
+
+void saveFormSectionValue(String prefix, int columnIndex, int labelPrefix) {
+  String key =
+      '$prefix${String.fromCharCode(65 + columnIndex)}'; // e.g., E1A, E1B
+  formData[key] = labelPrefix.toString();
+  print('Saved: $key = ${labelPrefix.toString()}');
+}
