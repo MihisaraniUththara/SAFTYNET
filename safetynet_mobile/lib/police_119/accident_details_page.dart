@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:safetynet_mobile/police_119/accident_report.dart';
+import 'package:safetynet_mobile/police_119/road_accident_form/accident_report.dart';
 import 'package:safetynet_mobile/police_119/map_toaccident.dart';
 
 class AccidentDetailsPage extends StatelessWidget {
