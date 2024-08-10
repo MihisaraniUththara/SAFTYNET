@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 
-import 'checkbox_input.dart';
+import 'input_fields.dart';
 
 class AccidentReportForm extends StatefulWidget {
   @override
