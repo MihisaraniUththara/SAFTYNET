@@ -63,17 +63,18 @@ class _MultipleChoiceCheckboxInputState
 }
 
 // Class to handle single choice checkbox input
-
 class SingleChoiceCheckboxInput extends StatefulWidget {
   final String topic;
   final List<String> labels;
   final void Function(String?) onSaved;
+  final String? Function()? validator; // Validator callback
 
   const SingleChoiceCheckboxInput({
     super.key,
     required this.topic,
     required this.labels,
     required this.onSaved,
+    this.validator, // Optionally pass a validator
   });
 
   @override
@@ -112,7 +113,7 @@ class SingleChoiceCheckboxInputState extends State<SingleChoiceCheckboxInput> {
           return CheckboxListTile(
             title: Text(label),
             value: _selectedLabel == label,
-            onChanged:(bool? value){
+            onChanged: (bool? value) {
               setState(() {
                 if (value == true) {
                   _selectedLabel = label;
@@ -125,6 +126,22 @@ class SingleChoiceCheckboxInputState extends State<SingleChoiceCheckboxInput> {
             },
           );
         }),
+        if (widget.validator != null) // Add validation feedback if applicable
+          Builder(
+            builder: (context) {
+              final error = widget.validator!();
+              if (error != null && _selectedLabel == null) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                );
+              }
+              return SizedBox.shrink();
+            },
+          ),
       ],
     );
   }
