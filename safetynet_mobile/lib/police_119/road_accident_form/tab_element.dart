@@ -1,6 +1,7 @@
 //import 'dart:io';
 
 //import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/widgets.dart';
 //import 'package:get/get_connect/http/src/utils/utils.dart';
@@ -421,7 +422,44 @@ class _TabElementState extends State<TabElement> {
                   onPressed: () {
                     if (_formKey.currentState?.validate() ?? false) {
                       _formKey.currentState?.save();
+                      // Save checkbox data from FormSection
+                      for (int sectionIndex = 0;
+                          sectionIndex < _checkboxStates.length;
+                          sectionIndex++) {
+                        for (int rowIndex = 0;
+                            rowIndex < _checkboxStates[sectionIndex].length;
+                            rowIndex++) {
+                          for (int colIndex = 0;
+                              colIndex <
+                                  _checkboxStates[sectionIndex][rowIndex]
+                                      .length;
+                              colIndex++) {
+                            if (_checkboxStates[sectionIndex][rowIndex]
+                                [colIndex]) {
+                              saveFormSectionValue('E${sectionIndex + 1}',
+                                  colIndex, rowIndex + 1);
+                            }
+                          }
+                        }
+                      }
+
                       print('Form saved: $formData');
+
+                      // Save data to Firestore (replace with your collection path)
+                      FirebaseFirestore.instance
+                          .collection('accident')
+                          .doc('elementDraft')
+                          .set(formData)
+                          .then((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Data saved successfully')),
+                        );
+                      }).catchError((error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('Failed to save data: $error')),
+                        );
+                      });
                     } else {
                       print("Error");
                       return;
@@ -436,3 +474,21 @@ class _TabElementState extends State<TabElement> {
     );
   }
 }
+
+
+  
+                    /*  print('Form saved: $formData');
+                    } else {
+                      print("Error");
+                      return;
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}*/
