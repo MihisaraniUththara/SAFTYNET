@@ -42,7 +42,7 @@ class _MultipleChoiceCheckboxInputState
             value: _selectedLabels.contains(label),
             onChanged: (bool? value) {
               setState(() {
-                if (value ?? false) {
+                if (value == true) {
                   _selectedLabels.add(label);
                 } else {
                   _selectedLabels.remove(label);
@@ -62,25 +62,40 @@ class _MultipleChoiceCheckboxInputState
   }
 }
 
-//class to handle single choice checkbox input
+// Class to handle single choice checkbox input
 class SingleChoiceCheckboxInput extends StatefulWidget {
   final String topic;
   final List<String> labels;
+  final void Function(String?) onSaved;
+  final String? Function()? validator; // Validator callback
 
   const SingleChoiceCheckboxInput({
     super.key,
     required this.topic,
     required this.labels,
+    required this.onSaved,
+    this.validator, // Optionally pass a validator
   });
 
   @override
-  SingleChoiceCheckboxInputState createState() => SingleChoiceCheckboxInputState();
+  SingleChoiceCheckboxInputState createState() =>
+      SingleChoiceCheckboxInputState();
 }
 
 class SingleChoiceCheckboxInputState extends State<SingleChoiceCheckboxInput> {
   String? _selectedLabel;
 
   String? get selectedValue => _selectedLabel;
+
+  @override
+  void initState() {
+    super.initState();
+    // Optionally initialize a default value
+  }
+
+  String _extractPrefix(String label) {
+    return label.split(' ')[0]; // Extract the prefix (e.g., '1', '2', etc.)
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,21 +115,37 @@ class SingleChoiceCheckboxInputState extends State<SingleChoiceCheckboxInput> {
             value: _selectedLabel == label,
             onChanged: (bool? value) {
               setState(() {
-                if (value ?? false) {
+                if (value == true) {
                   _selectedLabel = label;
+                  widget.onSaved(_extractPrefix(label));
                 } else {
                   _selectedLabel = null;
+                  widget.onSaved(null);
                 }
               });
             },
           );
-        }).toList(),
+        }),
+        if (widget.validator != null) // Add validation feedback if applicable
+          Builder(
+            builder: (context) {
+              final error = widget.validator!();
+              if (error != null && _selectedLabel == null) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                );
+              }
+              return SizedBox.shrink();
+            },
+          ),
       ],
     );
   }
 }
-
-
 
 //class to handle multiple choice radio input for checkbox fields
 class FormSection extends StatelessWidget {
@@ -150,11 +181,11 @@ class FormSection extends StatelessWidget {
             ...List.generate(columnsCount, (index) {
               String label = String.fromCharCode(65 + index); // A = 65 in ASCII
               return Expanded(
-              flex: 1,
-              child: Center(
-                child: Text(label,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
+                flex: 1,
+                child: Center(
+                  child: Text(label,
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
               );
             }),
           ],
@@ -221,7 +252,10 @@ class TopicTextFields extends StatefulWidget {
   final int maxChars;
   final int columnsCount;
 
-  TopicTextFields({required this.topic, required this.maxChars, required this.columnsCount});
+  TopicTextFields(
+      {required this.topic,
+      required this.maxChars,
+      required this.columnsCount});
 
   @override
   _TopicTextFieldsState createState() => _TopicTextFieldsState();
@@ -303,7 +337,10 @@ class IntegerInputFields extends StatefulWidget {
   final int maxChars;
   final int columnsCount;
 
-  IntegerInputFields({required this.topic, required this.maxChars, required this.columnsCount});
+  IntegerInputFields(
+      {required this.topic,
+      required this.maxChars,
+      required this.columnsCount});
 
   @override
   _IntegerInputFieldsState createState() => _IntegerInputFieldsState();

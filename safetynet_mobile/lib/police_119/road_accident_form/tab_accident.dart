@@ -1,10 +1,6 @@
-//import 'dart:io';
-
-//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/widgets.dart';
-//import 'package:get/get_connect/http/src/utils/utils.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/rendering.dart';
 import 'input_fields.dart';
 
 class TabAccident extends StatefulWidget {
@@ -15,316 +11,143 @@ class TabAccident extends StatefulWidget {
 class _TabAccidentState extends State<TabAccident> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Map<String, String> formData = {};
-  final List<GlobalKey<SingleChoiceCheckboxInputState>> _checkboxKeys = [];
+  // Controllers for text and numeric fields
+  final _divisionController = TextEditingController();
+  final _stationController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _timeController = TextEditingController();
+  final _uniqueIdController = TextEditingController();
+  final _roadNumberController = TextEditingController();
+  final _streetNameController = TextEditingController();
+  final _nearestLowerkmPostController = TextEditingController();
+  final _distanceFromNearestLowerKmPostController = TextEditingController();
+  final _nodeNumberController = TextEditingController();
+  final _linkNumberController = TextEditingController();
+  final _distanceFromNodeController = TextEditingController();
+  final _eastCoordinateController = TextEditingController();
+  final _northCoordinateController = TextEditingController();
+  final _collisionTypeController = TextEditingController();
+  final _caseNumberController = TextEditingController();
+  final _bReportController = TextEditingController();
+  final _researchPurposeController = TextEditingController();
+  final _gazettedSpeedLimitForLightVehiclesController = TextEditingController();
+  final _gazettedSpeedLimitForHeavyVehiclesController = TextEditingController();
 
-  void saveInputValue(String key, String value) {
-    formData[key] = value;
-    print('Saved: $key = $value');
-  }
-
-  /*Widget _buildClassOfAccidentSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'A6. Class of Accident',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        // Checkbox for Fatal
-        /*CheckboxListTile(
-          title: const Text('1 Fatal'),
-          value: _isFatal,
-          onChanged: (bool? value) {
-            setState(() {
-              _isFatal = value ?? false;
-              _updateClassOfAccident();
-            });
-          },
-        ),*/
-        // Checkbox for Grievous
-        /*CheckboxListTile(
-          title: const Text('2 Grievous'),
-          value: _isGrievous,
-          onChanged: (bool? value) {
-            setState(() {
-              _isGrievous = value ?? false;
-              _updateClassOfAccident();
-            });
-          },
-        ),*/
-        // Checkbox for Non-Grievous
-        /*CheckboxListTile(
-          title: const Text('3 Non-Grievous'),
-          value: _isNonGrievous,
-          onChanged: (bool? value) {
-            setState(() {
-              _isNonGrievous = value ?? false;
-              _updateClassOfAccident();
-            });
-          },
-        ),*/
-        // Checkbox for Damage Only
-        /*CheckboxListTile(
-          title: const Text('4 Damage Only'),
-          value: _isDamageOnly,
-          onChanged: (bool? value) {
-            setState(() {
-              _isDamageOnly = value ?? false;
-              _updateClassOfAccident();
-            });
-          },
-        ),*/
-      ],
-    );
-  }*/
-
-  /*Widget _chooseWorkdayHoliday() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'A7. Workday/Holiday',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        CheckboxListTile(
-          title: const Text('1 Normal working day'),
-          value: _normalWorkingday,
-          onChanged: (bool? value) {
-            setState(() {
-              _normalWorkingday = value ?? false;
-              //_updateClassOfAccident();
-            });
-          },
-        ),
-        CheckboxListTile(
-          title: const Text('2 Normal Weekend'),
-          value: _normalWeekend,
-          onChanged: (bool? value) {
-            setState(() {
-              _normalWeekend = value ?? false;
-              //_updateClassOfAccident();
-            });
-          },
-        ),
-        CheckboxListTile(
-          title: const Text('3 Public Holiday'),
-          value: _publicHoliday,
-          onChanged: (bool? value) {
-            setState(() {
-              _publicHoliday = value ?? false;
-              //_updateClassOfAccident();
-            });
-          },
-        ),
-        CheckboxListTile(
-          title: const Text('4 Festive day'),
-          value: _festiveday,
-          onChanged: (bool? value) {
-            setState(() {
-              _festiveday = value ?? false;
-              //_updateClassOfAccident();
-            });
-          },
-        ),
-        CheckboxListTile(
-          title: const Text('5 Election day or 1st of May'),
-          value: _isDamageOnly,
-          onChanged: (bool? value) {
-            setState(() {
-              _isDamageOnly = value ?? false;
-              //_updateClassOfAccident();
-            });
-          },
-        ),
-      ],
-    );
-  }*/
-
-  /*Map<String, dynamic> _formData =
-      {}; // Declare and initialize _formData variable
-
-  void _saveMultipleChoice(String key, Set<String> values) {
-    setState(() {
-      _formData[key] = values;
-    });
-  }
-
-  void _saveSingleChoice(String key, String? value) {
-    setState(() {
-      _formData[key] = value;
-    });
-  }*/
-
-  /*final Set<String> _selectedClasses = {};
-  String? _selectedClass;
-
-  // Define the variables to store the form data
-  String? _division;
-  String? _station;
-  DateTime? _date;
-  TimeOfDay? _time;
-  String? _uniqueId;
-  int? _urbanOrRural;
-  String? _workdayOrHoliday;
-  String? _dayOfWeek;
-  String? _roadNumber;
-  String? _roadStreetName;
-  int? _nearestLowerKmPost;
-  int? _distanceFromNearestLowerKmPost;
-  int? _nodeNumber;
-  String? _linkNumber;
-  int? _distanceFromNodeInMetres;
-  int? _eastCoordinate;
-  int? _northCoordinate;
-  int? _collisionType;
-  String? _secondCollisionOccurrence;
-  int? _roadSurfaceCondition;
-  int? _trafficControl;
-  int? _weather;
-  int? _postedSpeedLimitSigns;
-  int? _gazettedSpeedLimitForLightVehicles;
-  int? _gazettedSpeedLimitForHeavyVehicles;
-  int? _actionTakenByPolice;
-  int? _caseNumber;
-  int? _bReport;
+  // Variables to store checkbox selections
   String? _classOfAccident;
-  String? _A34;
-  // ignore: non_constant_identifier_names
-  String? A1a;
-  int? A1b;
-  String? A2a;
-  int? A2b;
-  int? A5c;
-  int? A5d;*/
+  String? _urbanOrRural;
+  String? _workdayOrHoliday;
+  String? _secondCollisionOccurence;
+  String? _roadSurfaceCondition;
+  String? _weather;
+  String? _lightCondition;
+  String? _locationType;
+  String? _locationTypeWhenPedestrianInvolved;
+  String? _trafficControl;
+  String? _postedSpeedLimitSigns;
+  String? _policeAction;
+  String? _casualties;
 
-  Widget _buildTextField(String label,
-      {String hintText = '', required int maxchars}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.left,
-        ),
-        TextFormField(
-          maxLength: maxchars,
-          maxLines: 1,
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            //labelText: label,
-            /*floatingLabelStyle: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),*/
-            border: InputBorder.none,
-            filled: true,
-            hintText: hintText,
-            //floatingLabelBehavior: FloatingLabelBehavior.auto,
-          ),
-          onSaved: (value) {
-            saveInputValue(label, value!);
-          },
-          validator: (value) {
-            if (value?.isEmpty ?? true) {
-              return 'This field cannot be empty';
-            }
-            return null;
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNumericField(String label,
-      {String hintText = '', required int maxchars}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.left,
-        ),
-        TextFormField(
-          keyboardType: TextInputType.number,
-          maxLength: maxchars,
-          decoration: InputDecoration(
-            //labelText: label,
-            /*floatingLabelStyle: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),*/
-            border: InputBorder.none,
-            filled: true,
-            hintText: hintText,
-            //floatingLabelBehavior: FloatingLabelBehavior.auto,
-          ),
-          onSaved: (value) {
-            saveInputValue(label, value!);
-          },
-          validator: (value) {
-            if (value?.isEmpty ?? true) {
-              return 'This field cannot be empty';
-            }
-            if (double.tryParse(value!) == null) {
-              return 'Please enter a valid number';
-            }
-            return null;
-          },
-        ),
-      ],
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Initialize the list of keys
-    _checkboxKeys.addAll([
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-      GlobalKey<SingleChoiceCheckboxInputState>(),
-    ]);
-  }
-
-  void _saveForm() {
+  // Method to save form data to Firestore
+  Future<void> _saveForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      // Iterate through the checkbox keys and save their selected values
-      for (var key in _checkboxKeys) {
-        final state = key.currentState;
-        if (state != null && state.selectedValue != null) {
-          saveInputValue(
-              state.widget.topic, state.selectedValue!.split(' ')[0]);
-        }
+
+      /*// Print form data before saving
+      print({
+        'division': _divisionController.text.trim(),
+        'station': _stationController.text.trim(),
+        'date': _dateController.text.trim(),
+        'time': _timeController.text.trim(),
+        'uniqueId': _uniqueIdController.text.trim(),
+        'roadNumber': _roadNumberController.text.trim(),
+        'streetName': _streetNameController.text.trim(),
+        'kmPost': _nearestLowerkmPostController.text.trim(),
+        'distanceKmPost': _distanceFromNearestLowerKmPostController.text.trim(),
+        'nodeNumber': _nodeNumberController.text.trim(),
+        'linkNumber': _linkNumberController.text.trim(),
+        'distanceFromNode': _distanceFromNodeController.text.trim(),
+        'eastCoordinate': _eastCoordinateController.text.trim(),
+        'northCoordinate': _northCoordinateController.text.trim(),
+        'collisionType': _collisionTypeController.text.trim(),
+        'caseNumber': _caseNumberController.text.trim(),
+        'bReport': _bReportController.text.trim(),
+        'researchPurpose': _researchPurposeController.text.trim(),
+        'gazettedSpeedLimitForLightVehicles':
+            _gazettedSpeedLimitForLightVehiclesController.text.trim(),
+        'gazettedSpeedLimitForHeavyVehicles':
+            _gazettedSpeedLimitForHeavyVehiclesController.text.trim(),
+        'classOfAccident': _classOfAccident,
+        'urbanOrRural': _urbanOrRural,
+        'workdayOrHoliday': _workdayOrHoliday,
+        'secondCollision': _secondCollisionOccurence,
+        'roadSurfaceCondition': _roadSurfaceCondition,
+        'weather': _weather,
+        'lightCondition': _lightCondition,
+        'locationType': _locationType,
+        'pedestrianLocation': _locationTypeWhenPedestrianInvolved,
+        'trafficControl': _trafficControl,
+        'speedLimitSigns': _postedSpeedLimitSigns,
+        'policeAction': _policeAction,
+        'casualties': _casualties,
+      });*/
+
+      // Save form data to Firestore
+      try {
+        await FirebaseFirestore.instance
+            .collection('accident')
+            .doc('accidentdraft')
+            .set({
+          'A1': _divisionController.text.trim(),
+          'A2': _stationController.text.trim(),
+          'A3': _dateController.text.trim(),
+          'A4': _timeController.text.trim(),
+          'A5': _uniqueIdController.text.trim(),
+          'A6': _classOfAccident,
+          'A7': _urbanOrRural,
+          'A8': _workdayOrHoliday,
+          //'A9': _
+          'A10': _roadNumberController.text.trim(),
+          'A11': _streetNameController.text.trim(),
+          'A12': _nearestLowerkmPostController.text.trim(),
+          'A13': _distanceFromNearestLowerKmPostController.text.trim(),
+          'A14': _nodeNumberController.text.trim(),
+          'A15': _linkNumberController.text.trim(),
+          'A16': _distanceFromNodeController.text.trim(),
+          'A17': _eastCoordinateController.text.trim(),
+          'A18': _northCoordinateController.text.trim(),
+          'A19': _collisionTypeController.text.trim(),
+          'A20': _secondCollisionOccurence,
+          'A21': _roadSurfaceCondition,
+          'A22': _weather,
+          'A23': _lightCondition,
+          'A24': _locationType,
+          'A25': _locationTypeWhenPedestrianInvolved,
+          'A26': _trafficControl,
+          'A27': _postedSpeedLimitSigns,
+          'A28': _gazettedSpeedLimitForLightVehiclesController.text.trim(),
+          'A29': _gazettedSpeedLimitForHeavyVehiclesController.text.trim(),
+          'A30': _policeAction,
+          'A31': _caseNumberController.text.trim(),
+          'A32': _bReportController.text.trim(),
+          'A33': _casualties,
+          'A34': _researchPurposeController.text.trim(),
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Draft saved successfully')),
+        );
+      } catch (e) {
+        print('Failed to save draft: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save draft')),
+        );
       }
-      print('Form saved: $formData');
     } else {
-      print("Form validation failed");
+      // Validation failed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please correct the validation errors in the form')),
+      );
     }
   }
 
@@ -338,51 +161,38 @@ class _TabAccidentState extends State<TabAccident> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // Add your form fields here
               Row(
                 children: [
                   Expanded(
-                    child: _buildTextField('A1 Division', maxchars: 30),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: _buildNumericField('no', maxchars: 2),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTextField('A2 Station', maxchars: 30),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: _buildNumericField('no', maxchars: 2),
-                  ),
-                ],
-              ),
-              _buildTextField('A3 Date', hintText: 'YYYY-MM-DD', maxchars: 10),
-              _buildTextField('A4 Time of accident',
-                  hintText: 'HH:MM', maxchars: 5),
-              _buildTextField(
-                'A5 Unique ID Number',
-                hintText: 'Division, Station, AR no, Year',
-                maxchars: 50,
-              ),
-              /*Row(
-                children: [
-                  Expanded(
-                    child: _buildTextField('A5 Unique ID number', (value) => A2a = value,
+                    child: _buildTextField('A1 Division', _divisionController,
                         maxchars: 30),
                   ),
-                  SizedBox(width:),
-                  Expanded(
-                    child: _buildNumericField(
-                        'no', (value) => A2b = int.parse(value ?? '0'),
-                        maxchars: 2),
-                  ),
+                  SizedBox(width: 10),
+                  /* Expanded(
+                    child: _buildNumericField('no', maxchars: 2),
+                  ),*/
                 ],
-              ),*/
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildTextField('A2 Station', _stationController,
+                        maxchars: 30),
+                  ),
+                  SizedBox(width: 10),
+                  /* Expanded(
+                    child: _buildNumericField('no', maxchars: 2),
+                  ),*/
+                ],
+              ),
+              _buildTextField('A3 Date', _dateController,
+                  hintText: 'YYYY-MM-DD', maxchars: 10),
+              _buildTextField('A4 Time of accident', _timeController,
+                  hintText: 'HH:MM', maxchars: 5),
+              _buildTextField('A5 Unique ID Number', _uniqueIdController,
+                  validatorMessage: "Unique ID Number is required",
+                  hintText: 'Division-Station-AR no-Year',
+                  maxchars: 50),
               SingleChoiceCheckboxInput(
                 topic: 'A6 Class of Accident',
                 labels: const [
@@ -391,10 +201,29 @@ class _TabAccidentState extends State<TabAccident> {
                   '3 Non-Grievous',
                   '4 Damage Only'
                 ],
+                onSaved: (selectedValue) {
+                  print('Selected Value: $selectedValue');
+                  _classOfAccident = selectedValue;
+                },
+                validator: () {
+                  if (_classOfAccident == null) {
+                    return 'Please select an option for Class of Accident';
+                  }
+                  return null;
+                },
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A7 Urban/Rural',
                 labels: ['1 Urban', '2 Rural'],
+                onSaved: (selectedValue) {
+                  _urbanOrRural = selectedValue;
+                },
+                validator: () {
+                  if (_urbanOrRural == null) {
+                    return 'Please select an option for Urban/Rural';
+                  }
+                  return null;
+                },
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A8 Workday/Holiday',
@@ -405,14 +234,25 @@ class _TabAccidentState extends State<TabAccident> {
                   '4 Festive day',
                   '5 Election day or 1st of May',
                 ],
+                onSaved: (selectedValue) {
+                  _workdayOrHoliday = selectedValue;
+                },
+                validator: () {
+                  if (_workdayOrHoliday == null) {
+                    return 'Please select an option for workday or holiday';
+                  }
+                  return null;
+                },
               ),
-              Text('A9 Day of Week',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  )),
-              TextFormField(
-                initialValue: DateTime.now().weekday == DateTime.sunday
+              Text(
+                'A9 Day of Week',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              _buildReadOnlyField(
+                DateTime.now().weekday == DateTime.sunday
                     ? '1 Sunday'
                     : DateTime.now().weekday == DateTime.monday
                         ? '2 Monday'
@@ -428,26 +268,42 @@ class _TabAccidentState extends State<TabAccident> {
                                                 DateTime.saturday
                                             ? '7 Saturday'
                                             : '',
-                readOnly: true,
-                maxLength: 10,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  filled: true,
-                ),
               ),
-              _buildTextField('A10 Road Number', maxchars: 4),
-              _buildTextField('A11 Road/Street Name', maxchars: 50),
-              _buildNumericField('A12 Nearest,lower Km post', maxchars: 3),
-              _buildNumericField('A13 Distance from Nearest Lower Km Post',
+              _buildTextField('A10 Road Number', _roadNumberController,
+                  validatorMessage: "Road Number is required", maxchars: 4),
+              _buildTextField('A11 Road/Street Name', _streetNameController,
+                  validatorMessage: "Road/Street Name is required",
+                  maxchars: 50),
+              _buildNumericField(
+                  'A12 Nearest,lower Km post', _nearestLowerkmPostController,
+                  validatorMessage: "Nearest,lower Km post is required",
                   maxchars: 3),
-              _buildNumericField('A14 Node number', maxchars: 6),
-              _buildTextField('A15 Link number', maxchars: 7),
-              _buildNumericField('A16 Distance from Node in metres',
+              _buildNumericField('A13 Distance from Nearest Lower Km Post',
+                  _distanceFromNearestLowerKmPostController,
+                  validatorMessage:
+                      "Distance from nearest,lower km post in metres is required",
+                  maxchars: 3),
+              _buildNumericField('A14 Node number', _nodeNumberController,
+                  validatorMessage: " Node number is required", maxchars: 6),
+              _buildTextField('A15 Link number', _linkNumberController,
+                  validatorMessage: "Link number is required", maxchars: 7),
+              _buildNumericField(
+                  'A16 Distance from Node in metres',
+                  validatorMessage: "Distance from Node in metres is required",
+                  _distanceFromNodeController,
                   maxchars: 5),
-              _buildNumericField('A17 East co-ordinate', maxchars: 6),
-              _buildNumericField('A18 North co-ordinate', maxchars: 6),
-              _buildNumericField('A19 Collision type',
-                  hintText: 'See separate Appendix', maxchars: 4),
+              _buildNumericField(
+                  'A17 East co-ordinate', _eastCoordinateController,
+                  validatorMessage: "East co-ordinate is required",
+                  maxchars: 6),
+              _buildNumericField(
+                  'A18 North co-ordinate', _northCoordinateController,
+                  validatorMessage: "North co-ordinate is required",
+                  maxchars: 6),
+              _buildNumericField('A19 Collision type', _collisionTypeController,
+                  validatorMessage: "Collision type is required",
+                  hintText: 'See separate Appendix',
+                  maxchars: 4),
               SingleChoiceCheckboxInput(
                 topic: 'A20 Any second collision occurance',
                 labels: [
@@ -455,8 +311,17 @@ class _TabAccidentState extends State<TabAccident> {
                   '2 With Pedestrian',
                   '3 With Fixed object',
                   '9 Others',
-                  '0 Not Applicable',
+                  '0 Not Applicable'
                 ],
+                onSaved: (selectedValue) {
+                  _secondCollisionOccurence = selectedValue;
+                },
+                validator: () {
+                  if (_secondCollisionOccurence == null) {
+                    return 'Please select an option for Any second collision occurance';
+                  }
+                  return null;
+                },
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A21 Road surface condition',
@@ -466,8 +331,17 @@ class _TabAccidentState extends State<TabAccident> {
                   '3 Flooded with water',
                   '4 Slippery surface(mud,oil,garbage,leaves)',
                   '9 Others',
-                  '0 Not known',
+                  '0 Not known'
                 ],
+                onSaved: (selectedValue) {
+                  _roadSurfaceCondition = selectedValue;
+                },
+                validator: () {
+                  if (_roadSurfaceCondition == null) {
+                    return 'Please select an option for Road surface condition';
+                  }
+                  return null;
+                },
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A22 Weather',
@@ -477,8 +351,17 @@ class _TabAccidentState extends State<TabAccident> {
                   '3 Rain',
                   '4 Fog/Mist',
                   '9 Others',
-                  '0 Not known',
+                  '0 Not known'
                 ],
+                onSaved: (selectedValue) {
+                  _weather = selectedValue;
+                },
+                validator: () {
+                  if (_weather == null) {
+                    return 'Please select an option for Weather';
+                  }
+                  return null;
+                },
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A23 Light condition',
@@ -490,6 +373,15 @@ class _TabAccidentState extends State<TabAccident> {
                   '5 Night,good street lighting',
                   '0 Not known',
                 ],
+                onSaved: (selectedValue) {
+                  _lightCondition = selectedValue;
+                },
+                validator: () {
+                  if (_lightCondition == null) {
+                    return 'Please select an option for Light condition';
+                  }
+                  return null;
+                },
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A24 Type of location',
@@ -505,6 +397,15 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Others',
                   '0 Not known/NA',
                 ],
+                onSaved: (selectedValue) {
+                  _locationType = selectedValue;
+                },
+                validator: () {
+                  if (_locationType == null) {
+                    return 'Please select an option for Type of location';
+                  }
+                  return null;
+                },
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A25 Type of location when pedestrian/s is/are involved',
@@ -519,32 +420,62 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Other',
                   '0 Not known/NA',
                 ],
+                onSaved: (selectedValue) {
+                  _locationTypeWhenPedestrianInvolved = selectedValue;
+                },
+                validator: () {
+                  if (_locationTypeWhenPedestrianInvolved == null) {
+                    return 'Please select an option for Type of location when pedestrian/s is/are involved';
+                  }
+                  return null;
+                },
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A26 Traffic control',
                 labels: [
                   '1 Police',
                   '2 Traffic lights',
-                  '3 Stop sign/marking'
-                      '4 Give way sign/marking',
+                  '3 Stop sign/marking',
+                  '4 Give way sign/marking',
                   '5 Controlled by traffic warden',
                   '6 No control',
                   '9 Other',
                   '0 Not known/NA',
                 ],
+                onSaved: (selectedValue) {
+                  _trafficControl = selectedValue;
+                },
+                validator: () {
+                  if (_trafficControl == null) {
+                    return 'Please select an option for Traffic control';
+                  }
+                  return null;
+                },
               ),
               SingleChoiceCheckboxInput(
                 topic: 'A27 Posted speed limit signs',
-                labels: [
-                  '1 Yes',
-                  '2 No',
-                ],
+                labels: ['1 Yes', '2 No'],
+                onSaved: (selectedValue) {
+                  _postedSpeedLimitSigns = selectedValue;
+                },
+                validator: () {
+                  if (_postedSpeedLimitSigns == null) {
+                    return 'Please select an option for Posted speed limit signs';
+                  }
+                  return null;
+                },
               ),
               _buildNumericField(
                   'A28 Gazetted speed limit for light vehicles(kmph)',
+                  _gazettedSpeedLimitForLightVehiclesController,
+                  validatorMessage:
+                      "Gazetted speed limit for light vehicles is required",
                   maxchars: 3),
               _buildNumericField(
                   'A29 Gazetted speed limit for heavy vehicles(kmph)',
+                  _gazettedSpeedLimitForHeavyVehiclesController,
+                  validatorMessage:
+                      "Gazetted speed limit for heavy vehicles is required",
                   maxchars: 3),
               SingleChoiceCheckboxInput(
                 topic: 'A30 Action taken by police',
@@ -553,17 +484,38 @@ class _TabAccidentState extends State<TabAccident> {
                   '2 No Prosecution',
                   '3 Parties settled',
                   '4 Offender unknown',
-                  '0 Not known/NA',
+                  '0 Not known/NA'
                 ],
+                onSaved: (selectedValue) {
+                  _policeAction = selectedValue;
+                },
+                validator: () {
+                  if (_policeAction == null) {
+                    return 'Please select an option for Action taken by police';
+                  }
+                  return null;
+                },
               ),
-              _buildNumericField('A31 Case number', maxchars: 10),
-              _buildNumericField('A32 B report', maxchars: 10),
+              _buildNumericField('A31 Case number', _caseNumberController,
+                  hintText: "if available", maxchars: 10),
+              _buildNumericField('A32 B report', _bReportController,
+                  hintText: "if available", maxchars: 10),
               SingleChoiceCheckboxInput(
                 topic: 'A33 Casualties',
                 labels: ['1 Fatal', '2 Grievous', '3 Non Grievous'],
+                onSaved: (selectedValue) {
+                  _casualties = selectedValue;
+                },
+                validator: () {
+                  if (_casualties == null) {
+                    return 'Please select an option for Casualties';
+                  }
+                  return null;
+                },
               ),
-              _buildTextField('A34 For research purpose', maxchars: 2),
-
+              _buildTextField(
+                  'A34 For research purpose', _researchPurposeController,
+                  maxchars: 2),
               SizedBox(height: 50.0),
               Container(
                 width: 150,
@@ -584,6 +536,98 @@ class _TabAccidentState extends State<TabAccident> {
       ),
     );
   }
+
+  Widget _buildTextField(String label, TextEditingController controller,
+      {String? validatorMessage, String hintText = '', required int maxchars}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.left,
+        ),
+        TextFormField(
+          controller: controller,
+          maxLength: maxchars,
+          maxLines: 1,
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(
+            //labelText: label,
+            /*floatingLabelStyle: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),*/
+            border: InputBorder.none,
+            filled: true,
+            hintText: hintText,
+            //floatingLabelBehavior: FloatingLabelBehavior.auto,
+          ),
+          validator: (value) {
+            if (validatorMessage != null && (value == null || value.isEmpty)) {
+              return validatorMessage;
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNumericField(String label, TextEditingController controller,
+      {String? validatorMessage, String hintText = '', required int maxchars}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.left,
+        ),
+        TextFormField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          maxLength: maxchars,
+          decoration: InputDecoration(
+            //labelText: label,
+            /*floatingLabelStyle: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),*/
+            border: InputBorder.none,
+            filled: true,
+            hintText: hintText,
+            //floatingLabelBehavior: FloatingLabelBehavior.auto,
+          ),
+          validator: (value) {
+            if (value?.isEmpty ?? true) {
+              return validatorMessage;
+            }
+            if (double.tryParse(value!) == null) {
+              return 'Please enter a valid number';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildReadOnlyField(String initialValue) {
+    return TextFormField(
+      initialValue: initialValue,
+      readOnly: true,
+      maxLength: 10,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        filled: true,
+      ),
+    );
+  }
 }
-
-
