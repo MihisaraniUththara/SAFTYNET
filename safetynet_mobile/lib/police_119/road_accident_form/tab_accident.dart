@@ -10,6 +10,7 @@ class TabAccident extends StatefulWidget {
 
 class _TabAccidentState extends State<TabAccident> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _saveAttempted = false; // Flag to track if the form has been submitted
 
   // Controllers for text and numeric fields
   final _divisionController = TextEditingController();
@@ -17,6 +18,7 @@ class _TabAccidentState extends State<TabAccident> {
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
   final _uniqueIdController = TextEditingController();
+  //final _dayOfWeek = TextEditingController();
   final _roadNumberController = TextEditingController();
   final _streetNameController = TextEditingController();
   final _nearestLowerkmPostController = TextEditingController();
@@ -50,6 +52,11 @@ class _TabAccidentState extends State<TabAccident> {
 
   // Method to save form data to Firestore
   Future<void> _saveForm() async {
+    setState(() {
+      _saveAttempted =
+          true; // Mark the form as submitted when the user clicks save
+    });
+
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -60,6 +67,7 @@ class _TabAccidentState extends State<TabAccident> {
         'date': _dateController.text.trim(),
         'time': _timeController.text.trim(),
         'uniqueId': _uniqueIdController.text.trim(),
+       // 'dayOfWeek': _dayOfWeek.text.trim(),
         'roadNumber': _roadNumberController.text.trim(),
         'streetName': _streetNameController.text.trim(),
         'kmPost': _nearestLowerkmPostController.text.trim(),
@@ -106,7 +114,7 @@ class _TabAccidentState extends State<TabAccident> {
           'A6': _classOfAccident,
           'A7': _urbanOrRural,
           'A8': _workdayOrHoliday,
-          //'A9': _
+          //'A9': _dayOfWeek.text.trim(),
           'A10': _roadNumberController.text.trim(),
           'A11': _streetNameController.text.trim(),
           'A12': _nearestLowerkmPostController.text.trim(),
@@ -146,7 +154,8 @@ class _TabAccidentState extends State<TabAccident> {
     } else {
       // Validation failed
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please correct the validation errors in the form')),
+        SnackBar(
+            content: Text('Please correct the validation errors in the form')),
       );
     }
   }
@@ -206,7 +215,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _classOfAccident = selectedValue;
                 },
                 validator: () {
-                  if (_classOfAccident == null) {
+                  if (_saveAttempted && _classOfAccident == null) {
                     return 'Please select an option for Class of Accident';
                   }
                   return null;
@@ -219,7 +228,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _urbanOrRural = selectedValue;
                 },
                 validator: () {
-                  if (_urbanOrRural == null) {
+                  if (_saveAttempted && _urbanOrRural == null) {
                     return 'Please select an option for Urban/Rural';
                   }
                   return null;
@@ -238,7 +247,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _workdayOrHoliday = selectedValue;
                 },
                 validator: () {
-                  if (_workdayOrHoliday == null) {
+                  if (_saveAttempted && _workdayOrHoliday == null) {
                     return 'Please select an option for workday or holiday';
                   }
                   return null;
@@ -252,23 +261,34 @@ class _TabAccidentState extends State<TabAccident> {
                 ),
               ),
               _buildReadOnlyField(
-                DateTime.now().weekday == DateTime.sunday
-                    ? '1 Sunday'
-                    : DateTime.now().weekday == DateTime.monday
-                        ? '2 Monday'
-                        : DateTime.now().weekday == DateTime.tuesday
-                            ? '3 Tuesday'
-                            : DateTime.now().weekday == DateTime.wednesday
-                                ? '4 Wednesday'
-                                : DateTime.now().weekday == DateTime.thursday
-                                    ? '5 Thursday'
-                                    : DateTime.now().weekday == DateTime.friday
-                                        ? '6 Friday'
-                                        : DateTime.now().weekday ==
-                                                DateTime.saturday
-                                            ? '7 Saturday'
-                                            : '',
-              ),
+                  DateTime.now().weekday == DateTime.sunday
+                      ? '1 Sunday'
+                      : DateTime.now().weekday == DateTime.monday
+                          ? '2 Monday'
+                          : DateTime.now().weekday == DateTime.tuesday
+                              ? '3 Tuesday'
+                              : DateTime.now().weekday == DateTime.wednesday
+                                  ? '4 Wednesday'
+                                  : DateTime.now().weekday == DateTime.thursday
+                                      ? '5 Thursday'
+                                      : DateTime.now().weekday ==
+                                              DateTime.friday
+                                          ? '6 Friday'
+                                          : '7 Saturday', (dayOfWeek) {
+                // Save the numeric day prefix to Firestore
+                // Replace 'A9' with the appropriate key for the database field
+                FirebaseFirestore.instance
+                    .collection('accident')
+                    .doc('accidentdraft')
+                    .set(
+                        {
+                      'A9':
+                          dayOfWeek, // This saves the prefix value, like '1' for Sunday
+                    },
+                        SetOptions(
+                            merge:
+                                true)); // Use merge to avoid overwriting the entire document*/
+              }),
               _buildTextField('A10 Road Number', _roadNumberController,
                   validatorMessage: "Road Number is required", maxchars: 4),
               _buildTextField('A11 Road/Street Name', _streetNameController,
@@ -317,7 +337,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _secondCollisionOccurence = selectedValue;
                 },
                 validator: () {
-                  if (_secondCollisionOccurence == null) {
+                  if (_saveAttempted && _secondCollisionOccurence == null) {
                     return 'Please select an option for Any second collision occurance';
                   }
                   return null;
@@ -337,7 +357,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _roadSurfaceCondition = selectedValue;
                 },
                 validator: () {
-                  if (_roadSurfaceCondition == null) {
+                  if (_saveAttempted && _roadSurfaceCondition == null) {
                     return 'Please select an option for Road surface condition';
                   }
                   return null;
@@ -357,7 +377,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _weather = selectedValue;
                 },
                 validator: () {
-                  if (_weather == null) {
+                  if (_saveAttempted && _weather == null) {
                     return 'Please select an option for Weather';
                   }
                   return null;
@@ -377,7 +397,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _lightCondition = selectedValue;
                 },
                 validator: () {
-                  if (_lightCondition == null) {
+                  if (_saveAttempted && _lightCondition == null) {
                     return 'Please select an option for Light condition';
                   }
                   return null;
@@ -401,7 +421,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _locationType = selectedValue;
                 },
                 validator: () {
-                  if (_locationType == null) {
+                  if (_saveAttempted && _locationType == null) {
                     return 'Please select an option for Type of location';
                   }
                   return null;
@@ -424,7 +444,8 @@ class _TabAccidentState extends State<TabAccident> {
                   _locationTypeWhenPedestrianInvolved = selectedValue;
                 },
                 validator: () {
-                  if (_locationTypeWhenPedestrianInvolved == null) {
+                  if (_saveAttempted &&
+                      _locationTypeWhenPedestrianInvolved == null) {
                     return 'Please select an option for Type of location when pedestrian/s is/are involved';
                   }
                   return null;
@@ -446,7 +467,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _trafficControl = selectedValue;
                 },
                 validator: () {
-                  if (_trafficControl == null) {
+                  if (_saveAttempted && _trafficControl == null) {
                     return 'Please select an option for Traffic control';
                   }
                   return null;
@@ -459,7 +480,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _postedSpeedLimitSigns = selectedValue;
                 },
                 validator: () {
-                  if (_postedSpeedLimitSigns == null) {
+                  if (_saveAttempted && _postedSpeedLimitSigns == null) {
                     return 'Please select an option for Posted speed limit signs';
                   }
                   return null;
@@ -490,7 +511,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _policeAction = selectedValue;
                 },
                 validator: () {
-                  if (_policeAction == null) {
+                  if (_saveAttempted && _policeAction == null) {
                     return 'Please select an option for Action taken by police';
                   }
                   return null;
@@ -507,7 +528,7 @@ class _TabAccidentState extends State<TabAccident> {
                   _casualties = selectedValue;
                 },
                 validator: () {
-                  if (_casualties == null) {
+                  if (_saveAttempted && _casualties == null) {
                     return 'Please select an option for Casualties';
                   }
                   return null;
@@ -619,7 +640,15 @@ class _TabAccidentState extends State<TabAccident> {
     );
   }
 
-  Widget _buildReadOnlyField(String initialValue) {
+  Widget _buildReadOnlyField(
+      String initialValue, void Function(String?) onSaved) {
+    String? _extractPrefix(String label) {
+      return label.split(' ')[0]; // Extract the prefix (e.g., '1', '2', etc.)
+    }
+
+    // Save the prefix when initializing
+    onSaved(_extractPrefix(initialValue));
+
     return TextFormField(
       initialValue: initialValue,
       readOnly: true,
