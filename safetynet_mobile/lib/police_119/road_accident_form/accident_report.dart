@@ -65,7 +65,7 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
           children: [
             TabAccident(),
             const TabElement(),
-            const TabCasualty(),
+            //const TabCasualty(),
             //const TabOther(),
           ],
         ),
@@ -74,52 +74,6 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
   }
 }
 
-/*
-          SingleChoiceCheckboxInput(
-                  topic: 'C1 Casualty details',
-                  labels: ['1 Fatal', '2 Grievous', '3 Non grievous'],
-                  onSaved: (value) =>
-                      _saveSingleChoice('casualty_details', value),
-                ),
-                SingleChoiceCheckboxInput(
-                  topic: 'C3 Category',
-                  labels: [
-                    '1 Driver/Rider',
-                    '2 Pedestrian',
-                    '3 Passenger/Pillion rider',
-                    '4 Passenger/Pillion rider falling off vehicle',
-                    '5 Passenger entering or leaving bus',
-                    '6 Not known'
-                  ],
-                  onSaved: (value) => _saveSingleChoice('category', value),
-                ),
-                SingleChoiceCheckboxInput(
-                  topic: 'C4 Sex',
-                  labels: ['1 Male', '2 Female', '3 Not known'],
-                  onSaved: (value) => _saveSingleChoice('sex_c4', value),
-                ),
-                MultipleChoiceCheckboxInput(
-                  topic: 'C6 Protection',
-                  labels: [
-                    '1 Safety belt, worn',
-                    '2 Safety belt, not worn',
-                    '3 Helmet, worn',
-                    '4 Helmet, not worn',
-                    '5 Child restraint seat used',
-                    '6 Not known/NA'
-                  ],
-                  onSaved: (values) =>
-                      _saveMultipleChoice('protection', values),
-                ),
-                SingleChoiceCheckboxInput(
-                  topic: 'C7 Hospitalized',
-                  labels: [
-                    '1 Injured and admitted to hospital at least 1 day',
-                    '2 Injured but not admitted to hospital or admitted less than 1 day'
-                  ],
-                  onSaved: (value) => _saveSingleChoice('hospitalized', value),
-                ),
-              */
 
 
 
