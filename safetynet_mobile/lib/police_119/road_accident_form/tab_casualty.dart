@@ -13,8 +13,6 @@ class TabCasualty extends StatefulWidget {
 
 class _TabCasualtyState extends State<TabCasualty> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  File? _pickedImage;
-  File? _collisionSketch;
 
   // Declare the formData map to store all form values
   Map<String, dynamic> formData = {};
@@ -55,13 +53,12 @@ class _TabCasualtyState extends State<TabCasualty> {
       _checkboxStates[sectionPrefix]![rowIndex][columnIndex] = true;
 
       // Save the selected value using the label's prefix
-      String casualty =
-          String.fromCharCode(65 + columnIndex); // A, B, C...
+      String casualty = String.fromCharCode(65 + columnIndex); // A, B, C...
       saveFormSectionValue(sectionPrefix + casualty, labelPrefix);
     });
   }
 
-   void _addCheckboxColumn(int sectionIndex) {
+  void _addCheckboxColumn(int sectionIndex) {
     setState(() {
       for (var row in _checkboxStates['E${sectionIndex + 1}']!) {
         row.add(false);
@@ -98,7 +95,7 @@ class _TabCasualtyState extends State<TabCasualty> {
     formData[key] = value;
     print('Saved: $key = $value');
   }
-  
+
   Future<void> _saveForm() async {
     /*setState(() {
       _saveAttempted =
@@ -112,7 +109,7 @@ class _TabCasualtyState extends State<TabCasualty> {
       try {
         await FirebaseFirestore.instance
             .collection('accident')
-            .doc('elementdraft')
+            .doc('casualtydraft')
             .set(formData);
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -164,8 +161,8 @@ class _TabCasualtyState extends State<TabCasualty> {
                 ],
                 checkboxStates: _checkboxStates['C2']!,
                 columnsCount: _columnsCount[0],
-                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
-                    _toggleCheckbox('C2', rowIndex,labelPrefix, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('C2', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'C3 Category',
@@ -179,8 +176,8 @@ class _TabCasualtyState extends State<TabCasualty> {
                 ],
                 checkboxStates: _checkboxStates['C3']!,
                 columnsCount: _columnsCount[1],
-                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
-                    _toggleCheckbox('C3', rowIndex,labelPrefix, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('C3', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'C4 Sex',
@@ -191,8 +188,8 @@ class _TabCasualtyState extends State<TabCasualty> {
                 ],
                 checkboxStates: _checkboxStates['C4']!,
                 columnsCount: _columnsCount[2],
-                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
-                    _toggleCheckbox('C4', rowIndex,labelPrefix, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('C4', rowIndex, labelPrefix, columnIndex),
               ),
               IntegerInputFields(
                 topic: 'C5 Age',
@@ -214,8 +211,8 @@ class _TabCasualtyState extends State<TabCasualty> {
                 ],
                 checkboxStates: _checkboxStates['C6']!,
                 columnsCount: _columnsCount[3],
-                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
-                    _toggleCheckbox('C6', rowIndex,labelPrefix, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('C6', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'C7 Hospitalized',
@@ -225,33 +222,8 @@ class _TabCasualtyState extends State<TabCasualty> {
                 ],
                 checkboxStates: _checkboxStates['C7']!,
                 columnsCount: _columnsCount[4],
-                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
-                    _toggleCheckbox('C7', rowIndex,labelPrefix, columnIndex),
-              ),
-              Row(
-                children: [
-                  ImagePickerFormField(
-                    label: 'Collision Sketch',
-                    onSaved: (file) => _collisionSketch = file,
-                    validator: (file) {
-                      if (file == null) {
-                        return 'Please attach an image';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(width: 20),
-                  ImagePickerFormField(
-                    label: 'Add Picture',
-                    onSaved: (file) => _pickedImage = file,
-                    validator: (file) {
-                      if (file == null) {
-                        return 'Please attach an image';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('C7', rowIndex, labelPrefix, columnIndex),
               ),
               SizedBox(height: 20),
               ElevatedButton(
@@ -261,124 +233,18 @@ class _TabCasualtyState extends State<TabCasualty> {
                 child: Text('Add Traffic Element'),
               ),
               SizedBox(height: 50.0),
-              Row(
-                children: [
-                  Container(
-                    width: 150,
-                    child: ElevatedButton(
-                      child: Text(
-                        'Save',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      onPressed: _saveForm,
-                    ),
-                  ),
-                  SizedBox(width: 30.0),
-                  Container(
-                    width: 150,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Color(0xFFfbbe00), 
-                      ),
-                      child: Text(
-                        'Submit',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          _formKey.currentState?.save();
-                          print('Form saved: $formData');
-                        } else {
-                          print("Error");
-                          return;
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class TabOther extends StatefulWidget {
-  const TabOther({super.key});
-
-  @override
-  State<TabOther> createState() => TabOtherState();
-}
-
-class TabOtherState extends State<TabOther> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  File? _pickedImage;
-  File? _collisionSketch;
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        margin: EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: [
-                  ImagePickerFormField(
-                    label: 'Collision Sketch',
-                    onSaved: (file) => _collisionSketch = file,
-                    validator: (file) {
-                      if (file == null) {
-                        return 'Please attach an image';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(width: 10),
-                  ImagePickerFormField(
-                    label: 'Add Picture',
-                    onSaved: (file) => _pickedImage = file,
-                    validator: (file) {
-                      if (file == null) {
-                        return 'Please attach an image';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(height: 50.0),
               Container(
                 width: 150,
                 child: ElevatedButton(
                   child: Text(
-                    'Submit',
+                    'Save',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16.0,
                     ),
                   ),
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      _formKey.currentState?.save();
-                      
-                    } else {
-                      print("Error");
-                      return;
-                    }
-                  },               ),
+                  onPressed: _saveForm,
+                ),
               ),
             ],
           ),

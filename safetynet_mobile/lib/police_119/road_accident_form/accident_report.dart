@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'tab_accident.dart';
 import 'tab_element.dart';
 import 'tab_casualty.dart';
+import 'tab_other.dart';
 
 class AccidentReportForm extends StatefulWidget {
   @override
