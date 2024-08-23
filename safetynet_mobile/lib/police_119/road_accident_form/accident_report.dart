@@ -1,9 +1,4 @@
-//import 'dart:io';
-
-//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/widgets.dart';
-//import 'package:get/get_connect/http/src/utils/utils.dart';
 
 import 'tab_accident.dart';
 import 'tab_element.dart';
@@ -18,7 +13,7 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -49,10 +44,10 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                 TabBar(
                   //controller: _tabController,
                   tabs: const [
-                    Tab(text: 'ACCIDENT DETAILS'),
-                    Tab(text: 'ELEMENT DETAILS'),
-                    Tab(text: 'CASUALTY DETAILS'),
-                    //Tab(text: 'OTHER DETAILS'),
+                    Tab(text: 'ACCIDENT'),
+                    Tab(text: 'ELEMENTS'),
+                    Tab(text: 'CASUALTY'),
+                    Tab(text: 'OTHER'),
                   ],
                 ),
               ],
@@ -65,8 +60,8 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
           children: [
             TabAccident(),
             const TabElement(),
-            //const TabCasualty(),
-            //const TabOther(),
+            const TabCasualty(),
+            const TabOther(),
           ],
         ),
       ),

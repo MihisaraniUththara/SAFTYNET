@@ -1,9 +1,6 @@
-/*import 'dart:io';
-
-//import 'package:flutter/cupertino.dart';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/widgets.dart';
-//import 'package:get/get_connect/http/src/utils/utils.dart';
 
 import 'input_fields.dart';
 
@@ -19,14 +16,18 @@ class _TabCasualtyState extends State<TabCasualty> {
   File? _pickedImage;
   File? _collisionSketch;
 
+  // Declare the formData map to store all form values
+  Map<String, dynamic> formData = {};
+
   // Store the checkbox states for each section
-  final List<List<List<bool>>> _checkboxStates = [
-    List.generate(3, (_) => List.generate(3, (_) => false)), // Severity
-    List.generate(6, (_) => List.generate(3, (_) => false)), // Category
-    List.generate(3, (_) => List.generate(3, (_) => false)), // Sex
-    List.generate(6, (_) => List.generate(3, (_) => false)), // Protection
-    List.generate(2, (_) => List.generate(3, (_) => false)), // Hospitalized
-  ];
+  final Map<String, List<List<bool>>> _checkboxStates = {
+    'C2': List.generate(3, (_) => List.generate(3, (_) => false)), // Severity
+    'C3': List.generate(6, (_) => List.generate(3, (_) => false)), // Category
+    'C4': List.generate(3, (_) => List.generate(3, (_) => false)), // Sex
+    'C6': List.generate(6, (_) => List.generate(3, (_) => false)), // Protection
+    'C7':
+        List.generate(2, (_) => List.generate(3, (_) => false)), // Hospitalized
+  };
 
   // Keep track of the number of columns for each section
   final List<int> _columnsCount = [
@@ -40,19 +41,29 @@ class _TabCasualtyState extends State<TabCasualty> {
   List<int> _topicTextFieldsCount = [3];
   List<int> _integerInputFieldsCount = [3];
 
-  void _toggleCheckbox(int sectionIndex, int rowIndex, int columnIndex) {
+  void _toggleCheckbox(
+      String sectionPrefix, int rowIndex, String labelPrefix, int columnIndex) {
     setState(() {
-      for (int i = 0; i < _checkboxStates[sectionIndex].length; i++) {
-        _checkboxStates[sectionIndex][i][columnIndex] = false;
+      // Reset all other checkboxes in the row for that section
+      if (_checkboxStates[sectionPrefix] != null) {
+        for (int i = 0; i < _checkboxStates[sectionPrefix]!.length; i++) {
+          _checkboxStates[sectionPrefix]![i][columnIndex] = false;
+        }
       }
-      _checkboxStates[sectionIndex][rowIndex][columnIndex] = true;
-      saveFormSectionValue('C${sectionIndex + 1}', columnIndex, rowIndex + 1);
+
+      // Set the selected checkbox to true
+      _checkboxStates[sectionPrefix]![rowIndex][columnIndex] = true;
+
+      // Save the selected value using the label's prefix
+      String casualty =
+          String.fromCharCode(65 + columnIndex); // A, B, C...
+      saveFormSectionValue(sectionPrefix + casualty, labelPrefix);
     });
   }
 
-  void _addCheckboxColumn(int sectionIndex) {
+   void _addCheckboxColumn(int sectionIndex) {
     setState(() {
-      for (var row in _checkboxStates[sectionIndex]) {
+      for (var row in _checkboxStates['E${sectionIndex + 1}']!) {
         row.add(false);
       }
       _columnsCount[sectionIndex]++;
@@ -71,6 +82,57 @@ class _TabCasualtyState extends State<TabCasualty> {
     });
   }
 
+  void _addColumnsAndFields() {
+    for (int i = 0; i < 12; i++) {
+      _addCheckboxColumn(i);
+    }
+    for (int i = 0; i < _topicTextFieldsCount.length; i++) {
+      _addTopicTextFields(i);
+    }
+    for (int i = 0; i < _integerInputFieldsCount.length; i++) {
+      _addIntegerInputFields(i);
+    }
+  }
+
+  void saveFormSectionValue(String key, dynamic value) {
+    formData[key] = value;
+    print('Saved: $key = $value');
+  }
+  
+  Future<void> _saveForm() async {
+    /*setState(() {
+      _saveAttempted =
+          true; // Mark the form as submitted when the user clicks save
+    });*/
+
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      // Save form data to Firestore
+      try {
+        await FirebaseFirestore.instance
+            .collection('accident')
+            .doc('elementdraft')
+            .set(formData);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Draft saved successfully')),
+        );
+      } catch (e) {
+        print('Failed to save draft: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save draft')),
+        );
+      }
+    } else {
+      // Validation failed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Please correct the validation errors in the form')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -85,6 +147,9 @@ class _TabCasualtyState extends State<TabCasualty> {
                 topic: 'C1 Traffic element number',
                 maxChars: 1,
                 columnsCount: _topicTextFieldsCount[0],
+                onChanged: (key, value) {
+                  formData[key] = value;
+                },
               ),
               Text(
                   'If a driver or passenger casualty indicate the vehicles element number in which the casualty traveled.'),
@@ -97,10 +162,10 @@ class _TabCasualtyState extends State<TabCasualty> {
                   '2 Grievous',
                   '3 Non grievous',
                 ],
-                checkboxStates: _checkboxStates[0],
+                checkboxStates: _checkboxStates['C2']!,
                 columnsCount: _columnsCount[0],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(0, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
+                    _toggleCheckbox('C2', rowIndex,labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'C3 Category',
@@ -112,10 +177,10 @@ class _TabCasualtyState extends State<TabCasualty> {
                   '5 Passenger entering or leaving bus',
                   '0 Not known',
                 ],
-                checkboxStates: _checkboxStates[1],
+                checkboxStates: _checkboxStates['C3']!,
                 columnsCount: _columnsCount[1],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(1, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
+                    _toggleCheckbox('C3', rowIndex,labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'C4 Sex',
@@ -124,15 +189,18 @@ class _TabCasualtyState extends State<TabCasualty> {
                   '2 Female',
                   '3 Not known',
                 ],
-                checkboxStates: _checkboxStates[2],
+                checkboxStates: _checkboxStates['C4']!,
                 columnsCount: _columnsCount[2],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(2, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
+                    _toggleCheckbox('C4', rowIndex,labelPrefix, columnIndex),
               ),
               IntegerInputFields(
                 topic: 'C5 Age',
                 maxChars: 2,
                 columnsCount: _integerInputFieldsCount[0],
+                onChanged: (key, value) {
+                  formData[key] = value;
+                },
               ),
               FormSection(
                 topic: 'C6 Protection',
@@ -144,10 +212,10 @@ class _TabCasualtyState extends State<TabCasualty> {
                   '5 Child restraint seat used',
                   '0 Not known/NA',
                 ],
-                checkboxStates: _checkboxStates[3],
+                checkboxStates: _checkboxStates['C6']!,
                 columnsCount: _columnsCount[3],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(3, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
+                    _toggleCheckbox('C6', rowIndex,labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'C7 Hospitalized',
@@ -155,10 +223,10 @@ class _TabCasualtyState extends State<TabCasualty> {
                   '1 Injured and admitted to hospital at least 1 day',
                   '2 Injured but not admitted to hospital or admitted less than 1 day',
                 ],
-                checkboxStates: _checkboxStates[4],
+                checkboxStates: _checkboxStates['C7']!,
                 columnsCount: _columnsCount[4],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(4, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
+                    _toggleCheckbox('C7', rowIndex,labelPrefix, columnIndex),
               ),
               Row(
                 children: [
@@ -188,15 +256,7 @@ class _TabCasualtyState extends State<TabCasualty> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  _addCheckboxColumn(0); // Add column to Severity
-                  _addCheckboxColumn(1); // Add column to Category
-                  _addCheckboxColumn(2); // Add column to Sex
-                  _addCheckboxColumn(3); // Add column to Protection
-                  _addCheckboxColumn(4); // Add column to Hospitalized
-
-                  _addTopicTextFields(
-                      0); // Add column to Traffic element number
-                  _addIntegerInputFields(0); // Add column to Age
+                  _addColumnsAndFields();
                 },
                 child: Text('Add Traffic Element'),
               ),
@@ -213,15 +273,7 @@ class _TabCasualtyState extends State<TabCasualty> {
                           fontSize: 16.0,
                         ),
                       ),
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          _formKey.currentState?.save();
-                          print('Form saved: $formData');
-                        } else {
-                          print("Error");
-                          return;
-                        }
-                      },
+                      onPressed: _saveForm,
                     ),
                   ),
                   SizedBox(width: 30.0),
@@ -230,7 +282,7 @@ class _TabCasualtyState extends State<TabCasualty> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            Color(0xFFfbbe00), // Add your desired color here
+                            Color(0xFFfbbe00), 
                       ),
                       child: Text(
                         'Submit',
@@ -260,7 +312,7 @@ class _TabCasualtyState extends State<TabCasualty> {
   }
 }
 
-/*class TabOther extends StatefulWidget {
+class TabOther extends StatefulWidget {
   const TabOther({super.key});
 
   @override
@@ -321,13 +373,12 @@ class TabOtherState extends State<TabOther> {
                   onPressed: () {
                     if (_formKey.currentState?.validate() ?? false) {
                       _formKey.currentState?.save();
-                      print('Form saved: $formData');
+                      
                     } else {
                       print("Error");
                       return;
                     }
-                  },
-                ),
+                  },               ),
               ),
             ],
           ),
@@ -335,4 +386,4 @@ class TabOtherState extends State<TabOther> {
       ),
     );
   }
-}*/*/
+}
