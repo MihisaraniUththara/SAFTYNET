@@ -153,7 +153,7 @@ class FormSection extends StatelessWidget {
   final List<String> labels;
   final List<List<bool>> checkboxStates;
   final int columnsCount;
-  final Function(int, int) onCheckboxChanged;
+  final Function(int, String, int) onCheckboxChanged;
 
   const FormSection({
     required this.topic,
@@ -194,12 +194,17 @@ class FormSection extends StatelessWidget {
           int rowIndex = entry.key;
           String label = entry.value;
 
+          // Extract the prefix (before the first space)
+          String labelPrefix = label.split(' ')[0];
+
           return CheckboxRow(
             label: label,
             checkboxStates: checkboxStates[rowIndex],
             columnsCount: columnsCount,
-            onChanged: (columnIndex) =>
-                onCheckboxChanged(rowIndex, columnIndex),
+            onChanged: (columnIndex) {
+              // Pass the prefix ,row index and column index to the parent widget
+              onCheckboxChanged(rowIndex,labelPrefix, columnIndex);
+            },
           );
         }).toList(),
         SizedBox(height: 20),
@@ -235,7 +240,7 @@ class CheckboxRow extends StatelessWidget {
                   checkboxStates.length > index ? checkboxStates[index] : false,
               onChanged: (value) {
                 if (value == true) {
-                  onChanged(index);
+                  onChanged(index);// Pass column index when checked
                 }
               },
             ),
@@ -246,16 +251,21 @@ class CheckboxRow extends StatelessWidget {
   }
 }
 
+
 //for 3 column text input fields
 class TopicTextFields extends StatefulWidget {
-  final String topic;
+  final String
+      topic; // Topic with prefix (e.g., "E2 Vehicle Registration number")
   final int maxChars;
   final int columnsCount;
+  final Function(String, String) onChanged; // Callback with key and value
 
-  TopicTextFields(
-      {required this.topic,
-      required this.maxChars,
-      required this.columnsCount});
+  TopicTextFields({
+    required this.topic,
+    required this.maxChars,
+    required this.columnsCount,
+    required this.onChanged,
+  });
 
   @override
   _TopicTextFieldsState createState() => _TopicTextFieldsState();
@@ -278,8 +288,15 @@ class _TopicTextFieldsState extends State<TopicTextFields> {
     }
   }
 
+  String _extractPrefix(String topic) {
+    // Extracts the prefix (e.g., "E2") from the topic
+    return topic.split(' ')[0]; // Assumes the prefix is the first word
+  }
+
   @override
   Widget build(BuildContext context) {
+    String prefix = _extractPrefix(widget.topic); // Extract the prefix
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -310,9 +327,16 @@ class _TopicTextFieldsState extends State<TopicTextFields> {
                         border: InputBorder.none,
                         filled: true,
                       ),
-                      /*onSaved: (value) {
-                        _userInputs[index] = value!;
-                      },*/
+                      onChanged: (value) {
+                        setState(() {
+                          _userInputs[index] = value;
+                        });
+                        // Generate key for the form states, e.g., 'E2A', 'E2B', 'E2C'
+                        String key =
+                            '$prefix${String.fromCharCode(65 + index)}';
+                        widget.onChanged(key, value); // Pass key and value
+                        //print('Key: $key, Value: $value');
+                      },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter some text';
@@ -336,11 +360,14 @@ class IntegerInputFields extends StatefulWidget {
   final String topic;
   final int maxChars;
   final int columnsCount;
+  final Function(String, String) onChanged; // Callback with key and value
 
-  IntegerInputFields(
-      {required this.topic,
-      required this.maxChars,
-      required this.columnsCount});
+  IntegerInputFields({
+    required this.topic,
+    required this.maxChars,
+    required this.columnsCount,
+    required this.onChanged,
+  });
 
   @override
   _IntegerInputFieldsState createState() => _IntegerInputFieldsState();
@@ -363,8 +390,15 @@ class _IntegerInputFieldsState extends State<IntegerInputFields> {
     }
   }
 
+  String _extractPrefix(String topic) {
+    // Extracts the prefix (e.g., "E3") from the topic
+    return topic.split(' ')[0]; // Assumes the prefix is the first word
+  }
+
   @override
   Widget build(BuildContext context) {
+    String prefix = _extractPrefix(widget.topic); // Extract the prefix
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -395,9 +429,15 @@ class _IntegerInputFieldsState extends State<IntegerInputFields> {
                         border: InputBorder.none,
                         filled: true,
                       ),
-                      /*onSaved: (value) {
-                        _userInputs[index] = int.tryParse(value!);
-                      },*/
+                      onChanged: (value) {
+                        setState(() {
+                          _userInputs[index] = int.tryParse(value);
+                        });
+                        // Generate key for the form states, e.g., 'E3A', 'E3B', 'E3C'
+                        String key =
+                            '$prefix${String.fromCharCode(65 + index)}';
+                        widget.onChanged(key, value); // Pass key and value
+                      },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a number';
@@ -475,17 +515,6 @@ class ImagePickerFormField extends FormField<File> {
         );
 }
 
-Map<String, String> formData = {};
 
-void saveInputValue(String prefix, int index, String value) {
-  String key = '$prefix${String.fromCharCode(65 + index)}'; // e.g., E1A, E1B
-  formData[key] = value;
-  print('Saved: $key = $value');
-}
 
-void saveFormSectionValue(String prefix, int columnIndex, int labelPrefix) {
-  String key =
-      '$prefix${String.fromCharCode(65 + columnIndex)}'; // e.g., E1A, E1B
-  formData[key] = labelPrefix.toString();
-  print('Saved: $key = ${labelPrefix.toString()}');
-}
+

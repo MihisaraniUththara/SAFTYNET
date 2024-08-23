@@ -1,11 +1,5 @@
-//import 'dart:io';
-
-//import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/widgets.dart';
-//import 'package:get/get_connect/http/src/utils/utils.dart';
-
 import 'input_fields.dart';
 
 class TabElement extends StatefulWidget {
@@ -18,46 +12,56 @@ class TabElement extends StatefulWidget {
 class _TabElementState extends State<TabElement> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  // Declare the formData map to store all form values
+  Map<String, dynamic> formData = {};
+
   // Store the checkbox states for each section
-  final List<List<List<bool>>> _checkboxStates = [
-    List.generate(15, (_) => List.generate(3, (_) => false)), // Element Type
-    List.generate(
+  final Map<String, List<List<bool>>> _checkboxStates = {
+    'E1': List.generate(
+        15, (_) => List.generate(3, (_) => false)), // Element Type
+    'E5': List.generate(
         7, (_) => List.generate(3, (_) => false)), // Vehicle Ownership
-    List.generate(
+    'E7': List.generate(
         3, (_) => List.generate(3, (_) => false)), // Driver/Rider/Pedest Sex
-    List.generate(6,
+    'E10': List.generate(6,
         (_) => List.generate(3, (_) => false)), // Validity of driving license
-    List.generate(
+    'E13': List.generate(
         11,
         (_) => List.generate(3,
-            (_) => false)), // Human pre crash factors contributing to accident
-    List.generate(
+            (_) => false)), // Human pre crash factor 1 contributing to accident
+    'E14': List.generate(
+        11,
+        (_) => List.generate(3,
+            (_) => false)), // human pre crash factor 2 contributing to accident
+    'E15': List.generate(
         6,
         (_) => List.generate(
             3,
             (_) =>
                 false)), // Pedestrian pre crash factor contributing to accident
-    List.generate(
+    'E16': List.generate(
         6,
         (_) => List.generate(
             3, (_) => false)), // Road pre crash factor contributing to accident
-    List.generate(
+    'E17': List.generate(
         8,
         (_) => List.generate(
             3,
             (_) =>
                 false)), // Vehicle pre crash factor defects contributing to accident
-    List.generate(
+    'E18': List.generate(
         8,
         (_) => List.generate(
             3, (_) => false)), // Crash factor contributing to accident severity
-    List.generate(6, (_) => List.generate(3, (_) => false)), // Other factors
-    List.generate(3, (_) => List.generate(3, (_) => false)), // Alcohol test
-    List.generate(
+    'E19': List.generate(
+        6, (_) => List.generate(3, (_) => false)), // Other factors
+    'E20':
+        List.generate(3, (_) => List.generate(3, (_) => false)), // Alcohol test
+    'E21': List.generate(
         3,
         (_) =>
             List.generate(3, (_) => false)), // Driver/Rider/Pedestrian at fault
-  ];
+  };
 
   // Keep track of the number of columns for each section
   final List<int> _columnsCount = [
@@ -78,19 +82,28 @@ class _TabElementState extends State<TabElement> {
   List<int> _topicTextFieldsCount = [3, 3, 3, 3];
   List<int> _integerInputFieldsCount = [3, 3, 3, 3, 3];
 
-  void _toggleCheckbox(int sectionIndex, int rowIndex, int columnIndex) {
-    setState(() {
-      for (int i = 0; i < _checkboxStates[sectionIndex].length; i++) {
-        _checkboxStates[sectionIndex][i][columnIndex] = false;
+  void _toggleCheckbox(String sectionPrefix,int rowIndex, String labelPrefix, int columnIndex) {
+  setState(() {
+    // Reset all other checkboxes in the row for that section
+    if (_checkboxStates[sectionPrefix] != null) {
+      for (int i = 0; i < _checkboxStates[sectionPrefix]!.length; i++) {
+        _checkboxStates[sectionPrefix]![i][columnIndex] = false;
       }
-      _checkboxStates[sectionIndex][rowIndex][columnIndex] = true;
-      saveFormSectionValue('E${sectionIndex + 1}', columnIndex, rowIndex + 1);
-    });
-  }
+    }
+
+    // Set the selected checkbox to true
+    _checkboxStates[sectionPrefix]![rowIndex][columnIndex] = true;
+
+    // Save the selected value using the label's prefix
+    String trafficElement = String.fromCharCode(65 + columnIndex); // A, B, C...
+    saveFormSectionValue(sectionPrefix + trafficElement, labelPrefix);
+  });
+}
+
 
   void _addCheckboxColumn(int sectionIndex) {
     setState(() {
-      for (var row in _checkboxStates[sectionIndex]) {
+      for (var row in _checkboxStates['E${sectionIndex + 1}']!) {
         row.add(false);
       }
       _columnsCount[sectionIndex]++;
@@ -107,6 +120,57 @@ class _TabElementState extends State<TabElement> {
     setState(() {
       _integerInputFieldsCount[sectionIndex]++;
     });
+  }
+
+  void _addColumnsAndFields() {
+    for (int i = 0; i < 12; i++) {
+      _addCheckboxColumn(i);
+    }
+    for (int i = 0; i < _topicTextFieldsCount.length; i++) {
+      _addTopicTextFields(i);
+    }
+    for (int i = 0; i < _integerInputFieldsCount.length; i++) {
+      _addIntegerInputFields(i);
+    }
+  }
+
+  void saveFormSectionValue(String key, dynamic value) {
+    formData[key] = value;
+    print('Saved: $key = $value');
+  }
+
+  Future<void> _saveForm() async {
+    /*setState(() {
+      _saveAttempted =
+          true; // Mark the form as submitted when the user clicks save
+    });*/
+
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      // Save form data to Firestore
+      try {
+        await FirebaseFirestore.instance
+            .collection('accident')
+            .doc('elementdraft')
+            .set(formData);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Draft saved successfully')),
+        );
+      } catch (e) {
+        print('Failed to save draft: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save draft')),
+        );
+      }
+    } else {
+      // Validation failed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Please correct the validation errors in the form')),
+      );
+    }
   }
 
   @override
@@ -138,25 +202,35 @@ class _TabElementState extends State<TabElement> {
                   '19 Others',
                   '00 Not known'
                 ],
-                checkboxStates: _checkboxStates[0],
+                checkboxStates: _checkboxStates['E1']!,
                 columnsCount: _columnsCount[0],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(0, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex,labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E1', rowIndex, labelPrefix, columnIndex),
               ),
               TopicTextFields(
                 topic: 'E2 Vehicle Registration number',
                 maxChars: 9,
-                columnsCount: _topicTextFieldsCount[0],
+                columnsCount: 3,
+                onChanged: (key, value) {
+                  formData[key] = value; // Store the value in the form state
+                },
               ),
               IntegerInputFields(
                 topic: 'E3 Vehicle year of manufacture',
                 maxChars: 4,
-                columnsCount: _integerInputFieldsCount[0],
+                columnsCount: 3,
+                onChanged: (key, value) {
+                  formData[key] = value;
+                  print(formData[key]);
+                },
               ),
               IntegerInputFields(
                 topic: 'E4 Age of vehicle',
                 maxChars: 2,
-                columnsCount: _integerInputFieldsCount[1],
+                columnsCount: 3,
+                onChanged: (key, value) {
+                  formData[key] = value;
+                },
               ),
               FormSection(
                 topic: 'E5 Vehicle Ownership',
@@ -169,33 +243,42 @@ class _TabElementState extends State<TabElement> {
                   '6 Police vehicle',
                   '0 Not Known',
                 ],
-                checkboxStates: _checkboxStates[1],
+                checkboxStates: _checkboxStates['E5']!,
                 columnsCount: _columnsCount[1],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(1, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex,labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E5',rowIndex, labelPrefix, columnIndex),
               ),
               TopicTextFields(
                 topic: 'E6 Direction of movement',
                 maxChars: 2,
-                columnsCount: _topicTextFieldsCount[1],
+                columnsCount: 3,
+                onChanged: (key, value) {
+                  formData[key] = value;
+                },
               ),
               FormSection(
                 topic: 'E7 Driver/Rider/Pedestrian Sex',
                 labels: ['1 Male', '2 Female', '0 Not known'],
-                checkboxStates: _checkboxStates[2],
+                checkboxStates: _checkboxStates['E7']!,
                 columnsCount: _columnsCount[2],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(2, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E7', rowIndex,labelPrefix, columnIndex),
               ),
               IntegerInputFields(
                 topic: 'E8 Driver/Rider/Pedestrian age',
                 maxChars: 2,
-                columnsCount: _integerInputFieldsCount[2],
+                columnsCount: 3,
+                onChanged: (key, value) {
+                  formData[key] = value;
+                },
               ),
               TopicTextFields(
                 topic: 'E9 Driving Licence number',
                 maxChars: 10,
-                columnsCount: _topicTextFieldsCount[2],
+                columnsCount: 3,
+                onChanged: (key, value) {
+                  formData[key] = value;
+                },
               ),
               FormSection(
                 topic: 'E10 Validity of driving license',
@@ -207,21 +290,27 @@ class _TabElementState extends State<TabElement> {
                   '5 International license',
                   '0 Not known/NA'
                 ],
-                checkboxStates: _checkboxStates[3],
+                checkboxStates: _checkboxStates['E10']!,
                 columnsCount: _columnsCount[3],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(3, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex ,labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E10', rowIndex, labelPrefix, columnIndex),
               ),
               IntegerInputFields(
                 topic: 'E11 Year of issue of Driving License',
                 maxChars: 4,
-                columnsCount: _integerInputFieldsCount[3],
+                columnsCount: 3,
+                onChanged: (key, value) {
+                  formData[key] = value;
+                },
               ),
               IntegerInputFields(
                 topic:
                     'E12 Number of years since first issue of driving license',
                 maxChars: 2,
-                columnsCount: _integerInputFieldsCount[4],
+                columnsCount: 3,
+                onChanged: (key, value) {
+                  formData[key] = value;
+                },
               ),
               FormSection(
                 topic: 'E13 Human pre crash factor 1 contributing to accident',
@@ -238,10 +327,10 @@ class _TabElementState extends State<TabElement> {
                   '19 Others',
                   '00 Not known/NA'
                 ],
-                checkboxStates: _checkboxStates[4],
+                checkboxStates: _checkboxStates['E13']!,
                 columnsCount: _columnsCount[4],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(4, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E13', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'E14 Human pre crash factor 2 contributing to accident',
@@ -258,10 +347,10 @@ class _TabElementState extends State<TabElement> {
                   '19 Others',
                   '00 Not known/NA'
                 ],
-                checkboxStates: _checkboxStates[4],
+                checkboxStates: _checkboxStates['E14']!,
                 columnsCount: _columnsCount[4],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(4, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E14', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic:
@@ -274,10 +363,10 @@ class _TabElementState extends State<TabElement> {
                   '9 Other',
                   '0 Not known/NA'
                 ],
-                checkboxStates: _checkboxStates[5],
+                checkboxStates: _checkboxStates['E15']!,
                 columnsCount: _columnsCount[5],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(5, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E15', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'E16 Road pre crash factor contributing to accident',
@@ -289,10 +378,10 @@ class _TabElementState extends State<TabElement> {
                   '5 Poor street lighting',
                   '9 Other',
                 ],
-                checkboxStates: _checkboxStates[6],
+                checkboxStates: _checkboxStates['E16']!,
                 columnsCount: _columnsCount[6],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(6, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E16', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic:
@@ -307,10 +396,10 @@ class _TabElementState extends State<TabElement> {
                   '9 Other',
                   '0 Not known/NA'
                 ],
-                checkboxStates: _checkboxStates[7],
+                checkboxStates: _checkboxStates['E17']!,
                 columnsCount: _columnsCount[7],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(7, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E17', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'E18 Crash factor contributing to accident severity',
@@ -324,10 +413,10 @@ class _TabElementState extends State<TabElement> {
                   '7 Rolled over',
                   '0 Not known/NA'
                 ],
-                checkboxStates: _checkboxStates[8],
+                checkboxStates: _checkboxStates['E18']!,
                 columnsCount: _columnsCount[8],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(8, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E18', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'E19 Other factors',
@@ -339,10 +428,10 @@ class _TabElementState extends State<TabElement> {
                   '5 Stolen vehicle',
                   '0 Not known/NA'
                 ],
-                checkboxStates: _checkboxStates[9],
+                checkboxStates: _checkboxStates['E19']!,
                 columnsCount: _columnsCount[9],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(9, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E19', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'E20 Alcohol test',
@@ -351,60 +440,31 @@ class _TabElementState extends State<TabElement> {
                   '2 Over legal limit',
                   '3 Not tested'
                 ],
-                checkboxStates: _checkboxStates[10],
+                checkboxStates: _checkboxStates['E20']!,
                 columnsCount: _columnsCount[10],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(10, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E20', rowIndex, labelPrefix, columnIndex),
               ),
               FormSection(
                 topic: 'E21 Driver/Rider/Pedestrian at fault',
                 labels: ['1 Yes', '2 No', '0 Not known/NA'],
-                checkboxStates: _checkboxStates[11],
+                checkboxStates: _checkboxStates['E21']!,
                 columnsCount: _columnsCount[11],
-                onCheckboxChanged: (rowIndex, columnIndex) =>
-                    _toggleCheckbox(11, rowIndex, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E21', rowIndex, labelPrefix, columnIndex),
               ),
               TopicTextFields(
-                  topic: 'E22 For research purpose',
-                  maxChars: 2,
-                  columnsCount: _topicTextFieldsCount[3]),
+                topic: 'E22 For research purpose',
+                maxChars: 2,
+                columnsCount: 3,
+                onChanged: (key, value) {
+                  formData[key] = value;
+                },
+              ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  _addCheckboxColumn(0); // Add column to Element Type
-                  _addCheckboxColumn(1); // Add column to Vehicle Ownership
-                  _addCheckboxColumn(2); // Add column to Driver/Rider/Pedest
-                  _addCheckboxColumn(
-                      3); // Add column to Validity of driving license
-                  _addCheckboxColumn(
-                      4); // Add column to Human pre crash factors
-                  _addCheckboxColumn(
-                      5); // Add column to Pedestrian pre crash factors
-                  _addCheckboxColumn(6); // Add column to Road pre crash factors
-                  _addCheckboxColumn(
-                      7); // Add column to Vehicle pre crash factors
-                  _addCheckboxColumn(
-                      8); // Add column to Crash factor contributing to accident severity
-                  _addCheckboxColumn(9); // Add column to Other factors
-                  _addCheckboxColumn(10); // Add column to Alcohol test
-                  _addCheckboxColumn(
-                      11); // Add column to Driver/Rider/Pedestrian at fault
-
-                  _addTopicTextFields(
-                      0); // Add column to Vehicle Registration number
-                  _addIntegerInputFields(
-                      0); // Add column to Vehicle year of manufacture
-                  _addIntegerInputFields(1); // Add column to Age of vehicle
-                  _addTopicTextFields(1); // Add column to Direction of movement
-                  _addIntegerInputFields(
-                      2); // Add column to Driver/Rider/Pedestrian age
-                  _addTopicTextFields(
-                      2); // Add column to Driving Licence number
-                  _addIntegerInputFields(
-                      3); // Add column to Year of issue of Driving License
-                  _addIntegerInputFields(
-                      4); // Add column to Number of years since first issue of driving license
-                  _addTopicTextFields(3); // Add column to For research purpose
+                  _addColumnsAndFields();
                 },
                 child: Text('Add Traffic Element'),
               ),
@@ -419,52 +479,7 @@ class _TabElementState extends State<TabElement> {
                       fontSize: 16.0,
                     ),
                   ),
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      _formKey.currentState?.save();
-                      // Save checkbox data from FormSection
-                      for (int sectionIndex = 0;
-                          sectionIndex < _checkboxStates.length;
-                          sectionIndex++) {
-                        for (int rowIndex = 0;
-                            rowIndex < _checkboxStates[sectionIndex].length;
-                            rowIndex++) {
-                          for (int colIndex = 0;
-                              colIndex <
-                                  _checkboxStates[sectionIndex][rowIndex]
-                                      .length;
-                              colIndex++) {
-                            if (_checkboxStates[sectionIndex][rowIndex]
-                                [colIndex]) {
-                              saveFormSectionValue('E${sectionIndex + 1}',
-                                  colIndex, rowIndex + 1);
-                            }
-                          }
-                        }
-                      }
-
-                      print('Form saved: $formData');
-
-                      // Save data to Firestore (replace with your collection path)
-                      FirebaseFirestore.instance
-                          .collection('accident')
-                          .doc('elementDraft')
-                          .set(formData)
-                          .then((_) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Data saved successfully')),
-                        );
-                      }).catchError((error) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text('Failed to save data: $error')),
-                        );
-                      });
-                    } else {
-                      print("Error");
-                      return;
-                    }
-                  },
+                  onPressed: _saveForm,
                 ),
               ),
             ],
@@ -474,21 +489,3 @@ class _TabElementState extends State<TabElement> {
     );
   }
 }
-
-
-  
-                    /*  print('Form saved: $formData');
-                    } else {
-                      print("Error");
-                      return;
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}*/
