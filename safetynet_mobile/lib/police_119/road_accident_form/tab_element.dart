@@ -210,7 +210,7 @@ class _TabElementState extends State<TabElement> {
               TopicTextFields(
                 topic: 'E2 Vehicle Registration number',
                 maxChars: 9,
-                columnsCount: 3,
+                columnsCount: _topicTextFieldsCount[0],
                 onChanged: (key, value) {
                   formData[key] = value; // Store the value in the form state
                 },
@@ -218,7 +218,7 @@ class _TabElementState extends State<TabElement> {
               IntegerInputFields(
                 topic: 'E3 Vehicle year of manufacture',
                 maxChars: 4,
-                columnsCount: 3,
+                columnsCount: _integerInputFieldsCount[0],
                 onChanged: (key, value) {
                   formData[key] = value;
                   print(formData[key]);
@@ -227,7 +227,7 @@ class _TabElementState extends State<TabElement> {
               IntegerInputFields(
                 topic: 'E4 Age of vehicle',
                 maxChars: 2,
-                columnsCount: 3,
+                columnsCount: _integerInputFieldsCount[1],
                 onChanged: (key, value) {
                   formData[key] = value;
                 },
