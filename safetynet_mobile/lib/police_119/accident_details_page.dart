@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:safetynet_mobile/police_119/accident_report.dart';
+import 'package:safetynet_mobile/police_119/road_accident_form/accident_report.dart';
 import 'package:safetynet_mobile/police_119/map_toaccident.dart';
 
 class AccidentDetailsPage extends StatelessWidget {
@@ -294,6 +294,7 @@ class TabSubmitted extends StatelessWidget {
     '2023-08-02 05:15 PM',
     '2023-08-03 06:30 PM'
   ];
+
 
   @override
   Widget build(BuildContext context) {
