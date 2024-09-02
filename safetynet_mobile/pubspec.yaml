@@ -46,8 +46,8 @@ dependencies:
   flutter_map: ^7.0.2
   latlong2: ^0.9.1
   url_launcher: ^6.3.0
-  image_picker: ^0.8.4+4
-
+  image_picker: ^0.8.6+15
+  firebase_storage: 12.1.1
  
 
 dev_dependencies:

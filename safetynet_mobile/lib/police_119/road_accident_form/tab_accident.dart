@@ -103,7 +103,7 @@ class _TabAccidentState extends State<TabAccident> {
       // Save form data to Firestore
       try {
         await FirebaseFirestore.instance
-            .collection('accident')
+            .collection('accidentReport')
             .doc('accidentdraft')
             .set({
           'A1': _divisionController.text.trim(),
