@@ -204,6 +204,14 @@ class TabNew extends StatelessWidget {
                             const InputDecoration(hintText: "Enter Officer ID"),
                       ),
                       actions: [
+                        // Cancel Button
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Closes the dialog
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        // Submit Button
                         TextButton(
                           onPressed: () {
                             // Navigate to accident location view map
@@ -294,7 +302,6 @@ class TabSubmitted extends StatelessWidget {
     '2023-08-02 05:15 PM',
     '2023-08-03 06:30 PM'
   ];
-
 
   @override
   Widget build(BuildContext context) {

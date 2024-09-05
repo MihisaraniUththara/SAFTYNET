@@ -180,10 +180,40 @@ class _AccidentViewState extends State<AccidentView> {
           // Second Card as a regular button
           InkWell(
             onTap: () {
-              // Navigate to accident report page
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AccidentReportForm()),
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  TextEditingController _controller = TextEditingController();
+                  return AlertDialog(
+                    title: const Text('Enter Officer ID'),
+                    content: TextField(
+                      controller: _controller,
+                      decoration:
+                          const InputDecoration(hintText: "Enter Officer ID"),
+                    ),
+                    actions: [
+                      // Cancel Button
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Closes the dialog
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      // Submit Button
+                      TextButton(
+                        onPressed: () {
+                          //navigate to the accident form
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AccidentReportForm()),
+                          );
+                        },
+                        child: const Text('Submit'),
+                      ),
+                    ],
+                  );
+                },
               );
             },
             child: SizedBox(

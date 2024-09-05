@@ -1,10 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data'; // For ByteData
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
-import 'input_fields.dart';
 
 class TabOther extends StatefulWidget {
   const TabOther({super.key});
@@ -17,33 +16,44 @@ class TabOtherState extends State<TabOther> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final _descriptionOfAccidentController = TextEditingController();
-  List<File?> _images = [null]; // Start with one placeholder for adding images
-  List<String> _uploadedImageUrls = [];
 
-  File? _collisionSketch;
+  // Separate lists for each image picker field
+  List<File?> _collisionSketchImages = [null]; // For Collision Sketch
+  List<File?> _additionalImages = [null]; // For Add Images
 
   Future<void> _saveForm() async {
+    if (_collisionSketchImages.isEmpty || _collisionSketchImages[0] == null) {
+      // Show error if collision sketch is empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please attach a collision sketch image')),
+      );
+      return; // Prevent saving
+    }
+
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
       // Save form data to Firestore
       try {
         // Upload images to Firebase storage and get their URLs
-        for (File? image in _images) {
-          if (image != null) {
-            String imageUrl = await _uploadImageToFirebase(image);
-            _uploadedImageUrls.add(imageUrl);
-          }
-        }
+        List<String> collisionSketchUrls =
+            await _uploadImages(_collisionSketchImages);
+        List<String> additionalImageUrls =
+            await _uploadImages(_additionalImages);
 
-         // Save description and image URLs to Firestore
+        // Debugging output
+        print('collisionSketchUrls: $collisionSketchUrls');
+        print('additionalImageUrls: $additionalImageUrls');
+
+        // Save description and image URLs to Firestore
         await FirebaseFirestore.instance
             .collection('accident')
             .doc('otherdraft')
             .set({
           'description of accident':
               _descriptionOfAccidentController.text.trim(),
-              'imageUrls': _uploadedImageUrls,
+          'collisionSketchUrls': collisionSketchUrls,
+          'additionalImageUrls': additionalImageUrls,
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -64,33 +74,76 @@ class TabOtherState extends State<TabOther> {
     }
   }
 
-  Future<String> _uploadImageToFirebase(File image) async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    Reference storageRef = FirebaseStorage.instance.ref().child("images/$fileName.jpg");
-    UploadTask uploadTask = storageRef.putFile(image);
-    TaskSnapshot snapshot = await uploadTask;
-    return await snapshot.ref.getDownloadURL();
+  Future<List<String>> _uploadImages(List<File?> images) async {
+    List<String> urls = [];
+    for (File? image in images) {
+      if (image != null) {
+        String imageUrl = await _uploadImageToFirebase(image);
+        urls.add(imageUrl);
+      }
+    }
+    return urls;
   }
 
-  Future<void> _pickImage(int index) async {
+  Future<String> _uploadImageToFirebase(File image) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference storageRef =
+          FirebaseStorage.instance.ref().child("images/$fileName.jpg");
+      UploadTask uploadTask = storageRef.putFile(image);
+      TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      print('Image upload failed: $e');
+      throw e;
+    }
+  }
+
+  Future<void> _pickImage(int index,
+      {required bool isCollisionSketch, bool isMultiple = false}) async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
+    final List<XFile>? pickedFiles = await picker.pickMultiImage();
+
+    if (pickedFiles != null && pickedFiles.isNotEmpty) {
       setState(() {
-        if (index == _images.length - 1 && _images.length < 10) {
-          // Add new placeholder only if current index is the last placeholder
-          _images.insert(_images.length - 1, File(pickedFile.path));
+        List<File?> targetList =
+            isCollisionSketch ? _collisionSketchImages : _additionalImages;
+
+        if (isCollisionSketch && !isMultiple) {
+          // If it's a collision sketch and only one image is allowed
+          targetList[index] = File(pickedFiles.first.path);
         } else {
-          // Replace the image at the current index
-          _images[index] = File(pickedFile.path);
+          // For additional images or other cases
+          if (index == targetList.length - 1 && targetList.length < 10) {
+            // Insert picked images at the current position, replacing the placeholder
+            for (var pickedFile in pickedFiles) {
+              targetList.insert(targetList.length - 1, File(pickedFile.path));
+            }
+          } else {
+            // Replace the image at the current index with the first selected image
+            targetList[index] = File(pickedFiles.first.path);
+            // Add any additional images (if multiple were selected)
+            for (var i = 1; i < pickedFiles.length; i++) {
+              targetList.insert(
+                  targetList.length - 1, File(pickedFiles[i].path));
+            }
+          }
         }
       });
     }
   }
 
-  void _removeImage(int index) {
+  void _removeImage(int index, {required bool isCollisionSketch}) {
     setState(() {
-      _images.removeAt(index);
+      List<File?> targetList =
+          isCollisionSketch ? _collisionSketchImages : _additionalImages;
+
+      targetList.removeAt(index);
+
+      // Add a placeholder if the list is empty after removal
+      if (targetList.isEmpty || (isCollisionSketch && targetList.length == 0)) {
+        targetList.add(null);
+      }
     });
   }
 
@@ -104,57 +157,45 @@ class TabOtherState extends State<TabOther> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Description of accident & additional information',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                  TextFormField(
-                    controller: _descriptionOfAccidentController,
-                    maxLength: 500,
-                    maxLines: 7,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      filled: true,
-                      //floatingLabelBehavior: FloatingLabelBehavior.auto,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                      return 'Please provide a description of the accident';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
+              Text(
+                'Description of accident & additional information',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.left,
+              ),
+              TextFormField(
+                controller: _descriptionOfAccidentController,
+                maxLength: 500,
+                maxLines: 7,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  filled: true,
+                ),
+                /*validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please provide a description of the accident';
+                  }
+                  return null;
+                },*/
               ),
               SizedBox(height: 20.0),
-              ImagePickerFormField(
+              _buildImagePickerField(
                 label: 'Collision Sketch',
-                onSaved: (file) => _collisionSketch = file,
-                validator: (file) {
-                  if (file == null) {
-                    return 'Please attach an image';
-                  }
-                  return null;
-                },
+                images: _collisionSketchImages,
+                onSaved: (file) => _collisionSketchImages.add(file),
+                isCollisionSketch: true,
+                isMultiple: false,
               ),
-              SizedBox(width: 20),
-              ImagePickerFormField(
+              SizedBox(height: 20),
+              _buildImagePickerField(
                 label: 'Add Images',
-                onSaved: (file) => _collisionSketch = file,
-                validator: (file) {
-                  if (file == null) {
-                    return 'Please attach an image';
-                  }
-                  return null;
-                },
+                images: _additionalImages,
+                onSaved: (file) => _additionalImages.add(file),
+                isCollisionSketch: false,
+                isMultiple: true, // Allow multiple images
               ),
               SizedBox(height: 50.0),
               Container(
@@ -180,8 +221,10 @@ class TabOtherState extends State<TabOther> {
                   ),
                   onPressed: _saveForm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xfffbbe00) ,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                    backgroundColor: const Color(0xfffbbe00),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
                   ),
                 ),
               ),
@@ -192,12 +235,64 @@ class TabOtherState extends State<TabOther> {
     );
   }
 
+  Widget _buildImagePickerField({
+    required String label,
+    required List<File?> images,
+    required FormFieldSetter<File?> onSaved,
+    FormFieldValidator<File?>? validator,
+    bool isMultiple = false,
+    required bool isCollisionSketch,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10),
+        Row(
+          children: List.generate(
+            images.length,
+            (index) => Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: _buildImageTile(index, images[index], isCollisionSketch),
+            ),
+          ),
+        ),
+        if (validator != null)
+          FormField<File?>(
+            onSaved: onSaved,
+            validator: (value) {
+              if (images.isEmpty || images[0] == null) {
+                return 'Please attach an image';
+              }
+              return null;
+            },
+            builder: (FormFieldState<File?> field) {
+              return field.errorText != null
+                  ? Text(
+                      field.errorText!,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 12,
+                      ),
+                    )
+                  : Container();
+            },
+          ),
+      ],
+    );
+  }
 
- Widget _buildImageTile(int index, File? image) {
+  Widget _buildImageTile(int index, File? image, bool isCollisionSketch) {
     return Stack(
       children: [
         GestureDetector(
-          onTap: () => _pickImage(index),
+          onTap: () => _pickImage(index, isCollisionSketch: isCollisionSketch),
           child: Container(
             width: 100,
             height: 100,
@@ -215,7 +310,8 @@ class TabOtherState extends State<TabOther> {
             top: 2,
             right: 2,
             child: GestureDetector(
-              onTap: () => _removeImage(index),
+              onTap: () =>
+                  _removeImage(index, isCollisionSketch: isCollisionSketch),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.red,
@@ -229,9 +325,3 @@ class TabOtherState extends State<TabOther> {
     );
   }
 }
-
-
-
-
-
- 
