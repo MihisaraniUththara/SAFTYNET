@@ -6,11 +6,18 @@ import 'tab_casualty.dart';
 import 'tab_other.dart';
 
 class AccidentReportForm extends StatefulWidget {
+
+  final String officerID; // Define officerID in the widget class
+
+  // Pass officerID via the constructor
+  AccidentReportForm({required this.officerID});
+
   @override
   _AccidentReportFormState createState() => _AccidentReportFormState();
 }
 
 class _AccidentReportFormState extends State<AccidentReportForm> {
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -59,10 +66,10 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
         body: TabBarView(
           //controller: _tabController,
           children: [
-            TabAccident(),
-            const TabElement(),
-            const TabCasualty(),
-            const TabOther(),
+            TabAccident(officerID: widget.officerID),
+            TabElement(officerID: widget.officerID),
+            TabCasualty(officerID: widget.officerID),
+            TabOther(officerID: widget.officerID),
           ],
         ),
       ),

@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'input_fields.dart';
 
 class TabCasualty extends StatefulWidget {
-  const TabCasualty({super.key});
+  final String officerID; // Accept officerID
+
+  // Pass officerID via the constructor
+  const TabCasualty({super.key, required this.officerID});
 
   @override
   State<TabCasualty> createState() => _TabCasualtyState();
@@ -14,8 +17,8 @@ class TabCasualty extends StatefulWidget {
 class _TabCasualtyState extends State<TabCasualty> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // Declare the formData map to store all form values
-  Map<String, dynamic> formData = {};
+  // Declare the casultyData map to store all form values
+  Map<String, dynamic> casualtyData = {};
 
   // Store the checkbox states for each section
   final Map<String, List<List<bool>>> _checkboxStates = {
@@ -92,11 +95,50 @@ class _TabCasualtyState extends State<TabCasualty> {
   }
 
   void saveFormSectionValue(String key, dynamic value) {
-    formData[key] = value;
+    casualtyData[key] = value;
     print('Saved: $key = $value');
   }
 
-  Future<void> _saveForm() async {
+  Future<void> saveCasualtyDraft() async {
+    
+    String draftID = "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+
+    DocumentReference draftRef =
+        FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
+
+     _formKey.currentState!.save();
+    try {
+      // Try to update the document if it exists
+      await draftRef.update({
+        'C': casualtyData, // Save C data 
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Draft updated successfully')),
+      );
+    } catch (e) {
+      // If the document doesn't exist, create it
+      try {
+        await draftRef.set({
+          'C': casualtyData,
+          'officerID': widget.officerID,
+          //'accidentID': accidentID,
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Draft created successfully')),
+        );
+      } catch (e) {
+        print('Failed to save draft: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save draft')),
+        );
+      }
+    }
+  }
+
+  /*Future<void> _saveForm() async {
     /*setState(() {
       _saveAttempted =
           true; // Mark the form as submitted when the user clicks save
@@ -128,7 +170,7 @@ class _TabCasualtyState extends State<TabCasualty> {
             content: Text('Please correct the validation errors in the form')),
       );
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +187,7 @@ class _TabCasualtyState extends State<TabCasualty> {
                 maxChars: 1,
                 columnsCount: _topicTextFieldsCount[0],
                 onChanged: (key, value) {
-                  formData[key] = value;
+                  casualtyData[key] = value;
                 },
               ),
               Text(
@@ -196,7 +238,7 @@ class _TabCasualtyState extends State<TabCasualty> {
                 maxChars: 2,
                 columnsCount: _integerInputFieldsCount[0],
                 onChanged: (key, value) {
-                  formData[key] = value;
+                  casualtyData[key] = value;
                 },
               ),
               FormSection(
@@ -243,7 +285,7 @@ class _TabCasualtyState extends State<TabCasualty> {
                       fontSize: 16.0,
                     ),
                   ),
-                  onPressed: _saveForm,
+                   onPressed: saveCasualtyDraft,
                 ),
               ),
             ],

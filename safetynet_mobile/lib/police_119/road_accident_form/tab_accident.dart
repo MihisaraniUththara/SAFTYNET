@@ -4,6 +4,10 @@ import 'package:flutter/rendering.dart';
 import 'input_fields.dart';
 
 class TabAccident extends StatefulWidget {
+  final String officerID; // Accept officerID
+
+  // Pass officerID via the constructor
+  const TabAccident({super.key, required this.officerID});
   @override
   State<TabAccident> createState() => _TabAccidentState();
 }
@@ -50,8 +54,122 @@ class _TabAccidentState extends State<TabAccident> {
   String? _policeAction;
   String? _casualties;
 
-  // Method to save form data to Firestore
-  Future<void> _saveForm() async {
+  // Method to save accident data to Firestore
+  Future<void> saveAccidentDraft() async {
+    /*setState(() {
+      _saveAttempted =
+          true; // Mark the form as submitted when the user clicks save
+    });*/
+
+    String draftID =
+        "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+
+    DocumentReference draftRef =
+        FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
+
+    _formKey.currentState!.save();
+    try {
+      // Try to update the document if it exists
+      await draftRef.update({
+        'A': {
+          'A1': _divisionController.text.trim(),
+          'A2': _stationController.text.trim(),
+          'A3': _dateController.text.trim(),
+          'A4': _timeController.text.trim(),
+          'A5': _uniqueIdController.text.trim(),
+          'A6': _classOfAccident,
+          'A7': _urbanOrRural,
+          'A8': _workdayOrHoliday,
+          //'A9': _dayOfWeek.text.trim(),
+          'A10': _roadNumberController.text.trim(),
+          'A11': _streetNameController.text.trim(),
+          'A12': _nearestLowerkmPostController.text.trim(),
+          'A13': _distanceFromNearestLowerKmPostController.text.trim(),
+          'A14': _nodeNumberController.text.trim(),
+          'A15': _linkNumberController.text.trim(),
+          'A16': _distanceFromNodeController.text.trim(),
+          'A17': _eastCoordinateController.text.trim(),
+          'A18': _northCoordinateController.text.trim(),
+          'A19': _collisionTypeController.text.trim(),
+          'A20': _secondCollisionOccurence,
+          'A21': _roadSurfaceCondition,
+          'A22': _weather,
+          'A23': _lightCondition,
+          'A24': _locationType,
+          'A25': _locationTypeWhenPedestrianInvolved,
+          'A26': _trafficControl,
+          'A27': _postedSpeedLimitSigns,
+          'A28': _gazettedSpeedLimitForLightVehiclesController.text.trim(),
+          'A29': _gazettedSpeedLimitForHeavyVehiclesController.text.trim(),
+          'A30': _policeAction,
+          'A31': _caseNumberController.text.trim(),
+          'A32': _bReportController.text.trim(),
+          'A33': _casualties,
+          'A34': _researchPurposeController.text.trim(),
+        }, // Save A data
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Draft updated successfully')),
+      );
+    } catch (e) {
+      // If the document doesn't exist, create it
+      try {
+        await draftRef.set({
+          'C': {
+            'A1': _divisionController.text.trim(),
+            'A2': _stationController.text.trim(),
+            'A3': _dateController.text.trim(),
+            'A4': _timeController.text.trim(),
+            'A5': _uniqueIdController.text.trim(),
+            'A6': _classOfAccident,
+            'A7': _urbanOrRural,
+            'A8': _workdayOrHoliday,
+            //'A9': _dayOfWeek.text.trim(),
+            'A10': _roadNumberController.text.trim(),
+            'A11': _streetNameController.text.trim(),
+            'A12': _nearestLowerkmPostController.text.trim(),
+            'A13': _distanceFromNearestLowerKmPostController.text.trim(),
+            'A14': _nodeNumberController.text.trim(),
+            'A15': _linkNumberController.text.trim(),
+            'A16': _distanceFromNodeController.text.trim(),
+            'A17': _eastCoordinateController.text.trim(),
+            'A18': _northCoordinateController.text.trim(),
+            'A19': _collisionTypeController.text.trim(),
+            'A20': _secondCollisionOccurence,
+            'A21': _roadSurfaceCondition,
+            'A22': _weather,
+            'A23': _lightCondition,
+            'A24': _locationType,
+            'A25': _locationTypeWhenPedestrianInvolved,
+            'A26': _trafficControl,
+            'A27': _postedSpeedLimitSigns,
+            'A28': _gazettedSpeedLimitForLightVehiclesController.text.trim(),
+            'A29': _gazettedSpeedLimitForHeavyVehiclesController.text.trim(),
+            'A30': _policeAction,
+            'A31': _caseNumberController.text.trim(),
+            'A32': _bReportController.text.trim(),
+            'A33': _casualties,
+            'A34': _researchPurposeController.text.trim(),
+          },
+          'officerID': widget.officerID,
+          //'accidentID': accidentID,
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Draft created successfully')),
+        );
+      }catch (e) {
+        print('Failed to save draft: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save draft')),
+        );
+      }
+    }
+  }
+
+  /*Future<void> saveForm() async {
     setState(() {
       _saveAttempted =
           true; // Mark the form as submitted when the user clicks save
@@ -59,46 +177,6 @@ class _TabAccidentState extends State<TabAccident> {
 
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
-      /*// Print form data before saving
-      print({
-        'division': _divisionController.text.trim(),
-        'station': _stationController.text.trim(),
-        'date': _dateController.text.trim(),
-        'time': _timeController.text.trim(),
-        'uniqueId': _uniqueIdController.text.trim(),
-       // 'dayOfWeek': _dayOfWeek.text.trim(),
-        'roadNumber': _roadNumberController.text.trim(),
-        'streetName': _streetNameController.text.trim(),
-        'kmPost': _nearestLowerkmPostController.text.trim(),
-        'distanceKmPost': _distanceFromNearestLowerKmPostController.text.trim(),
-        'nodeNumber': _nodeNumberController.text.trim(),
-        'linkNumber': _linkNumberController.text.trim(),
-        'distanceFromNode': _distanceFromNodeController.text.trim(),
-        'eastCoordinate': _eastCoordinateController.text.trim(),
-        'northCoordinate': _northCoordinateController.text.trim(),
-        'collisionType': _collisionTypeController.text.trim(),
-        'caseNumber': _caseNumberController.text.trim(),
-        'bReport': _bReportController.text.trim(),
-        'researchPurpose': _researchPurposeController.text.trim(),
-        'gazettedSpeedLimitForLightVehicles':
-            _gazettedSpeedLimitForLightVehiclesController.text.trim(),
-        'gazettedSpeedLimitForHeavyVehicles':
-            _gazettedSpeedLimitForHeavyVehiclesController.text.trim(),
-        'classOfAccident': _classOfAccident,
-        'urbanOrRural': _urbanOrRural,
-        'workdayOrHoliday': _workdayOrHoliday,
-        'secondCollision': _secondCollisionOccurence,
-        'roadSurfaceCondition': _roadSurfaceCondition,
-        'weather': _weather,
-        'lightCondition': _lightCondition,
-        'locationType': _locationType,
-        'pedestrianLocation': _locationTypeWhenPedestrianInvolved,
-        'trafficControl': _trafficControl,
-        'speedLimitSigns': _postedSpeedLimitSigns,
-        'policeAction': _policeAction,
-        'casualties': _casualties,
-      });*/
 
       // Save form data to Firestore
       try {
@@ -158,7 +236,7 @@ class _TabAccidentState extends State<TabAccident> {
             content: Text('Please correct the validation errors in the form')),
       );
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -548,7 +626,7 @@ class _TabAccidentState extends State<TabAccident> {
                       fontSize: 16.0,
                     ),
                   ),
-                  onPressed: _saveForm,
+                  onPressed: saveAccidentDraft,
                 ),
               )
             ],
@@ -627,7 +705,7 @@ class _TabAccidentState extends State<TabAccident> {
             //floatingLabelBehavior: FloatingLabelBehavior.auto,
           ),
           validator: (value) {
-            if (value?.isEmpty ?? true) {
+            if (validatorMessage != null && (value == null || value.isEmpty)) {
               return validatorMessage;
             }
             if (double.tryParse(value!) == null) {

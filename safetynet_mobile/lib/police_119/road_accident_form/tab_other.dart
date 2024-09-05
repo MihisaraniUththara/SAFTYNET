@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class TabOther extends StatefulWidget {
-  const TabOther({super.key});
+  final String officerID; // Accept officerID
+
+  // Pass officerID via the constructor
+  const TabOther({super.key, required this.officerID});
 
   @override
   State<TabOther> createState() => TabOtherState();
@@ -21,7 +24,13 @@ class TabOtherState extends State<TabOther> {
   List<File?> _collisionSketchImages = [null]; // For Collision Sketch
   List<File?> _additionalImages = [null]; // For Add Images
 
-  Future<void> _saveForm() async {
+  Future<void> saveOtherDraft() async {
+    String draftID =
+        "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+
+    DocumentReference draftRef =
+        FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
+
     if (_collisionSketchImages.isEmpty || _collisionSketchImages[0] == null) {
       // Show error if collision sketch is empty
       ScaffoldMessenger.of(context).showSnackBar(
@@ -30,11 +39,77 @@ class TabOtherState extends State<TabOther> {
       return; // Prevent saving
     }
 
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+    _formKey.currentState!.save();
+    try {
+      // Upload images to Firebase storage and get their URLs
+        List<String> collisionSketchUrls =
+            await _uploadImages(_collisionSketchImages);
+        List<String> additionalImageUrls =
+            await _uploadImages(_additionalImages);
 
-      // Save form data to Firestore
+        // Debugging output
+        print('collisionSketchUrls: $collisionSketchUrls');
+        print('additionalImageUrls: $additionalImageUrls');
+
+      // Try to update the document if it exists
+      await draftRef.update({
+        'O': {'description of accident':
+              _descriptionOfAccidentController.text.trim(),
+          'collisionSketchUrls': collisionSketchUrls,
+          'additionalImageUrls': additionalImageUrls}, // Save O data 
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Draft updated successfully')),
+      );
+    } catch (e) {
+      // If the document doesn't exist, create it
       try {
+        // Upload images to Firebase storage and get their URLs
+        List<String> collisionSketchUrls =
+            await _uploadImages(_collisionSketchImages);
+        List<String> additionalImageUrls =
+            await _uploadImages(_additionalImages);
+
+        // Debugging output
+        print('collisionSketchUrls: $collisionSketchUrls');
+        print('additionalImageUrls: $additionalImageUrls');
+
+        await draftRef.set({
+          'O': {'description of accident':
+              _descriptionOfAccidentController.text.trim(),
+          'collisionSketchUrls': collisionSketchUrls,
+          'additionalImageUrls': additionalImageUrls},
+          'officerID': widget.officerID,
+          //'accidentID': accidentID,
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Draft created successfully')),
+        );
+      } catch (e) {
+        print('Failed to save draft: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save draft')),
+        );
+      }
+    }
+  }
+
+  /*Future<void> _saveForm() async {
+    if (_collisionSketchImages.isEmpty || _collisionSketchImages[0] == null) {
+      // Show error if collision sketch is empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please attach a collision sketch image')),
+      );
+      return; // Prevent saving
+    }
+
+    _formKey.currentState!.save();
+
+    // Save form data to Firestore
+    try {
         // Upload images to Firebase storage and get their URLs
         List<String> collisionSketchUrls =
             await _uploadImages(_collisionSketchImages);
@@ -72,7 +147,7 @@ class TabOtherState extends State<TabOther> {
             content: Text('Please correct the validation errors in the form')),
       );
     }
-  }
+  }*/
 
   Future<List<String>> _uploadImages(List<File?> images) async {
     List<String> urls = [];
@@ -208,7 +283,7 @@ class TabOtherState extends State<TabOther> {
                       fontSize: 16.0,
                     ),
                   ),
-                  onPressed: _saveForm,
+                  onPressed: saveOtherDraft,
                 ),
               ),
               SizedBox(width: 30.0),
@@ -219,7 +294,7 @@ class TabOtherState extends State<TabOther> {
                     'Submit',
                     style: TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
-                  onPressed: _saveForm,
+                  onPressed: saveOtherDraft,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xfffbbe00),
                     shape: RoundedRectangleBorder(
