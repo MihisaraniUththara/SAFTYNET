@@ -195,11 +195,11 @@ class TabNew extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    TextEditingController _controller = TextEditingController();
+                    TextEditingController _officerID = TextEditingController();
                     return AlertDialog(
                       title: const Text('Enter Officer ID'),
                       content: TextField(
-                        controller: _controller,
+                        controller: _officerID,
                         decoration:
                             const InputDecoration(hintText: "Enter Officer ID"),
                       ),
@@ -214,6 +214,8 @@ class TabNew extends StatelessWidget {
                         // Submit Button
                         TextButton(
                           onPressed: () {
+                            String officerId =
+                                _officerID.text; // Retrieve officer ID
                             // Navigate to accident location view map
                             Navigator.push(
                               context,
@@ -271,10 +273,43 @@ class TabOnProgress extends StatelessWidget {
             subtitle: Text('Date and Time: ${dateTimes[index]}'),
             trailing: ElevatedButton(
               onPressed: () {
-                // Navigate to accident report page for editing
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AccidentReportForm()),
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    TextEditingController _officerId = TextEditingController();
+                    return AlertDialog(
+                      title: const Text('Enter Officer ID'),
+                      content: TextField(
+                        controller: _officerId,
+                        decoration:
+                            const InputDecoration(hintText: "Enter Officer ID"),
+                      ),
+                      actions: [
+                        // Cancel Button
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Closes the dialog
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        // Submit Button
+                        TextButton(
+                           onPressed: () {
+                          String officerID = _officerId.text;
+                          //navigate to the accident form
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AccidentReportForm(
+                                  officerID: officerID), // Pass the Officer ID
+                            ),
+                          );
+                        },
+                          child: const Text('Submit'),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
               child: Text('Edit'),

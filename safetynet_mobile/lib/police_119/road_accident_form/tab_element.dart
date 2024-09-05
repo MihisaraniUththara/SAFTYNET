@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'input_fields.dart';
 
 class TabElement extends StatefulWidget {
-  const TabElement({super.key});
+
+  final String officerID; // Accept officerID
+
+  // Pass officerID via the constructor
+  const TabElement({super.key, required this.officerID});
 
   @override
   State<TabElement> createState() => _TabElementState();
@@ -12,8 +16,8 @@ class TabElement extends StatefulWidget {
 class _TabElementState extends State<TabElement> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // Declare the formData map to store all form values
-  Map<String, dynamic> formData = {};
+  // Declare the elementData map to store all form values
+  Map<String, dynamic> elementData = {};
 
   // Store the checkbox states for each section
   final Map<String, List<List<bool>>> _checkboxStates = {
@@ -82,24 +86,25 @@ class _TabElementState extends State<TabElement> {
   List<int> _topicTextFieldsCount = [3, 3, 3, 3];
   List<int> _integerInputFieldsCount = [3, 3, 3, 3, 3];
 
-  void _toggleCheckbox(String sectionPrefix,int rowIndex, String labelPrefix, int columnIndex) {
-  setState(() {
-    // Reset all other checkboxes in the row for that section
-    if (_checkboxStates[sectionPrefix] != null) {
-      for (int i = 0; i < _checkboxStates[sectionPrefix]!.length; i++) {
-        _checkboxStates[sectionPrefix]![i][columnIndex] = false;
+  void _toggleCheckbox(
+      String sectionPrefix, int rowIndex, String labelPrefix, int columnIndex) {
+    setState(() {
+      // Reset all other checkboxes in the row for that section
+      if (_checkboxStates[sectionPrefix] != null) {
+        for (int i = 0; i < _checkboxStates[sectionPrefix]!.length; i++) {
+          _checkboxStates[sectionPrefix]![i][columnIndex] = false;
+        }
       }
-    }
 
-    // Set the selected checkbox to true
-    _checkboxStates[sectionPrefix]![rowIndex][columnIndex] = true;
+      // Set the selected checkbox to true
+      _checkboxStates[sectionPrefix]![rowIndex][columnIndex] = true;
 
-    // Save the selected value using the label's prefix
-    String trafficElement = String.fromCharCode(65 + columnIndex); // A, B, C...
-    saveFormSectionValue(sectionPrefix + trafficElement, labelPrefix);
-  });
-}
-
+      // Save the selected value using the label's prefix
+      String trafficElement =
+          String.fromCharCode(65 + columnIndex); // A, B, C...
+      saveFormSectionValue(sectionPrefix + trafficElement, labelPrefix);
+    });
+  }
 
   void _addCheckboxColumn(int sectionIndex) {
     setState(() {
@@ -135,11 +140,50 @@ class _TabElementState extends State<TabElement> {
   }
 
   void saveFormSectionValue(String key, dynamic value) {
-    formData[key] = value;
+    elementData[key] = value;
     print('Saved: $key = $value');
   }
 
-  Future<void> _saveForm() async {
+  Future<void> saveElementDraft() async {
+    String draftID =
+        "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+
+    DocumentReference draftRef =
+        FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
+
+    _formKey.currentState!.save();
+    try {
+      // Try to update the document if it exists
+      await draftRef.update({
+        'E': elementData, // Save  E data
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Draft updated successfully')),
+      );
+    } catch (e) {
+      // If the document doesn't exist, create it
+      try {
+        await draftRef.set({
+          'E': elementData,
+          'officerID': widget.officerID,
+          //'accidentID': accidentID,
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Draft created successfully')),
+        );
+      } catch (e) {
+        print('Failed to save draft: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save draft')),
+        );
+      }
+    }
+  }
+
+  /*Future<void> _saveForm() async {
     /*setState(() {
       _saveAttempted =
           true; // Mark the form as submitted when the user clicks save
@@ -153,7 +197,7 @@ class _TabElementState extends State<TabElement> {
         await FirebaseFirestore.instance
             .collection('accident')
             .doc('elementdraft')
-            .set(formData);
+            .set(elementData);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Draft saved successfully')),
@@ -171,7 +215,7 @@ class _TabElementState extends State<TabElement> {
             content: Text('Please correct the validation errors in the form')),
       );
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +248,7 @@ class _TabElementState extends State<TabElement> {
                 ],
                 checkboxStates: _checkboxStates['E1']!,
                 columnsCount: _columnsCount[0],
-                onCheckboxChanged: (rowIndex,labelPrefix, columnIndex) =>
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
                     _toggleCheckbox('E1', rowIndex, labelPrefix, columnIndex),
               ),
               TopicTextFields(
@@ -212,7 +256,7 @@ class _TabElementState extends State<TabElement> {
                 maxChars: 9,
                 columnsCount: _topicTextFieldsCount[0],
                 onChanged: (key, value) {
-                  formData[key] = value; // Store the value in the form state
+                  elementData[key] = value; // Store the value in the form state
                 },
               ),
               IntegerInputFields(
@@ -220,8 +264,8 @@ class _TabElementState extends State<TabElement> {
                 maxChars: 4,
                 columnsCount: _integerInputFieldsCount[0],
                 onChanged: (key, value) {
-                  formData[key] = value;
-                  print(formData[key]);
+                  elementData[key] = value;
+                  print(elementData[key]);
                 },
               ),
               IntegerInputFields(
@@ -229,7 +273,7 @@ class _TabElementState extends State<TabElement> {
                 maxChars: 2,
                 columnsCount: _integerInputFieldsCount[1],
                 onChanged: (key, value) {
-                  formData[key] = value;
+                  elementData[key] = value;
                 },
               ),
               FormSection(
@@ -245,15 +289,15 @@ class _TabElementState extends State<TabElement> {
                 ],
                 checkboxStates: _checkboxStates['E5']!,
                 columnsCount: _columnsCount[1],
-                onCheckboxChanged: (rowIndex,labelPrefix, columnIndex) =>
-                    _toggleCheckbox('E5',rowIndex, labelPrefix, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E5', rowIndex, labelPrefix, columnIndex),
               ),
               TopicTextFields(
                 topic: 'E6 Direction of movement',
                 maxChars: 2,
                 columnsCount: 3,
                 onChanged: (key, value) {
-                  formData[key] = value;
+                  elementData[key] = value;
                 },
               ),
               FormSection(
@@ -261,15 +305,15 @@ class _TabElementState extends State<TabElement> {
                 labels: ['1 Male', '2 Female', '0 Not known'],
                 checkboxStates: _checkboxStates['E7']!,
                 columnsCount: _columnsCount[2],
-                onCheckboxChanged: (rowIndex , labelPrefix, columnIndex) =>
-                    _toggleCheckbox('E7', rowIndex,labelPrefix, columnIndex),
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
+                    _toggleCheckbox('E7', rowIndex, labelPrefix, columnIndex),
               ),
               IntegerInputFields(
                 topic: 'E8 Driver/Rider/Pedestrian age',
                 maxChars: 2,
                 columnsCount: 3,
                 onChanged: (key, value) {
-                  formData[key] = value;
+                  elementData[key] = value;
                 },
               ),
               TopicTextFields(
@@ -277,7 +321,7 @@ class _TabElementState extends State<TabElement> {
                 maxChars: 10,
                 columnsCount: 3,
                 onChanged: (key, value) {
-                  formData[key] = value;
+                  elementData[key] = value;
                 },
               ),
               FormSection(
@@ -292,7 +336,7 @@ class _TabElementState extends State<TabElement> {
                 ],
                 checkboxStates: _checkboxStates['E10']!,
                 columnsCount: _columnsCount[3],
-                onCheckboxChanged: (rowIndex ,labelPrefix, columnIndex) =>
+                onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
                     _toggleCheckbox('E10', rowIndex, labelPrefix, columnIndex),
               ),
               IntegerInputFields(
@@ -300,7 +344,7 @@ class _TabElementState extends State<TabElement> {
                 maxChars: 4,
                 columnsCount: 3,
                 onChanged: (key, value) {
-                  formData[key] = value;
+                  elementData[key] = value;
                 },
               ),
               IntegerInputFields(
@@ -309,7 +353,7 @@ class _TabElementState extends State<TabElement> {
                 maxChars: 2,
                 columnsCount: 3,
                 onChanged: (key, value) {
-                  formData[key] = value;
+                  elementData[key] = value;
                 },
               ),
               FormSection(
@@ -458,7 +502,7 @@ class _TabElementState extends State<TabElement> {
                 maxChars: 2,
                 columnsCount: 3,
                 onChanged: (key, value) {
-                  formData[key] = value;
+                  elementData[key] = value;
                 },
               ),
               SizedBox(height: 20),
@@ -479,7 +523,7 @@ class _TabElementState extends State<TabElement> {
                       fontSize: 16.0,
                     ),
                   ),
-                  onPressed: _saveForm,
+                  onPressed: saveElementDraft,
                 ),
               ),
             ],

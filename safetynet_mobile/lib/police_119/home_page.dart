@@ -183,11 +183,11 @@ class _AccidentViewState extends State<AccidentView> {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  TextEditingController _controller = TextEditingController();
+                  TextEditingController _officerId = TextEditingController();
                   return AlertDialog(
                     title: const Text('Enter Officer ID'),
                     content: TextField(
-                      controller: _controller,
+                      controller: _officerId,
                       decoration:
                           const InputDecoration(hintText: "Enter Officer ID"),
                     ),
@@ -202,11 +202,14 @@ class _AccidentViewState extends State<AccidentView> {
                       // Submit Button
                       TextButton(
                         onPressed: () {
+                          String officerID = _officerId.text;
                           //navigate to the accident form
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AccidentReportForm()),
+                              builder: (context) => AccidentReportForm(
+                                  officerID: officerID), // Pass the Officer ID
+                            ),
                           );
                         },
                         child: const Text('Submit'),
