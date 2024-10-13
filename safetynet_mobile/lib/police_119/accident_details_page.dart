@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:safetynet_mobile/police_119/road_accident_form/accident_report.dart';
 import 'package:safetynet_mobile/police_119/map_toaccident.dart';
@@ -257,6 +258,19 @@ class TabOnProgress extends StatelessWidget {
     '2023-07-31 11:30 AM'
   ];
 
+  Future<Map<String, dynamic>?> loadDraft(String officerID) async {
+    String draftID = "${officerID}_currentAccidentID"; // Example draftID logic
+    DocumentSnapshot draftSnapshot = await FirebaseFirestore.instance
+        .collection('accident_draft')
+        .doc(draftID)
+        .get();
+
+    if (draftSnapshot.exists) {
+      return draftSnapshot.data() as Map<String, dynamic>?;
+    }
+    return null; // Return null if no draft is found
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -294,14 +308,20 @@ class TabOnProgress extends StatelessWidget {
                         ),
                         // Submit Button
                         TextButton(
-                           onPressed: () {
+                           onPressed: () async {
                           String officerID = _officerId.text;
-                          //navigate to the accident form
+                          // Load draft data for the officer
+                            Map<String, dynamic>? draftData =
+                                await loadDraft(officerID);
+
+                          //navigate to the accident form with the draft data
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => AccidentReportForm(
-                                  officerID: officerID), // Pass the Officer ID
+                                  officerID: officerID, // Pass the Officer ID
+                                  draftData: draftData // Pass loaded draft data
+                                )
                             ),
                           );
                         },

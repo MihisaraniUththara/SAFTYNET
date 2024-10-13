@@ -5,9 +5,10 @@ import 'input_fields.dart';
 
 class TabAccident extends StatefulWidget {
   final String officerID; // Accept officerID
+  final Map<String, dynamic>? draftData; // Accept draft data
 
   // Pass officerID via the constructor
-  const TabAccident({super.key, required this.officerID});
+  const TabAccident({super.key, required this.officerID, this.draftData});
   @override
   State<TabAccident> createState() => _TabAccidentState();
 }
@@ -53,6 +54,53 @@ class _TabAccidentState extends State<TabAccident> {
   String? _postedSpeedLimitSigns;
   String? _policeAction;
   String? _casualties;
+
+  @override
+  void initState() {
+    super.initState();
+    // Populate fields with draft data if available
+    if (widget.draftData != null) {
+      
+      _divisionController.text = widget.draftData?['A']?['A1'] ?? '';
+      _stationController.text = widget.draftData?['A']?['A2'] ?? '';
+      _dateController.text = widget.draftData?['A']?['A3'] ?? '';
+      _timeController.text = widget.draftData?['A']?['A4'] ?? '';
+      _uniqueIdController.text = widget.draftData?['A']?['A5'] ?? '';
+      _classOfAccident = widget.draftData?['A']?['A6'] ?? '';
+      _urbanOrRural = widget.draftData?['A']?['A7'] ?? '';
+      _workdayOrHoliday = widget.draftData?['A']?['A8'] ?? '';
+      //_dayOfWeek.text = widget.draftData?['A']?['A9'] ?? '';
+      _roadNumberController.text = widget.draftData?['A']?['A10'] ?? '';
+      _streetNameController.text = widget.draftData?['A']?['A11'] ?? '';
+      _nearestLowerkmPostController.text = widget.draftData?['A']?['A12'] ?? '';
+      _distanceFromNearestLowerKmPostController.text =
+          widget.draftData?['A']?['A13'] ?? '';
+      _nodeNumberController.text = widget.draftData?['A']?['A14'] ?? '';
+      _linkNumberController.text = widget.draftData?['A']?['A15'] ?? '';
+      _distanceFromNodeController.text = widget.draftData?['A']?['A16'] ?? '';
+      _eastCoordinateController.text = widget.draftData?['A']?['A17'] ?? '';
+      _northCoordinateController.text = widget.draftData?['A']?['A18'] ?? '';
+      _collisionTypeController.text = widget.draftData?['A']?['A19'] ?? '';
+      _secondCollisionOccurence = widget.draftData?['A']?['A20'] ?? '';
+      _roadSurfaceCondition = widget.draftData?['A']?['A21'] ?? '';
+      _weather = widget.draftData?['A']?['A22'] ?? '';
+      _lightCondition = widget.draftData?['A']?['A23'] ?? '';
+      _locationType = widget.draftData?['A']?['A24'] ?? '';
+      _locationTypeWhenPedestrianInvolved =
+          widget.draftData?['A']?['A25'] ?? '';
+      _trafficControl = widget.draftData?['A']?['A26'] ?? '';
+      _postedSpeedLimitSigns = widget.draftData?['A']?['A27'] ?? '';
+      _gazettedSpeedLimitForLightVehiclesController.text =
+          widget.draftData?['A']?['A28'] ?? '';
+      _gazettedSpeedLimitForHeavyVehiclesController.text =
+          widget.draftData?['A']?['A29'] ?? '';
+      _policeAction = widget.draftData?['A']?['A30'] ?? '';
+      _caseNumberController.text = widget.draftData?['A']?['A31'] ?? '';
+      _bReportController.text = widget.draftData?['A']?['A32'] ?? '';
+      _casualties = widget.draftData?['A']?['A33'] ?? '';
+      _researchPurposeController.text = widget.draftData?['A']?['A34'] ?? '';
+    }
+  }
 
   // Method to save accident data to Firestore
   Future<void> saveAccidentDraft() async {
@@ -116,7 +164,7 @@ class _TabAccidentState extends State<TabAccident> {
       // If the document doesn't exist, create it
       try {
         await draftRef.set({
-          'C': {
+          'A': {
             'A1': _divisionController.text.trim(),
             'A2': _stationController.text.trim(),
             'A3': _dateController.text.trim(),
@@ -160,7 +208,7 @@ class _TabAccidentState extends State<TabAccident> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Draft created successfully')),
         );
-      }catch (e) {
+      } catch (e) {
         print('Failed to save draft: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to save draft')),
