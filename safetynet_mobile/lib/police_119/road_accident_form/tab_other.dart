@@ -42,21 +42,22 @@ class TabOtherState extends State<TabOther> {
     _formKey.currentState!.save();
     try {
       // Upload images to Firebase storage and get their URLs
-        List<String> collisionSketchUrls =
-            await _uploadImages(_collisionSketchImages);
-        List<String> additionalImageUrls =
-            await _uploadImages(_additionalImages);
+      List<String> collisionSketchUrls =
+          await _uploadImages(_collisionSketchImages);
+      List<String> additionalImageUrls = await _uploadImages(_additionalImages);
 
-        // Debugging output
-        print('collisionSketchUrls: $collisionSketchUrls');
-        print('additionalImageUrls: $additionalImageUrls');
+      // Debugging output
+      print('collisionSketchUrls: $collisionSketchUrls');
+      print('additionalImageUrls: $additionalImageUrls');
 
       // Try to update the document if it exists
       await draftRef.update({
-        'O': {'description of accident':
+        'O': {
+          'description of accident':
               _descriptionOfAccidentController.text.trim(),
           'collisionSketchUrls': collisionSketchUrls,
-          'additionalImageUrls': additionalImageUrls}, // Save O data 
+          'additionalImageUrls': additionalImageUrls
+        }, // Save O data
         'updatedAt': FieldValue.serverTimestamp(),
       });
       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,10 +77,12 @@ class TabOtherState extends State<TabOther> {
         print('additionalImageUrls: $additionalImageUrls');
 
         await draftRef.set({
-          'O': {'description of accident':
-              _descriptionOfAccidentController.text.trim(),
-          'collisionSketchUrls': collisionSketchUrls,
-          'additionalImageUrls': additionalImageUrls},
+          'O': {
+            'description of accident':
+                _descriptionOfAccidentController.text.trim(),
+            'collisionSketchUrls': collisionSketchUrls,
+            'additionalImageUrls': additionalImageUrls
+          },
           'officerID': widget.officerID,
           //'accidentID': accidentID,
           'createdAt': FieldValue.serverTimestamp(),
@@ -148,6 +151,35 @@ class TabOtherState extends State<TabOther> {
       );
     }
   }*/
+
+  Future<void> submitAccidentReport() async {
+    String draftID =
+        "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+
+    DocumentReference draftRef =
+        FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
+
+    DocumentSnapshot draftSnapshot = await draftRef.get();
+
+    if (draftSnapshot.exists) {
+      Map<String, dynamic> draftData =
+          draftSnapshot.data() as Map<String, dynamic>;
+
+      // Submit to the final accident report collection
+      await FirebaseFirestore.instance.collection('accident_report').add({
+        'A': draftData['A'],
+        'E': draftData['E'],
+        'C': draftData['C'],
+        'O': draftData['O'],
+        'officerID': widget.officerID,
+        'createdAt': draftData['createdAt'],
+        'submittedAt': FieldValue.serverTimestamp(),
+      });
+
+      // Optionally, delete the draft after submission
+      await draftRef.delete();
+    }
+  }
 
   Future<List<String>> _uploadImages(List<File?> images) async {
     List<String> urls = [];
@@ -294,7 +326,7 @@ class TabOtherState extends State<TabOther> {
                     'Submit',
                     style: TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
-                  onPressed: saveOtherDraft,
+                  onPressed: submitAccidentReport,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xfffbbe00),
                     shape: RoundedRectangleBorder(
