@@ -68,6 +68,7 @@ class SingleChoiceCheckboxInput extends StatefulWidget {
   final List<String> labels;
   final void Function(String?) onSaved;
   final String? Function()? validator; // Validator callback
+  final String? initialValue; // Add initialValue parameter
 
   const SingleChoiceCheckboxInput({
     super.key,
@@ -75,6 +76,7 @@ class SingleChoiceCheckboxInput extends StatefulWidget {
     required this.labels,
     required this.onSaved,
     this.validator, // Optionally pass a validator
+    this.initialValue,
   });
 
   @override
@@ -85,12 +87,10 @@ class SingleChoiceCheckboxInput extends StatefulWidget {
 class SingleChoiceCheckboxInputState extends State<SingleChoiceCheckboxInput> {
   String? _selectedLabel;
 
-  String? get selectedValue => _selectedLabel;
-
   @override
   void initState() {
     super.initState();
-    // Optionally initialize a default value
+    _selectedLabel = widget.initialValue; // Initialize with the provided value
   }
 
   String _extractPrefix(String label) {
@@ -99,50 +99,61 @@ class SingleChoiceCheckboxInputState extends State<SingleChoiceCheckboxInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.topic,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        ...widget.labels.map((label) {
-          return CheckboxListTile(
-            title: Text(label),
-            value: _selectedLabel == label,
-            onChanged: (bool? value) {
-              setState(() {
-                if (value == true) {
-                  _selectedLabel = label;
-                  widget.onSaved(_extractPrefix(label));
-                } else {
-                  _selectedLabel = null;
-                  widget.onSaved(null);
-                }
-              });
-            },
-          );
-        }),
-        if (widget.validator != null) // Add validation feedback if applicable
-          Builder(
-            builder: (context) {
-              final error = widget.validator!();
-              if (error != null && _selectedLabel == null) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    error,
-                    style: TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                );
-              }
-              return SizedBox.shrink();
-            },
-          ),
-      ],
+    return FormField<String>(
+      initialValue: _selectedLabel,
+      validator: (_) => widget.validator?.call(),
+      onSaved: (value) => widget.onSaved(_selectedLabel),
+      builder: (FormFieldState<String> state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.topic,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            ...widget.labels.map((label) {
+              return CheckboxListTile(
+                title: Text(label),
+                value: _selectedLabel == _extractPrefix(label),
+                onChanged: (bool? value) {
+                  setState(() {
+                    _selectedLabel = value! ? _extractPrefix(label) : null;
+                    state.didChange(_selectedLabel);
+                  });
+                },
+                //controlAffinity: ListTileControlAffinity.leading,
+              );
+            }).toList(),
+            /*if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(left: 12, top: 8),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              ),*/
+            if (widget.validator != null) // Add validation feedback if applicable
+              Builder(
+                builder: (context) {
+                  final error = widget.validator!();
+                  if (error != null && _selectedLabel == null) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        error,
+                        style: TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    );
+                  }
+                  return SizedBox.shrink();
+                },
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -203,7 +214,7 @@ class FormSection extends StatelessWidget {
             columnsCount: columnsCount,
             onChanged: (columnIndex) {
               // Pass the prefix ,row index and column index to the parent widget
-              onCheckboxChanged(rowIndex,labelPrefix, columnIndex);
+              onCheckboxChanged(rowIndex, labelPrefix, columnIndex);
             },
           );
         }).toList(),
@@ -240,7 +251,7 @@ class CheckboxRow extends StatelessWidget {
                   checkboxStates.length > index ? checkboxStates[index] : false,
               onChanged: (value) {
                 if (value == true) {
-                  onChanged(index);// Pass column index when checked
+                  onChanged(index); // Pass column index when checked
                 }
               },
             ),
@@ -250,7 +261,6 @@ class CheckboxRow extends StatelessWidget {
     );
   }
 }
-
 
 //for 3 column text input fields
 class TopicTextFields extends StatefulWidget {
@@ -514,7 +524,3 @@ class ImagePickerFormField extends FormField<File> {
           },
         );
 }
-
-
-
-
