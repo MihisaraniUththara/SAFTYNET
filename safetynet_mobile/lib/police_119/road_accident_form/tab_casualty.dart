@@ -1,14 +1,22 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'input_fields.dart';
 
 class TabCasualty extends StatefulWidget {
-  final String officerID; // Accept officerID
+  final String officerID;   // Accept officerID
+  final Map<String, dynamic>? draftData;  //Accept draft data
 
   // Pass officerID via the constructor
-  const TabCasualty({super.key, required this.officerID});
+  const TabCasualty({
+    super.key,
+    required this.officerID,
+    this.draftData,
+  });
+  
+  
 
   @override
   State<TabCasualty> createState() => _TabCasualtyState();
@@ -20,6 +28,16 @@ class _TabCasualtyState extends State<TabCasualty> {
   // Declare the casultyData map to store all form values
   Map<String, dynamic> casualtyData = {};
 
+  // Controllers for text fields
+  final Map<String, List<TextEditingController>> _textControllers = {
+    'C1': [], // Traffic element number
+  };
+
+  // Controllers for integer fields
+  final Map<String, List<TextEditingController>> _integerControllers = {
+    'C5': [], // Age
+  };
+
   // Store the checkbox states for each section
   final Map<String, List<List<bool>>> _checkboxStates = {
     'C2': List.generate(3, (_) => List.generate(3, (_) => false)), // Severity
@@ -30,17 +48,123 @@ class _TabCasualtyState extends State<TabCasualty> {
         List.generate(2, (_) => List.generate(3, (_) => false)), // Hospitalized
   };
 
-  // Keep track of the number of columns for each section
-  final List<int> _columnsCount = [
-    3, // Initial number of checkbox columns for Severity
-    3, // Initial number of checkbox columns for Category
-    3, // Initial number of checkbox columns for Sex
-    3, // Initial number of checkbox columns for Protection
-    3, // Initial number of checkbox columns for Hospitalized
-  ];
+  // Keep track of the initial number of columns for each section
+  List<int> _columnsCount = List.filled(5, 3); //=[3,3,3,3,3]
+  List<int> _topicTextFieldsCount = List.filled(1, 3); //=[3]
+  List<int> _integerInputFieldsCount = List.filled(1, 3); //=[3]
+  //List<int> _integerInputFieldsCount = [3];
 
-  List<int> _topicTextFieldsCount = [3];
-  List<int> _integerInputFieldsCount = [3];
+  // Define labels for each section
+  final Map<String, List<String>> labels = {
+    'C2': ['1 Fatal', '2 Grievous', '3 Non grievous'],
+    'C3': [
+      '1 Driver/Rider',
+      '2 Pedestrian',
+      '3 Passenger/pillion rider',
+      '4 Passenger/pillion rider falling off vehicle',
+      '5 Passenger entering or leaving bus',
+      '0 Not known'
+    ],
+    'C4': ['1 Male', '2 Female', '3 Not known'],
+    'C6': [
+      '1 Safety belt, worn',
+      '2 Safety belt, not worn',
+      '3 Helmet, worn',
+      '4 Helmet, not worn',
+      '5 Child restraint seat used',
+      '0 Not known/NA'
+    ],
+    'C7': [
+      '1 Injured and admitted to hospital at least 1 day',
+      '2 Injured but not admitted to hospital or admitted less than 1 day'
+    ],
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    print('load Draft');
+    _initializeControllers();
+    if (widget.draftData != null) {
+      _loadDraftData();
+      
+    }
+  }
+
+  void _initializeControllers() {
+    // Initialize text controllers
+    _textControllers.forEach((key, list) {
+      for (int i = 0; i < 3; i++) {
+        list.add(TextEditingController());
+      }
+    });
+
+    // Initialize integer controllers
+    _integerControllers.forEach((key, list) {
+      for (int i = 0; i < 3; i++) {
+        list.add(TextEditingController());
+      }
+    });
+  }
+
+  void _loadDraftData() {
+    final dataC = widget.draftData?['C'];
+    if (dataC != null) {
+      setState(() {
+        casualtyData = Map<String, dynamic>.from(dataC);
+
+        // Load checkbox values
+        _checkboxStates.forEach((section, rows) {
+          for (int i = 0; i < rows.length; i++) {
+            for (int j = 0; j < rows[i].length; j++) {
+              String key = '$section${String.fromCharCode(65 + j)}'; // Key format: C2A, C2B, etc.
+              String expectedPrefix = labels[section]![i].split(' ')[0];
+              if (dataC[key] != null &&
+                  dataC[key].toString() == expectedPrefix) {
+                rows[i][j] = true; // Match found, set checkbox as checked
+              } else {
+                rows[i][j] = false; // No match, ensure checkbox is unchecked
+              }
+              
+              print('Section: $section, Row: $i, Column: $j, Key: $key');
+            }
+          }
+        });
+
+        // Load text field values
+        _textControllers.forEach((section, controllers) {
+          for (int i = 0; i < controllers.length; i++) {          //controllers.length = _columnCount.length
+            String key = '$section${String.fromCharCode(65 + i)}';
+            if (dataC[key] != null) {
+              controllers[i].text = dataC[key].toString();
+            }
+          }
+        });
+
+        // Load integer field values
+        _integerControllers.forEach((section, controllers) {
+          for (int i = 0; i < controllers.length; i++) {
+            String key = '$section${String.fromCharCode(65 + i)}';
+            if (dataC[key] != null) {
+              controllers[i].text = dataC[key].toString();
+            }
+          }
+        });
+
+        // Update column counts if needed
+        int maxColumns = 3;
+        _checkboxStates.forEach((key, value) {
+          for (var row in value) {
+            maxColumns = max(maxColumns, row.length);
+          }
+        });
+
+        _columnsCount = List.filled(5, maxColumns);
+        _topicTextFieldsCount = List.filled(1, maxColumns);
+        _integerInputFieldsCount = List.filled(1, maxColumns);
+      });
+    }
+  }
 
   void _toggleCheckbox(
       String sectionPrefix, int rowIndex, String labelPrefix, int columnIndex) {
@@ -63,8 +187,11 @@ class _TabCasualtyState extends State<TabCasualty> {
 
   void _addCheckboxColumn(int sectionIndex) {
     setState(() {
-      for (var row in _checkboxStates['E${sectionIndex + 1}']!) {
-        row.add(false);
+      String section = ['C2', 'C3', 'C4', 'C6', 'C7'][sectionIndex];
+      if (_checkboxStates.containsKey(section)) {
+        for (var row in _checkboxStates[section]!) {
+          row.add(false);
+        }
       }
       _columnsCount[sectionIndex]++;
     });
@@ -73,17 +200,19 @@ class _TabCasualtyState extends State<TabCasualty> {
   void _addTopicTextFields(int sectionIndex) {
     setState(() {
       _topicTextFieldsCount[sectionIndex]++;
+      _textControllers['C1']?.add(TextEditingController());
     });
   }
 
   void _addIntegerInputFields(int sectionIndex) {
     setState(() {
       _integerInputFieldsCount[sectionIndex]++;
+      _integerControllers['C5']?.add(TextEditingController());
     });
   }
 
   void _addColumnsAndFields() {
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < _columnsCount.length; i++) {
       _addCheckboxColumn(i);
     }
     for (int i = 0; i < _topicTextFieldsCount.length; i++) {
@@ -100,17 +229,33 @@ class _TabCasualtyState extends State<TabCasualty> {
   }
 
   Future<void> saveCasualtyDraft() async {
-    
-    String draftID = "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+    String draftID =
+        "${widget.officerID}_currentAccidentID"; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
 
-     _formKey.currentState!.save();
+    _formKey.currentState!.save();
+
+    // Save text field values
+    _textControllers.forEach((section, controllers) {
+      for (int i = 0; i < controllers.length; i++) {
+        String key = '$section${String.fromCharCode(65 + i)}';
+        casualtyData[key] = controllers[i].text.trim();
+      }
+    });
+
+    // Save integer field values
+    _integerControllers.forEach((section, controllers) {
+      for (int i = 0; i < controllers.length; i++) {
+        String key = '$section${String.fromCharCode(65 + i)}';
+        casualtyData[key] = controllers[i].text.trim();
+      }
+    });
     try {
       // Try to update the document if it exists
       await draftRef.update({
-        'C': casualtyData, // Save C data 
+        'C': casualtyData, // Save C data
         'updatedAt': FieldValue.serverTimestamp(),
       });
       ScaffoldMessenger.of(context).showSnackBar(
@@ -176,7 +321,7 @@ class _TabCasualtyState extends State<TabCasualty> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        margin: EdgeInsets.all(24.0),
+        margin: const EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -186,14 +331,18 @@ class _TabCasualtyState extends State<TabCasualty> {
                 topic: 'C1 Traffic element number',
                 maxChars: 1,
                 columnsCount: _topicTextFieldsCount[0],
-                onChanged: (key, value) {
-                  casualtyData[key] = value;
-                },
+                controllers: _textControllers['C1']!,
+                onChanged: (key, value) => casualtyData[key] = value,
               ),
-              Text(
-                  'If a driver or passenger casualty indicate the vehicles element number in which the casualty traveled.'),
-              Text(
-                  'If a pedestrian casualty indicate the element number for the pedestrian.'),
+              const Text(
+                'If a driver or passenger casualty indicate the vehicles element number in which the casualty traveled.',
+                style: TextStyle(fontSize: 12),
+              ),
+              const Text(
+                'If a pedestrian casualty indicate the element number for the pedestrian.',
+                style: TextStyle(fontSize: 12),
+              ),
+              const SizedBox(height: 16),
               FormSection(
                 topic: 'C2. Severity according to penal code',
                 labels: [
@@ -237,6 +386,7 @@ class _TabCasualtyState extends State<TabCasualty> {
                 topic: 'C5 Age',
                 maxChars: 2,
                 columnsCount: _integerInputFieldsCount[0],
+                controllers: _integerControllers['C5']!,
                 onChanged: (key, value) {
                   casualtyData[key] = value;
                 },
@@ -267,15 +417,13 @@ class _TabCasualtyState extends State<TabCasualty> {
                 onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
                     _toggleCheckbox('C7', rowIndex, labelPrefix, columnIndex),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  _addColumnsAndFields();
-                },
+                onPressed: _addColumnsAndFields,
                 child: Text('Add Traffic Element'),
               ),
-              SizedBox(height: 50.0),
-              Container(
+              const SizedBox(height: 50.0),
+              SizedBox(
                 width: 150,
                 child: ElevatedButton(
                   child: Text(
@@ -285,7 +433,7 @@ class _TabCasualtyState extends State<TabCasualty> {
                       fontSize: 16.0,
                     ),
                   ),
-                   onPressed: saveCasualtyDraft,
+                  onPressed: saveCasualtyDraft,
                 ),
               ),
             ],
@@ -293,5 +441,21 @@ class _TabCasualtyState extends State<TabCasualty> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Dispose of all controllers
+    _textControllers.forEach((_, controllers) {
+      for (var controller in controllers) {
+        controller.dispose();
+      }
+    });
+    _integerControllers.forEach((_, controllers) {
+      for (var controller in controllers) {
+        controller.dispose();
+      }
+    });
+    super.dispose();
   }
 }

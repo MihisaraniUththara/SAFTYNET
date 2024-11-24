@@ -659,7 +659,7 @@ class _TabAccidentState extends State<TabAccident> {
                   'A34 For research purpose', _researchPurposeController,
                   maxchars: 2),
               SizedBox(height: 50.0),
-              Container(
+              SizedBox(
                 width: 150,
                 child: ElevatedButton(
                   child: Text(
