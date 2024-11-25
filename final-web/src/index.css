@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+  background-color:  #f1f1f1;
+}
+
+/* Define custom properties */
+:root {
+  --primary-color: #FBBE00;
+}
+
+/* Custom classes using CSS variables */
+.bg-primary {
+  background-color: var(--primary-color);
+}

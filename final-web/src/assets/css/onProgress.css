@@ -1,0 +1,206 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  overflow: hidden; /* Prevent body overflow */
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.header {
+  background-color: #FBBE00;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Ensure header stays on top */
+}
+
+.logo {
+  height: 60px;
+  margin-right: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.location {
+  margin-right: 20px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.profile {
+  border-radius: 50%;
+  height: 40px;
+  margin: 0 10px;
+}
+
+.logout {
+  background-color: transparent;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  margin-left: 20px;
+  font-size: 1em;
+}
+
+.dashboard {
+  display: flex;
+  flex: 1;
+  margin-top: 80px; /* Adjust based on header height */
+}
+
+.sidebar {
+  background-color: #FBBE00;
+  width: 250px;
+  padding: 20px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Enable vertical scrolling if needed */
+  overflow-x: hidden;
+  position: fixed;
+  top: 80px; /* Adjust based on header height */
+  bottom: 0;
+  left: 0;
+  z-index: 1000; /* Ensure sidebar stays on top */
+}
+
+.profile-pic {
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
+}
+
+.user-name {
+  color: #000;
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.menu-item {
+  display: block;
+  padding: 15px;
+  text-align: center;
+  width: 100%;
+  cursor: pointer;
+  text-decoration: none;
+  color: #000;
+  background-color: #fffb00;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 1.0em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.menu-item.active {
+  background-color: #FFFFFF; /* Highlight color for the active item */
+  color: #000; /* Text color for active item */
+}
+
+.menu-item.active.on-progress {
+  color: #000000; /* Set color to white for "Accidents on Progress" */
+  background-color: #ffffff; /* Set background color if needed */
+}
+
+.menu-item:hover {
+  background-color: #FDDE7F;
+}
+
+.main-content {
+  margin: 25px;
+  width: 100%;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  text-align: center;
+  background-color: #f4f4f4;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-list {
+  padding: 20px;
+}
+
+.date-group {
+  padding: 8px;
+  margin-bottom: 20px;
+}
+
+.notification {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f0ead8;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 5px auto;
+  margin-top: 10px;
+}
+
+.notification p {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.notification-actions {
+  display: flex;
+  align-items: center;
+}
+
+.progress-bar-container {
+  width: 100px;
+  height: 20px;
+  margin-top: 5px;
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-right: 50px;
+  margin-left: 50px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: rgb(29, 177, 12);
+}
+
+.details-button {
+  padding: 5px 10px;
+  background-color: #060112;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.details-button:hover {
+  background-color: #5a5a58;
+}

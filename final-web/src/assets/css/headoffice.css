@@ -1,0 +1,172 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    /* overflow-y: auto; */
+  }
+  
+  .header {
+    background-color: #FBBE00;
+    padding: 10px;
+    display: flex;
+    
+    align-items: center;
+    width: 100%;
+  }
+
+  .logo {
+    height: 60px;
+    margin-bottom: 0px;
+    /* margin-right: 300px; */
+    margin-left: 5px;
+  }
+  
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-info span {
+    margin-right: 60px;
+    margin-top: 10px;
+  }
+  
+  .profile {
+    border-radius: 50%;
+    height: 40px;
+    margin: 0 10px;
+  }
+  
+  .logout {
+    background-color: transparent;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    margin-right: 30px;
+  }
+  
+  .dashboard {
+    display: flex;
+    flex: 1;
+  }
+  
+  .sidebar {
+    background-color: #FBBE00;
+    width: 200px;
+    padding: 20px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  
+  .profile-pic {
+    margin-top: 10px;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    margin-left: 50px;
+    margin-right: 50px;
+    
+  }
+  
+ 
+  .user-name {
+    color: #000;
+    font-weight: bold;
+    font-size: 1.2em; /* Adjust the font size as needed */
+    margin-bottom: 20px;
+  }
+  
+  .menu {
+    list-style: none;
+    padding: 10px;
+    width: 100%;
+  }
+  
+  .menu li {
+    padding: 15px 0;
+    text-align: center; /* Center the text within the box */
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    margin-bottom: 10px;
+    justify-content: center; /* Center content horizontally */
+  align-items: center;
+    font-size: 1.2em; /* Add space between boxes */
+  }
+  
+ /*  .menu li:first-child {
+    background-color: #FDDE7F; 
+    color: black;
+    
+  } */
+
+  .menu .dashboard {
+    
+    background-color: #FDDE7F; /* Red background for 'Dashboard' */
+  }
+  
+/*   .menu li:not(:first-child) {
+    background-color: #FBBE00; 
+    color: black;
+  } */
+
+
+  .menu li:not(.dashboard) {
+  background-color: #FBBE00; /* Green background for other items */
+}
+  .menu li:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .stat-card {
+    background-color: #f7e7b5;
+    padding: 20px;
+    text-align: center;
+    width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    margin: 0 10px;
+    border-radius: 10px; /* Round corners */
+  }
+
+  .stat-title {
+    display: block; /* Ensure the title is on its own line */
+    font-size: 1em; /* Adjust font size as needed */
+  }
+  
+  .stat-number {
+    display: block; /* Ensure the number is on its own line */
+    font-size: 1.5em; /* Adjust font size as needed */
+    font-weight: bold;
+    margin-top: 10px; /* Add some space between title and number */
+  }
+  
+  .charts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  
+  .charts img {
+    width: 45%;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    border-radius: 10px; /* Round corners */
+  }

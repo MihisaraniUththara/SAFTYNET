@@ -1,0 +1,179 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  overflow: hidden; /* Prevent body overflow */
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  background-color: #FBBE00;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Ensure header stays on top */
+}
+
+.logo {
+  height: 60px;
+  margin-right: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.location {
+  margin-right: 20px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.profile {
+  border-radius: 50%;
+  height: 40px;
+  margin: 0 10px;
+}
+
+.logout {
+  background-color: transparent;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  margin-left: 20px;
+  font-size: 1em;
+}
+
+.dashboard {
+  display: flex;
+  flex: 1;
+  margin-top: 80px; /* Adjust based on header height */
+  padding-left: 250px; /* Ensure space for the sidebar */
+}
+
+.sidebar {
+  background-color: #FBBE00;
+  width: 250px;
+  padding: 20px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Enable vertical scrolling if needed */
+  overflow-x: hidden;
+  position: fixed; /* Fixed position to stay in place */
+  top: 80px; /* Align with header height */
+  bottom: 0;
+  left: 0;
+}
+
+.profile-pic {
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
+}
+
+.user-name {
+  color: #000;
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.menu-item {
+  display: block;
+  padding: 15px;
+  text-align: center;
+  width: 100%;
+  cursor: pointer;
+  text-decoration: none;
+  color: #000;
+  background-color: #fffb00;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 1.0em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.menu-item.active {
+  background-color: #FFFFFF; /* Highlight color for the active item */
+  color: #000; /* Text color for active item */
+}
+
+.menu-item:hover {
+  background-color: #FDDE7F;
+}
+
+.main-content {
+  padding: 20px;
+  background-color: #f4f4f4;
+  flex: 1; /* Ensure it takes up the remaining space */
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background-color: #ffffff;
+  padding: 20px;
+  text-align: center;
+  width: 220px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-title {
+  display: block;
+  font-size: 1em;
+  color: #333;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #000;
+}
+
+.charts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-around;
+}
+
+.chart-img {
+  width: 45%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.map-img {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
