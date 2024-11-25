@@ -74,7 +74,7 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                 officerID: widget.officerID, draftData: widget.draftData),
             TabCasualty(
                 officerID: widget.officerID, draftData: widget.draftData),
-            TabOther(officerID: widget.officerID),
+            TabOther(officerID: widget.officerID, draftData: widget.draftData),
           ],
         ),
       ),
