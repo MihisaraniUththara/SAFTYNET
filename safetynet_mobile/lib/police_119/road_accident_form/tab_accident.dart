@@ -8,7 +8,7 @@ class TabAccident extends StatefulWidget {
   final Map<String, dynamic>? draftData; // Accept draft data
 
   // Pass officerID via the constructor
-  const TabAccident({super.key, required this.officerID, this.draftData});
+  const TabAccident({super.key, required this.officerID, this.draftData,});
 
   @override
   State<TabAccident> createState() => _TabAccidentState();
@@ -208,7 +208,7 @@ class _TabAccidentState extends State<TabAccident> {
           //'accidentID': accidentID,
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
+        });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Draft created successfully')),
