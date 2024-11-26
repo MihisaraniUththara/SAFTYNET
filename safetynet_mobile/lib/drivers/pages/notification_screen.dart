@@ -166,6 +166,13 @@ class _NotificationPageState extends State<NotificationPage> {
               date: '10:52 pM',
               color: Colors.green,
             ),
+            _buildNotificationCard(
+              title: 'Ride Completed',
+              subtitle: 'From Location F to Location C',
+              icon: Icons.check_circle,
+              date: '10:52 pM',
+              color: Colors.green,
+            ),
           ],
         ),
       ),
