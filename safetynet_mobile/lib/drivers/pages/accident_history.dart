@@ -46,22 +46,8 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Choose your vehicle:',
-                  style: TextStyle(fontSize: 16),
-                ),
-                DropdownButton<String>(
-                  value: 'KH9024',
-                  items: <String>['KH9024', 'CAA1789', 'ND4957'].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    // Handle vehicle selection change
-                  },
-                ),
+                
+                
               ],
             ),
             SizedBox(height: 16),
@@ -72,29 +58,25 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
                     date: '2023-01-01',
                     time: '14:30',
                     location: '1st Lane, Kirulapone',
-                    status: 'Fatal',
-                    color: Colors.red,
+                    
                   ),
                   _buildAccidentCard(
                     date: '2022-12-15',
                     time: '09:15',
                     location: 'Highlevel Road, Nugegoda',
-                    status: 'Grievous',
-                    color: Colors.orange,
+                    
                   ),
                   _buildAccidentCard(
                     date: '2021-11-10',
                     time: '17:45',
                     location: 'Market St, Homagama',
-                    status: 'Non Grievous',
-                    color: Color(0xFFfbbe00),
+                    
                   ),
                   _buildAccidentCard(
                     date: '2020-10-05',
                     time: '08:00',
                     location: '5th Ave, Maharagama',
-                    status: 'Damage Only',
-                    color: Colors.green,
+                    
                   ),
                 ],
               ),
@@ -109,8 +91,7 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
     required String date,
     required String time,
     required String location,
-    required String status,
-    required Color color,
+    
   }) {
     return Card(
       elevation: 4,
@@ -148,16 +129,10 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: color,
+               
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                status,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+             
             ),
           ],
         ),
