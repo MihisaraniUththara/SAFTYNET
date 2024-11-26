@@ -46,22 +46,8 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Choose your vehicle:',
-                  style: TextStyle(fontSize: 16),
-                ),
-                DropdownButton<String>(
-                  value: 'KH9024',
-                  items: <String>['KH9024', 'CAA1789', 'ND4957'].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    // Handle vehicle selection change
-                  },
-                ),
+                
+                
               ],
             ),
             SizedBox(height: 16),
