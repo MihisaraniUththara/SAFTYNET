@@ -78,15 +78,15 @@ class _DriverHomePageState extends State<DriverHomePage> {
               ),
               SizedBox(height: 30),
               GridView.count(
-                crossAxisCount: 3,
+                crossAxisCount: 4,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 mainAxisSpacing: 16, // Adjust the spacing between rows
-                crossAxisSpacing: 16, // Adjust the spacing between columns
-                childAspectRatio: 1, // Maintain aspect ratio of cards
+                crossAxisSpacing: 4, // Adjust the spacing between columns
+                childAspectRatio: 0.8, // Maintain aspect ratio of cards
                 children: [
                   _buildCard(
-                      Icons.directions_car, 'Start a Ride', Colors.green, () {
+                      Icons.directions_car, 'Start Ride', Colors.green, () {
                         Get.to(() => StartRidePage());
                         }),
                    
@@ -95,15 +95,15 @@ class _DriverHomePageState extends State<DriverHomePage> {
                         Get.to(() => ReportAccidentPage());
                       }), 
                  
-                  _buildCard(Icons.contact_page, 'Inform Insurance', Colors.orange,
-                      () {
-                        Get.to(() => ReportInsurancePage());
-                      }),
+                  // _buildCard(Icons.contact_page, 'Inform Insurance', Colors.orange,
+                  //     () {
+                  //       Get.to(() => ReportInsurancePage());
+                  //     }),
                   _buildCard(Icons.car_rental, 'Register Vehicle', Colors.blue,
                       () {
                     Get.to(() => RegisterVehiclePage());
                   }),
-                  _buildCard(Icons.history, 'Accidents History', Colors.purple,
+                  _buildCard(Icons.history, 'Accident History', Colors.purple,
                       () {
                         Get.to(() => AccidentHistoryPage());
                       }),
