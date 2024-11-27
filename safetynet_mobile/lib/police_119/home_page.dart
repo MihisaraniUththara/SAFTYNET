@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../drivers/authentication/login_screen.dart';
 import 'road_accident_form/accident_report.dart';
-import 'accident_details_page.dart';
+import 'view_accidents/accident_details_page.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -13,9 +14,8 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFfbbe00),
-        leadingWidth:
-            150, // Increase leading width to allow the title to be on the left
-        titleSpacing: 0, // Reduce title spacing to align with the left
+        leadingWidth: 150,
+        titleSpacing: 0,
         automaticallyImplyLeading: false,
         title: Row(
           children: [
@@ -31,15 +31,14 @@ class HomePage extends StatelessWidget {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: _logout,
-            child: const Icon(
-              Icons.logout,
-              color: Colors.black,
-            ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.black),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Get.off(LoginScreen()); // Navigate back to the login screen
+            },
           ),
         ],
-        //elevation: 10.0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -49,11 +48,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-Future<void> _logout() async {
-  await FirebaseAuth.instance.signOut();
-  Get.off(LoginScreen()); // Redirect to login screen after logout
-}
-
 class AccidentView extends StatefulWidget {
   @override
   _AccidentViewState createState() => _AccidentViewState();
@@ -61,20 +55,38 @@ class AccidentView extends StatefulWidget {
 
 class _AccidentViewState extends State<AccidentView> {
   bool _newNotification = false;
-  Timer? _timer;
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isAlerting = false;
+  StreamSubscription<QuerySnapshot>? _accidentSubscription;
+  DateTime? _lastAccidentTime;
 
   @override
   void initState() {
     super.initState();
-    // Simulating new accident notification after 5 seconds
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      if (!_isAlerting) {
-        setState(() {
-          _newNotification = true;
-        });
-        _playNotificationSound();
+    _setupAccidentListener();
+  }
+
+  void _setupAccidentListener() {
+    _accidentSubscription = FirebaseFirestore.instance
+        .collection('driver_accidents')
+        .orderBy('date_time', descending: true)
+        .limit(1)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        final latestAccident = snapshot.docs.first;
+        final dateTime = latestAccident['date_time'] as Timestamp;
+        final accidentTime = dateTime.toDate();
+
+        if (_lastAccidentTime == null || accidentTime.isAfter(_lastAccidentTime!)) {
+          _lastAccidentTime = accidentTime;
+          if (!_isAlerting) {
+            setState(() {
+              _newNotification = true;
+            });
+            _playNotificationSound();
+          }
+        }
       }
     });
   }
@@ -89,7 +101,7 @@ class _AccidentViewState extends State<AccidentView> {
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _accidentSubscription?.cancel();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -100,10 +112,9 @@ class _AccidentViewState extends State<AccidentView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // First Card with blinking effect
+          // Card for Viewing Accident Details
           InkWell(
             onTap: () {
-              // Handle viewing details
               setState(() {
                 _newNotification = false;
                 _isAlerting = true;
@@ -111,12 +122,15 @@ class _AccidentViewState extends State<AccidentView> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => AccidentDetailsPage(accept: () {
-                          setState(() {
-                            _isAlerting = false;
-                            _stopNotificationSound();
-                          });
-                        })),
+                  builder: (context) => AccidentDetailsPage(
+                    accept: () {
+                      setState(() {
+                        _isAlerting = false;
+                        _stopNotificationSound();
+                      });
+                    },
+                  ),
+                ),
               );
             },
             child: AnimatedContainer(
@@ -150,25 +164,24 @@ class _AccidentViewState extends State<AccidentView> {
                     children: [
                       ListTile(
                         leading: Icon(Icons.warning,
-                            color:
-                                _newNotification ? Colors.white : Colors.white),
+                            color: _newNotification ? Colors.white : Colors.white),
                         title: Text(
-                            _newNotification
-                                ? 'New Accident Reported'
-                                : 'View Accidents',
-                            style: TextStyle(
-                                color: _newNotification
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25)),
+                          _newNotification
+                              ? 'New Accident Reported'
+                              : 'View Accidents',
+                          style: TextStyle(
+                            color: _newNotification ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
+                          ),
+                        ),
                         subtitle: Text(
-                            _newNotification ? 'Click to view details' : '',
-                            style: TextStyle(
-                                color: _newNotification
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 15)),
+                          _newNotification ? 'Click to view details' : '',
+                          style: TextStyle(
+                            color: _newNotification ? Colors.white : Colors.black,
+                            fontSize: 15,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -176,8 +189,8 @@ class _AccidentViewState extends State<AccidentView> {
               ),
             ),
           ),
-          SizedBox(height: 40), // Space between the cards
-          // Second Card as a regular button
+          const SizedBox(height: 40), // Spacing
+          // Card for Adding New Accident Report
           InkWell(
             onTap: () {
               showDialog(
@@ -199,11 +212,13 @@ class _AccidentViewState extends State<AccidentView> {
                         },
                         child: const Text('Cancel'),
                       ),
+
                       // Submit Button
                       TextButton(
                         onPressed: () {
                           String officerID = _officerId.text;
-                          //navigate to the accident form
+
+                          // Navigate to the Accident Report Form
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -234,13 +249,15 @@ class _AccidentViewState extends State<AccidentView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ListTile(
-                      title: Text('Add New Accident Report',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                          )),
+                      title: Text(
+                        'Add New Accident Report',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                        ),
+                      ),
                     ),
                   ],
                 ),
