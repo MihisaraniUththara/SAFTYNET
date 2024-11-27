@@ -5,7 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:safetynet_mobile/drivers/pages/home.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'home_page.dart';
+import '../home_page.dart';
 
 void main() {
   runApp(MyApp());
