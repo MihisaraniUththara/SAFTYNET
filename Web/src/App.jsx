@@ -17,7 +17,14 @@ import TrafficDashboad from './Pages/Traffic/Dashboad'
 import TrafficAccidentProgress from './Pages/Traffic/AccidentProgress'
 import TrafficAccidentProgressAll from './Pages/Traffic/AccidentProgressAll'
 import TrafficAccidentProgressMyCases from './Pages/Traffic/AccidentProgressMyCases'
-import OICD from './Pages/Oic/Dashboad'
+import OicLayout from './Pages/Oic/Layout'
+import OicDashboad from './Pages/Oic/Dashboad'
+import HeadLayout from './Pages/Head/Layout'
+import HeadDashboad from './Pages/Head/Dashboad'
+import HeadAccidentProgress from './Pages/Head/AccidentProgress'
+import HeadAccidentDetails from './Pages/Head/AccidentDetails'
+import HeadReportSubmit from './Pages/Head/ReportSubmit'
+import HeadAnalysis from './Pages/Head/Analysis'
 import { AuthContext } from './Context/AuthContext';
 
 
@@ -48,7 +55,16 @@ function App() {
             <Route path='mycases' element={<TrafficAccidentProgressMyCases/>} />
           </Route>
         </Route>
-      <Route path='oic' element={<RequireAuth><OICD/></RequireAuth>}/>
+        <Route path='Oic' element={<RequireAuth><OicLayout /></RequireAuth>}>
+          <Route index element={<RequireAuth><OicDashboad /></RequireAuth>} />
+        </Route>
+        <Route path='Head' element={<RequireAuth><HeadLayout /></RequireAuth>}>
+          <Route index element={<RequireAuth><HeadDashboad /></RequireAuth>} />
+          <Route path='AccidentProgress' element={<RequireAuth><HeadAccidentProgress/></RequireAuth>}/>
+          <Route path='AccidentDetails' element={<RequireAuth><HeadAccidentDetails/></RequireAuth>}/>
+          <Route path='ReportSubmit' element={<RequireAuth><HeadReportSubmit/></RequireAuth>}/>
+          <Route path='Analysis' element={<RequireAuth><HeadAnalysis/></RequireAuth>}/>
+        </Route>
       </Route>
     </Routes>
   </BrowserRouter>,

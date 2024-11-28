@@ -2,7 +2,7 @@ import React from 'react'
 import { HiOutlineBell } from 'react-icons/hi'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 
-const HeaderTraffic = () => {
+const HeaderHead = () => {
   return (
     <div className='bg-white h-16 px-4 text-black flex justify-end items-center'>
         <div className='flex items-center gap-9 mr-2 font-semibold'>
@@ -28,4 +28,4 @@ const HeaderTraffic = () => {
   )
 }
 
-export default HeaderTraffic
+export default HeaderHead

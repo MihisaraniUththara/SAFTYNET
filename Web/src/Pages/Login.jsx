@@ -57,6 +57,7 @@ const Login = () => {
               }
             } else {
               console.log("No such document!");
+              setError(true); //new change
             }
             setError(false);
           } catch (err) {

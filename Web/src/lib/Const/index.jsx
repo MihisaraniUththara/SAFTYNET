@@ -51,7 +51,7 @@ export const DASHBOARD_SIDEBAR_LINKS_OIC = [
 	{
 		key: 'O-dashboard',
 		label: 'Dashboard',
-		path: '/',
+		path: '/oic',
 		icon: <HiOutlineViewGrid />
 	},
 	{
@@ -98,37 +98,37 @@ export const DASHBOARD_SIDEBAR_LINKS_HEAD = [
 	{
 		key: 'H-dashboard',
 		label: 'Dashboard',
-		path: '/',
+		path: '/Head',
 		icon: <HiOutlineViewGrid />
 	},
 	{
 		key: 'H-accident-on-progress',
 		label: 'Accident On Progress',
-		path: '/',
+		path: '/Head/AccidentProgress',
 		icon: <FaHourglassHalf />
 	},
 	{
 		key: 'H-accident-details',
 		label: 'Accident Details',
-		path: '/',
+		path: '/Head/AccidentDetails',
 		icon: <FaInfoCircle />
 	},
 	{
 		key: 'H-ReportSub',
 		label: 'Report Submission',
-		path: '/',
+		path: '/Head/ReportSubmit',
 		icon: <SiTicktick />
 	},
 	{
 		key: 'H-report',
 		label: 'Report',
-		path: '/',
+		path: '#',
 		icon: <MdEditNote />
 	},
 	{
 		key: 'H-analysis',
 		label: 'Analysis',
-		path: '/',
+		path: '/Head/Analysis',
 		icon: <FaChartLine />
 	},
 	
