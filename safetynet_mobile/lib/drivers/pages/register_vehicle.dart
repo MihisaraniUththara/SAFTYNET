@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
 
 class RegisterVehiclePage extends StatefulWidget {
   @override
@@ -17,10 +16,10 @@ class _RegisterVehiclePageState extends State<RegisterVehiclePage> {
     if (user != null) {
       return FirebaseFirestore.instance
           .collection('vehicles')
-          .where('driverId', isEqualTo: user.uid) // Filter by driverId
+          .where('driverId', isEqualTo: user.uid)
           .snapshots();
     }
-    return Stream.empty(); // Return an empty stream if no user is logged in
+    return Stream.empty();
   }
 
   Future<void> _showDeleteConfirmationDialog(BuildContext context, String docId) async {
@@ -56,6 +55,62 @@ class _RegisterVehiclePageState extends State<RegisterVehiclePage> {
     }
   }
 
+  Future<void> _showVehicleDetailsDialog(BuildContext context, DocumentSnapshot doc) async {
+    final _agentContactNumberController = TextEditingController(text: doc['agentContactNumber']);
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Vehicle Details'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Model: ${doc['model']}'),
+                Text('Year: ${doc['year']}'),
+                Text('License Plate: ${doc['licensePlate']}'),
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: _agentContactNumberController,
+                  decoration: InputDecoration(
+                    labelText: 'Insurance Agent Tele',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.phone,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await FirebaseFirestore.instance
+                    .collection('vehicles')
+                    .doc(doc.id)
+                    .update({'agentContactNumber': _agentContactNumberController.text.trim()});
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Contact number updated successfully!')),
+                );
+                Navigator.of(context).pop();
+              },
+              child: Text('Update'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFfbbe00),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,16 +133,45 @@ class _RegisterVehiclePageState extends State<RegisterVehiclePage> {
                     return Center(child: Text('No registered vehicles.'));
                   }
                   return ListView(
+                    padding: EdgeInsets.all(8.0),  // Padding for the ListView
                     children: snapshot.data!.docs.map((doc) {
-                      return ListTile(
-                        title: Text('${doc['model']}'),
-                        subtitle: Text(
-                            'Year: ${doc['year']}, License Plate: ${doc['licensePlate']}'),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            _showDeleteConfirmationDialog(context, doc.id);
-                          },
+                      return Card(  // Using Card widget for individual items to add styling
+                        elevation: 4,  // Elevation for shadow effect
+                        margin: EdgeInsets.symmetric(vertical: 8.0),  // Margin between items
+                        child: ListTile(
+                          contentPadding: EdgeInsets.all(16.0),  // Padding inside ListTile
+                          title: Text(
+                            '${doc['model']}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,  // Larger font size for title
+                              color: Colors.black,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'Year: ${doc['year']}, License Plate: ${doc['licensePlate']}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],  // Lighter color for subtitle
+                            ),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.info, color: Colors.blue),
+                                onPressed: () {
+                                  _showVehicleDetailsDialog(context, doc);
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete, color: Colors.red),
+                                onPressed: () {
+                                  _showDeleteConfirmationDialog(context, doc.id);
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     }).toList(),
@@ -130,24 +214,18 @@ class AddVehicleDialog extends StatefulWidget {
 
 class _AddVehicleDialogState extends State<AddVehicleDialog> {
   final _formKey = GlobalKey<FormState>();
-  //final _makeController = TextEditingController();
   final _modelController = TextEditingController();
   final _yearController = TextEditingController();
   final _licensePlateController = TextEditingController();
-  final _vinController = TextEditingController();
-  //final _insuranceCompanyController = TextEditingController(); // New controller for insurance company
-  final _agentContactNumberController = TextEditingController(); // New controller for agent contact number
-  final _auth = FirebaseAuth.instance; // Firebase Auth instance
+  final _agentContactNumberController = TextEditingController();
+  final _auth = FirebaseAuth.instance;
 
   @override
   void dispose() {
-   // _makeController.dispose();
     _modelController.dispose();
     _yearController.dispose();
     _licensePlateController.dispose();
-    _vinController.dispose();
-  //  _insuranceCompanyController.dispose(); // Dispose new controller
-    _agentContactNumberController.dispose(); // Dispose new controller
+    _agentContactNumberController.dispose();
     super.dispose();
   }
 
@@ -155,24 +233,18 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
     if (_formKey.currentState!.validate()) {
       final user = _auth.currentUser;
       if (user != null) {
-        // Save vehicle details to Firestore
         await FirebaseFirestore.instance.collection('vehicles').add({
-          'driverId': user.uid, // Associate vehicle with driver
-          // 'make': _makeController.text.trim(),
+          'driverId': user.uid,
           'model': _modelController.text.trim(),
           'year': _yearController.text.trim(),
           'licensePlate': _licensePlateController.text.trim(),
-          // 'insuranceCompany': _insuranceCompanyController.text.trim(), // Save insurance company
-          'agentContactNumber': _agentContactNumberController.text.trim(), // Save agent contact number
+          'agentContactNumber': _agentContactNumberController.text.trim(),
           'createdAt': FieldValue.serverTimestamp(),
         });
 
-        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Vehicle registered successfully!')),
         );
-
-        // Close the dialog
         Navigator.of(context).pop();
       }
     }
@@ -188,12 +260,6 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // _buildTextFormField(
-              //   controller: _makeController,
-              //   labelText: 'Make',
-              //   validatorMessage: 'Please enter the vehicle make',
-              // ),
-              SizedBox(height: 16),
               _buildTextFormField(
                 controller: _modelController,
                 labelText: 'Model',
@@ -213,18 +279,10 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
                 validatorMessage: 'Please enter the vehicle registration number',
               ),
               SizedBox(height: 16),
-              // _buildTextFormField(
-              //   controller: _insuranceCompanyController,
-              //   labelText: 'Insurance Company (Optional)',
-              //   validatorMessage: null, // No validation required
-              // ),
-              SizedBox(height: 16),
-             _buildTextFormField(
+              _buildTextFormField(
                 controller: _agentContactNumberController,
-                labelText: 'Insurance Agent Tele (Optional)', 
+                labelText: 'Insurance Agent Tele (Optional)',
                 keyboardType: TextInputType.phone,
-                validatorMessage: null, // No validation required
-                // Adding the phone icon
               ),
             ],
           ),
@@ -259,13 +317,10 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
       decoration: InputDecoration(
         labelText: labelText,
         border: OutlineInputBorder(),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFFfbbe00)),
-        ),
       ),
       keyboardType: keyboardType,
       validator: (value) {
-        if (validatorMessage != null && (value == null || value.isEmpty)) {
+        if (value == null || value.isEmpty) {
           return validatorMessage;
         }
         return null;
