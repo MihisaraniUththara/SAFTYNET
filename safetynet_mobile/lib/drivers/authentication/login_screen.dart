@@ -20,77 +20,88 @@ class _LoginScreenState extends State<LoginScreen> {
   var isObsecure = true.obs;
 
   Future<void> login() async {
-    if (formkey.currentState!.validate()) {
-      try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
-        );
+  if (formkey.currentState!.validate()) {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-        User? user = userCredential.user;
-        if (user != null) {
-          // Check if user is in the drivers collection
-          DocumentSnapshot driverDoc = await FirebaseFirestore.instance
-              .collection('drivers')
-              .doc(user.uid)
-              .get();
-          if (driverDoc.exists) {
-            // User is a driver
-            String fullName = driverDoc['fullName'];
-            Get.snackbar(
-              "Success",
-              "Driver login successful",
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-            );
-            Get.off(() => DriverHomePage(fullName: fullName));
-            return;
-          }
+      User? user = userCredential.user;
+      if (user != null) {
+        // Check if user is in the drivers collection
+        DocumentSnapshot driverDoc = await FirebaseFirestore.instance
+            .collection('drivers')
+            .doc(user.uid)
+            .get();
+        if (driverDoc.exists) {
+          // User is a driver
+          String fullName = driverDoc['fullName'];
+          Get.snackbar(
+            "Success",
+            "Driver login successful",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+          Get.off(() => DriverHomePage(fullName: fullName));
+          return;
+        }
 
-          // Check if user is in the police collection
-          DocumentSnapshot policeDoc = await FirebaseFirestore.instance
+        // Check if user is in either the police or police_stations collections
+        List<bool> isPolice = await Future.wait([
+          FirebaseFirestore.instance
               .collection('police')
               .doc(user.uid)
-              .get();
-          if (policeDoc.exists) {
-            // User is a police officer
-            Get.snackbar(
-              "Success",
-              "Police login successful",
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-            );
-            Get.off(() => HomePage());
-            return;
-          }
+              .get()
+              .then((doc) => doc.exists), // Check in 'police' collection
+          FirebaseFirestore.instance
+              .collection('police_stations')
+              .doc(user.uid)
+              .get()
+              .then((doc) => doc.exists), // Check in 'police_stations' collection
+        ]);
 
-          // User is not found in either collection
+        if (isPolice.any((exists) => exists)) {
+          // User is in either police or police_stations collection
           Get.snackbar(
-            "Login Failed",
-            "User not found",
+            "Success",
+            "Police login successful",
             snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
           );
+          Get.off(() => HomePage());
+          return;
         }
-      } on FirebaseAuthException catch (e) {
-        print("FirebaseAuthException: ${e.message}");
+
+        // User is not found in any collection
         Get.snackbar(
           "Login Failed",
-          e.message!,
+          "User not found in the system",
           snackPosition: SnackPosition.BOTTOM,
-        );
-      } catch (e) {
-        print("Unknown Error: $e");
-        Get.snackbar(
-          "Login Failed",
-          "An unknown error occurred: $e",
-          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
         );
       }
+    } on FirebaseAuthException catch (e) {
+      print("FirebaseAuthException: ${e.message}");
+      Get.snackbar(
+        "Login Failed",
+        e.message!,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      print("Unknown Error: $e");
+      Get.snackbar(
+        "Login Failed",
+        "An unknown error occurred: $e",
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
