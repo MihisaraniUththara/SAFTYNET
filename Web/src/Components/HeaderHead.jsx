@@ -6,7 +6,6 @@ const HeaderHead = () => {
   return (
     <div className='bg-white h-16 px-4 text-black flex justify-end items-center'>
         <div className='flex items-center gap-9 mr-2 font-semibold'>
-            DIVISION
             <Popover>
                 <PopoverButton className="block text-sm/6 font-semibold text-black/50 focus:outline-none">
                     <HiOutlineBell fontSize={24}/>

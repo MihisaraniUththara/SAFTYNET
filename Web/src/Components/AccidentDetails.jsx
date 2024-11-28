@@ -23,12 +23,12 @@ const AccidentDetails = () => {
 
         if (data.A) {
           accidentData.push({
-            date: data.A.A3 || 'N/A', // A3 is Date
-            time: data.A.A4 || 'N/A', // A4 is Time
-            accidentId: data.A.A5 || 'N/A', // A5 is Accident ID
-            station: data.A.A2 || 'N/A', // A2 is Station
-            action: data.A.A30 || null, // A30 is Action
-            severity: data.A.A6 || null, // A6 is Severity
+            date: data.A?.A3 || 'N/A', // A3 is Date
+            time: data.A?.A4 || 'N/A', // A4 is Time
+            accidentId: data.A?.A5 || 'N/A', // A5 is Accident ID
+            station: data.A?.A2 || 'N/A', // A2 is Station
+            action: data.A?.A30 || null, // A30 is Action
+            severity: data.A?.A6 || null, // A6 is Severity
           });
         }
       });

@@ -1,47 +1,48 @@
-import React from 'react'
-import { HiOutlineBell } from 'react-icons/hi'
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
+import React, { useContext, useEffect, useState } from 'react';
+import { HiOutlineBell } from 'react-icons/hi';
+import { AuthContext } from '../Context/AuthContext';
+import { db } from '../firebase'; // Adjust import based on your Firebase setup
+import { getDocs, collection, query, where } from 'firebase/firestore';
 
 const HeaderOic = () => {
+  const { currentUser } = useContext(AuthContext);
+  const [station, setStation] = useState('Loading...');
+
+  useEffect(() => {
+    const fetchStation = async () => {
+      if (!currentUser?.email) return;
+
+      try {
+        // Query the 'police' collection to find the station associated with the user's email
+        const q = query(
+          collection(db, 'police'),
+          where('email', '==', currentUser.email)
+        );
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const stationData = querySnapshot.docs[0]?.data()?.station || 'No Station';
+          setStation(stationData);
+        } else {
+          setStation('No Station Found');
+        }
+      } catch (error) {
+        console.error('Error fetching station:', error);
+        setStation('Error Loading Station');
+      }
+    };
+
+    fetchStation();
+  }, [currentUser?.email]);
+
   return (
     <div className='bg-white h-16 px-4 text-black flex justify-end items-center'>
-        <div className='flex items-center gap-9 mr-2 font-semibold'>
-            DIVISION
-            <Popover>
-                <PopoverButton className="block text-sm/6 font-semibold text-black/50 focus:outline-none data-[active]:text-white data-[hover]:text-white data-[focus]:outline-1 data-[focus]:outline-white">
-                    Solutions
-                </PopoverButton>
-                <PopoverPanel
-                    transition
-                    anchor="bottom"
-                    className="divide-y divide-white/5 rounded-xl bg-white/5 text-sm/6 transition duration-200 ease-in-out [--anchor-gap:var(--spacing-5)] data-[closed]:-translate-y-1 data-[closed]:opacity-0">
-                    <div className="p-3">
-                    <a className="block rounded-lg py-2 px-3 transition hover:bg-white/5" href="#">
-                        <p className="font-semibold text-black">Insights</p>
-                        <p className="text-white/50">Measure actions your users take</p>
-                    </a>
-                    <a className="block rounded-lg py-2 px-3 transition hover:bg-white/5" href="#">
-                        <p className="font-semibold text-white">Automations</p>
-                        <p className="text-white/50">Create your own targeted content</p>
-                    </a>
-                    <a className="block rounded-lg py-2 px-3 transition hover:bg-white/5" href="#">
-                        <p className="font-semibold text-white">Reports</p>
-                        <p className="text-white/50">Keep track of your growth</p>
-                    </a>
-                    </div>
-                    <div className="p-3">
-                    <a className="block rounded-lg py-2 px-3 transition hover:bg-white/5" href="#">
-                        <p className="font-semibold text-white">Documentation</p>
-                        <p className="text-white/50">Start integrating products and tools</p>
-                    </a>
-                    </div>
-                </PopoverPanel>
-            </Popover>
-            <HiOutlineBell fontSize={24}/>
-        </div>
+      <div className='flex items-center gap-9 mr-2 font-semibold'>
+        <div>{station}</div>
+        <HiOutlineBell fontSize={24} />
+      </div>
     </div>
+  );
+};
 
-  )
-}
-
-export default HeaderOic
+export default HeaderOic;

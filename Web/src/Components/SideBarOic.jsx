@@ -11,7 +11,7 @@ const SideBarOic = () => {
     return (
     <div className='bg-yellow w-60 p-3 flex flex-col'>
         <div className='flex items-center gap-1 px-2 py-2'>
-            <img src={logo} class="h-10" alt="Logo"/>
+            <img src={logo} className="h-10" alt="Logo"/>
         </div>
         <div className='flex-1 py-8 flex flex-col gap-0.5'>
             {DASHBOARD_SIDEBAR_LINKS_OIC.map((item) => (

@@ -23,7 +23,7 @@ export const DASHBOARD_SIDEBAR_LINKS_TRAFFIC = [
 	{
 		key: 'T-accident-details',
 		label: 'Accident Details',
-		path: '/',
+		path: '/Traffic/AccidentDetails',
 		icon: <FaInfoCircle />
 	},
 	{
@@ -57,7 +57,7 @@ export const DASHBOARD_SIDEBAR_LINKS_OIC = [
 	{
 		key: 'O-accident-on-progress',
 		label: 'Accident On Progress',
-		path: '/',
+		path: '/oic/AccidentProgress',
 		icon: <FaHourglassHalf />
 	},
 	{

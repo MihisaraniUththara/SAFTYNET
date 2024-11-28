@@ -1,41 +1,77 @@
-import React, { useEffect, useState } from 'react';
-import { collection, getDocs, query, where, setDoc, doc } from 'firebase/firestore';
-import { db } from '../../firebase'; // Ensure your Firebase config is correctly imported
+import React, { useEffect, useState, useContext } from 'react';
+import { collection, getDocs, query, where, Timestamp } from 'firebase/firestore';
+import { db } from '../../firebase';
+import { AuthContext } from '../../Context/AuthContext';
 
 const AccidentProgress = () => {
+  const { currentUser } = useContext(AuthContext); // Access user context
+  const [station, setStation] = useState(null); // State for station
   const [accidentData, setAccidentData] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const q = query(collection(db, "accident_report"), where("A.A1", "==", "kurunegala")); // Adjust path to access subcollection field
-      const querySnapshot = await getDocs(q);
-
-      const data = querySnapshot.docs.map(doc => {
-        const docData = doc.data();
-        
-        // Extract nested fields
-        const accidentInfo = docData.A || {}; // Assume 'A' contains nested fields
-        const officerId = docData.officerID || "N/A"; // officerId in the main doc
-        
-
-        // Add default fields if missing
-        if (!docData.submit || !docData.oicApp || !docData.HeadApp) {
-          setDoc(doc.ref, { submit: 1, oicApp: 0, HeadApp: 0 }, { merge: true });
+    const fetchStation = async () => {
+      if (currentUser?.email) {
+        try {
+          const stationQuery = query(
+            collection(db, 'police'),
+            where('email', '==', currentUser.email.toLowerCase())
+          );
+          const querySnapshot = await getDocs(stationQuery);
+          if (!querySnapshot.empty) {
+            const policeStation = querySnapshot.docs[0].data()?.station || 'Unknown';
+            setStation(policeStation.toLowerCase()); // Normalize station name
+          } else {
+            setStation(null); // No station found
+          }
+        } catch (error) {
+          console.error('Error fetching station:', error);
         }
+      }
+    };
 
-        return {
-          date: accidentInfo.A3 || "N/A",
-          AccidentId: accidentInfo.A5 || "N/A",
-          InchargeOfficer: officerId || "N/A",
-          Status: docData.status || "Pending"
-        };
-      });
+    fetchStation();
+  }, [currentUser]);
 
-      setAccidentData(data);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!station) return;
+
+      try {
+        // Calculate timestamp for 30 days ago
+        const thirtyDaysAgo = Timestamp.fromDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+
+        // Query to fetch documents with createdAt within the last 30 days
+        const q = query(
+          collection(db, 'accident_report'),
+          where('A.A1', '==', station.toLowerCase()),
+          where('createdAt', '>=', thirtyDaysAgo)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        const data = querySnapshot.docs.map(doc => {
+          const docData = doc.data();
+
+          // Extract nested fields
+          const accidentInfo = docData.A || {}; // Assume 'A' contains nested fields
+          const officerId = docData.officerID || 'N/A'; // officerId in the main doc
+
+          return {
+            date: accidentInfo.A3 || 'N/A',
+            AccidentId: accidentInfo.A5 || 'N/A',
+            InchargeOfficer: officerId || 'N/A',
+            Status: docData.status || 'Pending'
+          };
+        });
+
+        setAccidentData(data);
+      } catch (error) {
+        console.error('Error fetching accident reports:', error);
+      }
     };
 
     fetchData();
-  }, []);
+  }, [station]);
 
   return (
     <div className='bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full'>

@@ -1,4 +1,4 @@
-import { Children, useContext, useState } from 'react'
+import {children, useContext, useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 // import './App.css'
@@ -8,8 +8,6 @@ import {
   Route,
   Navigate
 } from "react-router-dom";
-import Header from './Components/Header'
-import Slider from './Components/Slider'
 import Home from './Pages/Home/Home'
 import Login from './Pages/Login'
 import TrafficLayout from './Pages/Traffic/Layout'
@@ -17,8 +15,10 @@ import TrafficDashboad from './Pages/Traffic/Dashboad'
 import TrafficAccidentProgress from './Pages/Traffic/AccidentProgress'
 import TrafficAccidentProgressAll from './Pages/Traffic/AccidentProgressAll'
 import TrafficAccidentProgressMyCases from './Pages/Traffic/AccidentProgressMyCases'
+import TrafficAccidentDetails from './Pages/Traffic/AccidentDetails'
 import OicLayout from './Pages/Oic/Layout'
 import OicDashboad from './Pages/Oic/Dashboad'
+import OicAccidentProgress from './Pages/Oic/AccidentProgress'
 import HeadLayout from './Pages/Head/Layout'
 import HeadDashboad from './Pages/Head/Dashboad'
 import HeadAccidentProgress from './Pages/Head/AccidentProgress'
@@ -48,17 +48,19 @@ function App() {
       <Route path='/'>
         <Route index element={<Home/>} />
         <Route path='Login' element={<Login />} />
-        <Route path='Traffic' element={<RequireAuth><TrafficLayout /></RequireAuth>}>
+        <Route path='Traffic' element={<TrafficLayout />}>
           <Route index element={<RequireAuth><TrafficDashboad /></RequireAuth>} />
           <Route path='AccidentProgress' element={<RequireAuth><TrafficAccidentProgress /></RequireAuth>}> 
             <Route index element={<TrafficAccidentProgressAll/>} />
             <Route path='mycases' element={<TrafficAccidentProgressMyCases/>} />
           </Route>
+          <Route path='AccidentDetails' element={<RequireAuth><TrafficAccidentDetails /></RequireAuth>} />
         </Route>
-        <Route path='Oic' element={<RequireAuth><OicLayout /></RequireAuth>}>
+        <Route path='Oic' element={<OicLayout />}>
           <Route index element={<RequireAuth><OicDashboad /></RequireAuth>} />
+          <Route path='AccidentProgress' element={<RequireAuth><OicAccidentProgress/></RequireAuth>}/>
         </Route>
-        <Route path='Head' element={<RequireAuth><HeadLayout /></RequireAuth>}>
+        <Route path='Head' element={<HeadLayout />}>
           <Route index element={<RequireAuth><HeadDashboad /></RequireAuth>} />
           <Route path='AccidentProgress' element={<RequireAuth><HeadAccidentProgress/></RequireAuth>}/>
           <Route path='AccidentDetails' element={<RequireAuth><HeadAccidentDetails/></RequireAuth>}/>

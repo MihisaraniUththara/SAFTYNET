@@ -112,16 +112,17 @@ const ReportSubmit = () => {
               <th className="p-3 tracking-wide">Accident Id</th>
               <th className="p-3 tracking-wide">Station</th>
               <th className="p-3 tracking-wide">Severity</th>
+              <th className="p-3 tracking-wide">Action</th>
               <th className="p-3 tracking-wide">Options</th>
             </tr>
           </thead>
           <tbody>
             {reports.map((report) => (
               <tr key={report.id} className="border-t text-center">
-                <td className="p-3">{report.A3 || 'N/A'}</td>
-                <td className="p-3">{report.A5 || 'N/A'}</td>
-                <td className="p-3">{report.A2 || 'N/A'}</td>
-                <td className="p-3">{getSeverityText(report.A2)}</td>
+                <td className="p-3">{report.A?.A3 || 'N/A'}</td>
+                <td className="p-3">{report.A?.A5 || 'N/A'}</td>
+                <td className="p-3">{report.A?.A2 || 'N/A'}</td>
+                <td className="p-3">{getSeverityText(report.A?.A6) || 'Hell'}</td>
                 <td className="p-3">
                   <button
                     className="bg-green-500 hover:bg-green-600 text-black font-semibold py-1 px-2 rounded text-sm mr-2"
@@ -131,10 +132,12 @@ const ReportSubmit = () => {
                   </button>
                   <button
                     className="bg-red-500 hover:bg-red-600 text-black font-semibold py-1 px-2 rounded text-sm mr-2"
-                    onClick={() => handleReject(report.id, `${report.A2}.com`, report.A2)}
+                    onClick={() => handleReject(report.id, `${report.A?.A2}.com`, report.A?.A2)}
                   >
                     Reject
                   </button>
+                  </td>
+                  <td>
                   <button
                     className="bg-yellow-button hover:bg-yellow text-black font-semibold py-1 px-2 rounded text-sm"
                     onClick={() => handleDetails(report)} // Open the details modal
@@ -146,6 +149,8 @@ const ReportSubmit = () => {
             ))}
           </tbody>
         </table>
+
+        
       </div>
 
       {/* Modal for displaying report details */}
@@ -157,8 +162,8 @@ const ReportSubmit = () => {
               <p><strong>Accident ID:</strong> {selectedReport.A5}</p>
               <p><strong>Station:</strong> {selectedReport.A2}</p>
               <p><strong>Date:</strong> {selectedReport.A3}</p>
-              <p><strong>Severity:</strong> {selectedReport.A6}</p>
-              <p><strong>Description:</strong> {selectedReport.A4}</p> {/* Assuming A4 is description */}
+              <p><strong>Severity:</strong> {getSeverityText(selectedReport.A6)}</p>
+              <p><strong>Description:</strong> {selectedReport.A4 || 'No Description Available'}</p> {/* Assuming A4 is description */}
             </div>
             <button
               onClick={closeDetails}

@@ -4,9 +4,9 @@ import AccidentOnProgress from '../../Components/AccidentProgress'
 const AccidentProgress = () => {
   return (
     <div>
-        <div>
-            <AccidentOnProgress/>
-        </div>
+      <div>
+        <AccidentOnProgress />
+      </div>
     </div>
   )
 }
