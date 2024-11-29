@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'input_fields.dart';
@@ -7,12 +6,14 @@ import 'input_fields.dart';
 class TabElement extends StatefulWidget {
   final String officerID; // Accept officerID
   final Map<String, dynamic>? draftData;
+  final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier
 
   // Pass officerID via the constructor
   const TabElement({
     super.key,
     required this.officerID,
     this.draftData,
+    required this.uniqueIdNotifier,
   });
 
   @override
@@ -245,9 +246,10 @@ class _TabElementState extends State<TabElement> {
         _checkboxStates.forEach((section, rows) {
           for (int i = 0; i < rows.length; i++) {
             for (int j = 0; j < rows[i].length; j++) {
-              String key = '$section${String.fromCharCode(65 + j)}';  // Key format: E2A, E2B, etc.
+              String key =
+                  '$section${String.fromCharCode(65 + j)}'; // Key format: E2A, E2B, etc.
               String expectedPrefix = labels[section]![i].split(' ')[0];
-               if (dataE[key] != null &&
+              if (dataE[key] != null &&
                   dataE[key].toString() == expectedPrefix) {
                 rows[i][j] = true; // Match found, set checkbox as checked
               } else {
@@ -260,7 +262,8 @@ class _TabElementState extends State<TabElement> {
 
         // Load text field values
         _textControllers.forEach((section, controllers) {
-          for (int i = 0; i < controllers.length; i++) {         //controllers.length = _columnCount.length
+          for (int i = 0; i < controllers.length; i++) {
+            //controllers.length = _columnCount.length
             String key = '$section${String.fromCharCode(65 + i)}';
             if (dataE[key] != null) {
               controllers[i].text = dataE[key].toString();
@@ -315,7 +318,21 @@ class _TabElementState extends State<TabElement> {
 
   void _addCheckboxColumn(int sectionIndex) {
     setState(() {
-      String section = ['E1', 'E5', 'E7', 'E10', 'E13', 'E14', 'E15', 'E16', 'E17', 'E18', 'E19', 'E20', 'E21'][sectionIndex];
+      String section = [
+        'E1',
+        'E5',
+        'E7',
+        'E10',
+        'E13',
+        'E14',
+        'E15',
+        'E16',
+        'E17',
+        'E18',
+        'E19',
+        'E20',
+        'E21'
+      ][sectionIndex];
       if (_checkboxStates.containsKey(section)) {
         for (var row in _checkboxStates[section]!) {
           row.add(false);
@@ -359,8 +376,9 @@ class _TabElementState extends State<TabElement> {
   }
 
   Future<void> saveElementDraft() async {
+
     String draftID =
-        "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+        "${widget.officerID}_${widget.uniqueIdNotifier.value}"; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);

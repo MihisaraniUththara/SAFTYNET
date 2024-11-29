@@ -5,7 +5,7 @@ import 'tab_casualty.dart';
 import 'tab_other.dart';
 
 class AccidentReportForm extends StatefulWidget {
-  final String officerID; // Define officerID 
+  final String officerID; // Define officerID
   final Map<String, dynamic>? draftData; // Option to pass draft data
 
   // Pass officerID via the constructor
@@ -19,7 +19,11 @@ class AccidentReportForm extends StatefulWidget {
   _AccidentReportFormState createState() => _AccidentReportFormState();
 }
 
-class _AccidentReportFormState extends State<AccidentReportForm> {
+class _AccidentReportFormState extends State<AccidentReportForm>{
+  
+  // ValueNotifier for shared unique ID state
+  final ValueNotifier<String?> uniqueIdNotifier = ValueNotifier(null);
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -51,9 +55,8 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                             fontWeight: FontWeight.bold)),
                   ],
                 ),
-                TabBar(
-                  //controller: _tabController,
-                  tabs: const [
+                const TabBar(
+                  tabs: [
                     Tab(text: 'ACCIDENT'),
                     Tab(text: 'ELEMENTS'),
                     Tab(text: 'CASUALTY'),
@@ -65,17 +68,34 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
           ),
           backgroundColor: const Color(0xfffbbe00),
         ),
-        body: TabBarView(
-          //controller: _tabController,
-          children: [
-            TabAccident(
-                officerID: widget.officerID, draftData: widget.draftData),
-            TabElement(
-                officerID: widget.officerID, draftData: widget.draftData),
-            TabCasualty(
-                officerID: widget.officerID, draftData: widget.draftData),
-            TabOther(officerID: widget.officerID, draftData: widget.draftData),
-          ],
+        body: ValueListenableBuilder<String?>(
+          valueListenable: uniqueIdNotifier,
+          builder: (context, uniqueId, child) {
+            return TabBarView(
+              children: [
+                TabAccident(
+                  officerID: widget.officerID,
+                  draftData: widget.draftData,
+                  uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                ),
+                TabElement(
+                  officerID: widget.officerID,
+                  draftData: widget.draftData,
+                  uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                ),
+                TabCasualty(
+                  officerID: widget.officerID,
+                  draftData: widget.draftData,
+                  uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                ),
+                TabOther(
+                  officerID: widget.officerID,
+                  draftData: widget.draftData,
+                  uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

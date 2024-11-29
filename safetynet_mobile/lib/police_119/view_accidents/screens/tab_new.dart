@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'map_toaccident.dart';
+import '../map_toaccident.dart';
 
 class TabNew extends StatelessWidget {
   final VoidCallback accept;

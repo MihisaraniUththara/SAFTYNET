@@ -50,6 +50,8 @@ class TabSubmitted extends StatelessWidget {
 
             final a3 = report.data().containsKey('A3') ? report['A3'] : 'N/A';
             final a4 = report.data().containsKey('A4') ? report['A4'] : 'N/A';
+            //final ActionTakenByPolice = report.data().containsKey('A30') ? report['A30'] : 'N/A';
+
 
             // Combine A3 and A4 as the date-time
             final DateTime = '$a3 $a4';
@@ -69,6 +71,7 @@ class TabSubmitted extends StatelessWidget {
                     Text('Submitted At: ${submittedAt != null ? submittedAt.toString() : 'N/A'}'),
                     Text('Officer ID: $officerID'),
                     Text('Date and Time: $DateTime'),
+                    //Text('Action taken by police: $'),
                   ],
                 ),
               ),
