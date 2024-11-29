@@ -7,11 +7,13 @@ import 'package:image_picker/image_picker.dart';
 class TabOther extends StatefulWidget {
   final String officerID;
   final Map<String, dynamic>? draftData;
+  final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier
 
   const TabOther({
     super.key,
     required this.officerID,
     this.draftData,
+    required this.uniqueIdNotifier,
   });
 
   @override
@@ -290,7 +292,7 @@ class TabOtherState extends State<TabOther> {
       return;
     }
 
-    String draftID = "${widget.officerID}_currentAccidentID";
+    String draftID = "${widget.officerID}_${widget.uniqueIdNotifier.value}";
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
 
