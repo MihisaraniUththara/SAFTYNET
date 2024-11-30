@@ -52,6 +52,8 @@ dependencies:
   image_picker: ^0.8.6+15
   firebase_storage: 12.1.1
   firebase_messaging: ^15.0.3
+  geocoding: ^2.0.4
+
  
 
 dev_dependencies:
