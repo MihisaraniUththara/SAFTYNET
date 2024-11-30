@@ -4,7 +4,7 @@ import '../../road_accident_form/accident_report.dart';
 
 class OfficerValidationDialog extends StatelessWidget {
   final String accidentNo;
-  
+
   const OfficerValidationDialog({
     Key? key,
     required this.accidentNo,
@@ -29,27 +29,30 @@ class OfficerValidationDialog extends StatelessWidget {
           child: const Text('Cancel'),
         ),
         TextButton(
-          onPressed: () => _validateAndNavigate(context, officerIdController.text),
+          onPressed: () =>
+              _validateAndNavigate(context, officerIdController.text),
           child: const Text('Submit'),
         ),
       ],
     );
   }
 
-  Future<void> _validateAndNavigate(BuildContext context, String officerId) async {
+  Future<void> _validateAndNavigate(
+      BuildContext context, String officerId) async {
     if (officerId.isEmpty) {
       _showError(context, 'Officer ID is required');
       return;
     }
 
     try {
-      /*// Validate Officer ID
-      DocumentSnapshot officerSnapshot = await FirebaseFirestore.instance
+      /*// Validate Officer ID by checking 'badgeNumber' field
+      QuerySnapshot officerQuerySnapshot = await FirebaseFirestore.instance
           .collection('police')
-          .doc(officerId)
+          .where('badgeNumber', isEqualTo: officerId)
+          .limit(1)
           .get();
 
-      if (!officerSnapshot.exists) {
+      if (officerQuerySnapshot.docs.isEmpty) {
         _showError(context, 'Invalid Officer ID');
         return;
       }*/
@@ -69,7 +72,7 @@ class OfficerValidationDialog extends StatelessWidget {
       // Check if officer ID matches
       final draftData = draftSnapshot.data() as Map<String, dynamic>;
       final savedOfficerId = draftData['officerID'];
-      
+
       if (savedOfficerId != officerId) {
         _showError(context, 'Officer ID does not match the saved Officer ID');
         return;

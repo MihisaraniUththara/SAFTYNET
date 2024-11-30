@@ -353,11 +353,11 @@ class TabOtherState extends State<TabOther> {
   }
 
   Future<void> submitAccidentReport() async {
-    if (!_formKey.currentState!.validate()) {
+    /*if (!_formKey.currentState!.validate()) {
       return;
-    }
+    }*/
 
-    String draftID = "${widget.officerID}_currentAccidentID";
+    String draftID = "${widget.officerID}_${widget.uniqueIdNotifier.value}";
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
 
