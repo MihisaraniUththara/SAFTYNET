@@ -1,8 +1,11 @@
 import React from 'react'
+import StatCards from '../../Components/StationWise/StatCards'
 
 const Dashboad = () => {
   return (
-    <div>Dashboad</div>
+    <div className='flex gap-4 flex-col'>
+      <StatCards />
+    </div>
   )
 }
 

@@ -36,9 +36,10 @@ const HeaderOic = () => {
   }, [currentUser?.email]);
 
   return (
-    <div className='bg-white h-16 px-4 text-black flex justify-end items-center'>
+    <div className='bg-white h-16 px-4 text-black flex justify-between items-center'>
+      <div className='flex items-center gap-9 mr-2 font-semibold px-3'>OFFICER IN CHARGE</div>
       <div className='flex items-center gap-9 mr-2 font-semibold'>
-        <div>{station}</div>
+        <div>{station.toUpperCase()}</div>
         <HiOutlineBell fontSize={24} />
       </div>
     </div>

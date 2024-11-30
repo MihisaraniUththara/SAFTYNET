@@ -1,7 +1,4 @@
 import {children, useContext, useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-// import './App.css'
 import {
   BrowserRouter,
   Routes,
@@ -15,16 +12,24 @@ import TrafficDashboad from './Pages/Traffic/Dashboad'
 import TrafficAccidentProgress from './Pages/Traffic/AccidentProgress'
 import TrafficAccidentProgressAll from './Pages/Traffic/AccidentProgressAll'
 import TrafficAccidentProgressMyCases from './Pages/Traffic/AccidentProgressMyCases'
+import TrafficAccidentProgressReject from './Pages/Traffic/AccidentProgressReject'
 import TrafficAccidentDetails from './Pages/Traffic/AccidentDetails'
 import OicLayout from './Pages/Oic/Layout'
 import OicDashboad from './Pages/Oic/Dashboad'
 import OicAccidentProgress from './Pages/Oic/AccidentProgress'
+import OicAccidentDetails from './Pages/Oic/AccidentDetails'
+import OicReportApproval from './Pages/Oic/ReportApprove'
+import DutyLayout from './Pages/Oic/DutyLayout'
+import DayDuty from './Pages/Oic/DayDuty'
+import NightDuty from './Pages/Oic/NightDuty'
 import HeadLayout from './Pages/Head/Layout'
 import HeadDashboad from './Pages/Head/Dashboad'
 import HeadAccidentProgress from './Pages/Head/AccidentProgress'
 import HeadAccidentDetails from './Pages/Head/AccidentDetails'
 import HeadReportSubmit from './Pages/Head/ReportSubmit'
 import HeadAnalysis from './Pages/Head/Analysis'
+import AdminLayout from './Pages/Admin/Layout'
+import AdminOfficers from './Pages/Admin/Officers'
 import { AuthContext } from './Context/AuthContext';
 
 
@@ -48,24 +53,46 @@ function App() {
       <Route path='/'>
         <Route index element={<Home/>} />
         <Route path='Login' element={<Login />} />
+
+        {/* Traffic police */}
+
         <Route path='Traffic' element={<TrafficLayout />}>
           <Route index element={<RequireAuth><TrafficDashboad /></RequireAuth>} />
           <Route path='AccidentProgress' element={<RequireAuth><TrafficAccidentProgress /></RequireAuth>}> 
             <Route index element={<TrafficAccidentProgressAll/>} />
             <Route path='mycases' element={<TrafficAccidentProgressMyCases/>} />
+            <Route path='Reject' element={<TrafficAccidentProgressReject/>} />
           </Route>
           <Route path='AccidentDetails' element={<RequireAuth><TrafficAccidentDetails /></RequireAuth>} />
         </Route>
+
+        {/* OIC */}
+
         <Route path='Oic' element={<OicLayout />}>
           <Route index element={<RequireAuth><OicDashboad /></RequireAuth>} />
           <Route path='AccidentProgress' element={<RequireAuth><OicAccidentProgress/></RequireAuth>}/>
+          <Route path='AccidentDetails' element={<RequireAuth><OicAccidentDetails/></RequireAuth>}/>
+          <Route path='ReportApproval' element={<RequireAuth><OicReportApproval/></RequireAuth>}/>
+          <Route path='Duty' element={<RequireAuth><DutyLayout/></RequireAuth>}>
+            <Route index element={<DayDuty/>} />
+            <Route path='Night' element={<RequireAuth><NightDuty/></RequireAuth>} />
+          </Route>
         </Route>
+
+        {/* Head Office */}
+
         <Route path='Head' element={<HeadLayout />}>
           <Route index element={<RequireAuth><HeadDashboad /></RequireAuth>} />
           <Route path='AccidentProgress' element={<RequireAuth><HeadAccidentProgress/></RequireAuth>}/>
           <Route path='AccidentDetails' element={<RequireAuth><HeadAccidentDetails/></RequireAuth>}/>
           <Route path='ReportSubmit' element={<RequireAuth><HeadReportSubmit/></RequireAuth>}/>
           <Route path='Analysis' element={<RequireAuth><HeadAnalysis/></RequireAuth>}/>
+        </Route>
+
+        {/* Admin */}
+
+        <Route path='Admin' element={<AdminLayout/>}>
+          <Route path='Officers' element={<AdminOfficers/>}/>
         </Route>
       </Route>
     </Routes>

@@ -48,7 +48,7 @@ const ReportSubmit = () => {
           date: new Date().toLocaleDateString(),
           accident_id: accidentId,
         },
-        'dC0v0cM6UrHCug-qq' // Replace with your actual public key
+        'dC0v0cM6UrHCug-qq' //public key
       );
 
       console.log('Email sent successfully:', result.status, result.text);

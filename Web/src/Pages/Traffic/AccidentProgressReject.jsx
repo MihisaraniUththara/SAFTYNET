@@ -3,7 +3,7 @@ import { collection, query, where, Timestamp, onSnapshot, orderBy, getDocs } fro
 import { db } from '../../firebase';
 import { AuthContext } from '../../Context/AuthContext';
 
-const AccidentProgressMyCases = () => {
+const AccidentProgressReject = () => {
   const { currentUser } = useContext(AuthContext); // Access user context
   const [badgeNumber, setBadgeNumber] = useState(null); // Badge number of current user
   const [accidentData, setAccidentData] = useState([]); // Accident reports
@@ -39,14 +39,15 @@ const AccidentProgressMyCases = () => {
   useEffect(() => {
     if (!badgeNumber) return;
 
-    // Calculate timestamp for 30 days ago
-    const thirtyDaysAgo = Timestamp.fromDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+    // // Calculate timestamp for 30 days ago
+    // const thirtyDaysAgo = Timestamp.fromDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
 
     // Real-time Firestore listener for accident reports
     const accidentQuery = query(
       collection(db, 'accident_report'),
       where('officerID', '==', badgeNumber),
-      where('createdAt', '>=', thirtyDaysAgo),
+    //   where('createdAt', '>=', thirtyDaysAgo),
+      where('reject', '==', true),
       orderBy('createdAt', 'desc')
     );
 
@@ -62,8 +63,7 @@ const AccidentProgressMyCases = () => {
           AccidentId: accidentInfo.A5 || 'N/A',
           InchargeOfficer: docData.officerID || 'N/A',
           submit: docData.submit || 0, 
-          oicApp: docData.oicApp || 0, 
-          headApp: docData.headApp || 0,
+          reject: docData.reject || false,
         };
       });
 
@@ -73,32 +73,18 @@ const AccidentProgressMyCases = () => {
     return () => unsubscribe();
   }, [badgeNumber]);
 
-  const getStatus = (submit, oicApp, headApp) => {
-    if (submit === 1 && oicApp === 0 && headApp === 0) {
-      return (
-        <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-          Pending
-        </span>
-      );
-    }
-    if (submit === 1 && oicApp === 1 && headApp === 0) {
-      return (
-        <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-          In Progress
-        </span>
-      );
-    }
-    if (submit === 1 && oicApp === 1 && headApp === 1) {
-      return (
-        <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-          Completed
-        </span>
-      );
-    }
-    if (submit === 0 && oicApp === 0 && headApp === 0) {
+  const getStatus = (submit, reject) => {
+    if (submit === 0 && reject == true) {
       return (
         <span className="inline-flex items-center rounded-md bg-red-200 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-          Rejected
+          Rejected by OIC
+        </span>
+      );
+    }
+    if (submit === 0 && reject == false) {
+      return (
+        <span className="inline-flex items-center rounded-md bg-red-200 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+          Rejected by Head Office
         </span>
       );
     }
@@ -111,10 +97,10 @@ const AccidentProgressMyCases = () => {
 
   return (
     <div className='bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full'>
-      <strong><h1><center>My Recent Cases</center></h1></strong>
+      <strong><h1><center>Rejected Cases</center></h1></strong>
       <div className='mt-3 p-3'>
         {accidentData.length === 0 ? (
-          <p className='text-center text-gray-500'>No cases assigned to you in the last 30 days.</p>
+          <p className='text-center text-gray-500'>No cases Rejected in the last 30 days.</p>
         ) : (
           <table className='w-full table-auto'>
             <thead className='bg-gray-100 border-gray-400 font-semibold'>
@@ -133,7 +119,7 @@ const AccidentProgressMyCases = () => {
                   <td className='text-center p-3'>{accident.AccidentId}</td>
                   <td className='text-center p-3'>{accident.InchargeOfficer}</td>
                   <td className='text-center p-3 font-semibold'>
-                  {getStatus(accident.submit, accident.oicApp, accident.headApp)}
+                  {getStatus(accident.submit, accident.reject)}
                   </td>
                   <td className='text-center p-3'>
                     <button className='bg-yellow-button hover:bg-yellow text-black font-semibold py-1 px-1 rounded text-sm'>
@@ -150,4 +136,9 @@ const AccidentProgressMyCases = () => {
   );
 };
 
-export default AccidentProgressMyCases;
+export default AccidentProgressReject
+
+
+
+  
+

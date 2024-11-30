@@ -37,9 +37,11 @@ const HeaderTraffic = () => {
     }, [currentUser?.email]);
 
   return (
-    <div className='bg-white h-16 px-4 text-black flex justify-end items-center'>
+    <div className='bg-white h-16 px-4 text-black flex justify-between items-center'>
+      <div className='flex items-center gap-9 mr-2 font-semibold px-3'>TRAFFIC POLICE OFFICER</div>
         <div className='flex items-center gap-9 mr-2 font-semibold'>
-            {station}
+        {station.toUpperCase()}
+
             <Popover>
                 <PopoverButton className="block text-sm/6 font-semibold text-black/50 focus:outline-none">
                     <HiOutlineBell fontSize={24}/>
