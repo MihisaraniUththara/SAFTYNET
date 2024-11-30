@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../widgets/op_officer_validation_dialog.dart';
+import '../widgets/edit_officer_validation_dialog.dart';
 
 class TabOnProgress extends StatelessWidget {
   const TabOnProgress({Key? key}) : super(key: key);

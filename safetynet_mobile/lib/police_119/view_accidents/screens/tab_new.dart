@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../map_toaccident.dart';
+import '../widgets/accept_officer_validation_dialog.dart';
 
 class TabNew extends StatelessWidget {
   final VoidCallback accept;
@@ -67,59 +68,13 @@ class TabNew extends StatelessWidget {
                 ),
                 trailing: ElevatedButton(
                   onPressed: () {
-                    TextEditingController officerIdController =
-                        TextEditingController();
-
+                    print('Opening dialog with accidentId: ${accident.id}');
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Enter Officer ID'),
-                          content: TextField(
-                            controller: officerIdController,
-                            decoration: const InputDecoration(
-                              hintText: "Enter Officer ID",
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Close dialog
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                final officerId = officerIdController.text;
-
-                                if (officerId.isNotEmpty) {
-                                  // Update Firestore document
-                                  await FirebaseFirestore.instance
-                                      .collection('driver_accidents')
-                                      .doc(accident.id)
-                                      .update({
-                                    'accepted': true,
-                                    'officer_id': officerId,
-                                    'accepted_time': DateTime.now(),
-                                  });
-
-                                  accept(); // Stop notification sound
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => StartRidePage()),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Officer ID is required.'),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: const Text('Submit'),
-                            ),
-                          ],
+                        return OfficerValidationDialog(
+                          accept: accept,
+                          accidentId: accident.id, // Ensure this value is correct
                         );
                       },
                     );
