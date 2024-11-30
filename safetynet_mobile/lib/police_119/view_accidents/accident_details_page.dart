@@ -5,11 +5,8 @@ import 'screens/tab_new.dart';
 import 'screens/tab_onprogress.dart';
 
 class AccidentDetailsPage extends StatelessWidget {
-  final VoidCallback accept;
 
-  AccidentDetailsPage({required this.accept});
-
-  @override
+@override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
@@ -31,7 +28,7 @@ class AccidentDetailsPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            TabNew(accept: accept, currentAccidentId: null),
+            TabNew(),
             TabOnProgress(),
             TabSubmitted(),
           ],
@@ -40,4 +37,3 @@ class AccidentDetailsPage extends StatelessWidget {
     );
   }
 }
-
