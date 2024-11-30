@@ -1,11 +1,14 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../accident_details_page.dart';
 
 class ViewAccidentsCard extends StatefulWidget {
+  final String userEmail;
+
+  ViewAccidentsCard({required this.userEmail});
+
   @override
   _ViewAccidentsCardState createState() => _ViewAccidentsCardState();
 }
@@ -13,9 +16,7 @@ class ViewAccidentsCard extends StatefulWidget {
 class _ViewAccidentsCardState extends State<ViewAccidentsCard> {
   bool _newNotification = false;
   final AudioPlayer _audioPlayer = AudioPlayer();
-  bool _isAlerting = false;
   StreamSubscription<QuerySnapshot>? _accidentSubscription;
-  DateTime? _lastAccidentTime;
 
   @override
   void initState() {
@@ -24,36 +25,28 @@ class _ViewAccidentsCardState extends State<ViewAccidentsCard> {
   }
 
   void _setupAccidentListener() {
+    final email = widget.userEmail; // Already checked for null in HomePage
     _accidentSubscription = FirebaseFirestore.instance
         .collection('driver_accidents')
-        .orderBy('date_time', descending: true)
-        .limit(1)
+        .where('police_station_email', isEqualTo: email)
+        .where('accepted', isEqualTo: false)
         .snapshots()
         .listen((snapshot) {
       if (snapshot.docs.isNotEmpty) {
-        final latestAccident = snapshot.docs.first;
-        final dateTime = latestAccident['date_time'] as Timestamp;
-        final accidentTime = dateTime.toDate();
-
-        if (_lastAccidentTime == null || accidentTime.isAfter(_lastAccidentTime!)) {
-          _lastAccidentTime = accidentTime;
-          if (!_isAlerting) {
-            setState(() {
-              _newNotification = true;
-            });
-            _playNotificationSound();
-          }
-        }
+        setState(() {
+          _newNotification = true;
+        });
+        _playNotificationSound();
+      } else {
+        setState(() {
+          _newNotification = false;
+        });
       }
     });
   }
 
   void _playNotificationSound() async {
     await _audioPlayer.play(AssetSource('sounds/beep.wav'), volume: 1.0);
-  }
-
-  void _stopNotificationSound() {
-    _audioPlayer.stop();
   }
 
   @override
@@ -67,26 +60,15 @@ class _ViewAccidentsCardState extends State<ViewAccidentsCard> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        setState(() {
-          _newNotification = false;
-          _isAlerting = true;
-        });
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AccidentDetailsPage(
-              accept: () {
-                setState(() {
-                  _isAlerting = false;
-                  _stopNotificationSound();
-                });
-              },
-            ),
+            builder: (context) => AccidentDetailsPage(),
           ),
         );
       },
       child: AnimatedContainer(
-        duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
           boxShadow: _newNotification
@@ -115,8 +97,10 @@ class _ViewAccidentsCardState extends State<ViewAccidentsCard> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ListTile(
-                  leading: Icon(Icons.warning,
-                      color: _newNotification ? Colors.white : Colors.white),
+                  leading: Icon(
+                    Icons.warning,
+                    color: _newNotification ? Colors.white : Colors.white,
+                  ),
                   title: Text(
                     _newNotification ? 'New Accident Reported' : 'View Accidents',
                     style: TextStyle(

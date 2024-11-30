@@ -1,87 +1,154 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../map_toaccident.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/accept_officer_validation_dialog.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:intl/intl.dart';
 
 class TabNew extends StatelessWidget {
-  final VoidCallback accept;
-  final String? currentAccidentId;
+  // Method to get a human-readable location name from a GeoPoint
+  Future<String> _getLocationName(GeoPoint geoPoint) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        geoPoint.latitude,
+        geoPoint.longitude,
+      );
+      if (placemarks.isNotEmpty) {
+        // Fetch the first placemark's locality or name
+        return placemarks.first.locality ?? 'Unknown location';
+      }
+      return 'Unknown location';
+    } catch (e) {
+      print('Error in reverse geocoding: $e');
+      return 'Unknown location';
+    }
+  }
 
-  TabNew({required this.accept, required this.currentAccidentId});
+  // Method to get the logged-in user's email
+  Future<String?> _getUserEmail() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      return user?.email; // Return the logged-in user's email
+    } catch (e) {
+      print("Error fetching user email: $e");
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('driver_accidents')
-          .where('accepted', isEqualTo: false)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+    return FutureBuilder<String?>(
+      future: _getUserEmail(), // Fetch the logged-in user's email
+      builder: (context, userEmailSnapshot) {
+        if (userEmailSnapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (snapshot.hasError) {
+        if (userEmailSnapshot.hasError) {
           return Center(
             child: Text(
-              'Error loading data: ${snapshot.error}',
-              style: TextStyle(color: Colors.red, fontSize: 16),
+              'Error fetching station email: ${userEmailSnapshot.error}',
+              style: const TextStyle(color: Colors.red, fontSize: 16),
             ),
           );
         }
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(
-            child: const Text(
-              'No new accidents reported.',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-          );
-        }
+        final userEmail = userEmailSnapshot.data;
 
-        var accidents = snapshot.data!.docs;
+        return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('driver_accidents')
+              .where('accepted', isEqualTo: false)
+              .where('police_station_email',
+                  isEqualTo: userEmail) // Filter by logged-in user's email
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-        return ListView.builder(
-          itemCount: accidents.length,
-          itemBuilder: (context, index) {
-            var accident = accidents[index];
-
-            // Safely check if fields exist before accessing them
-            final location = accident.data().containsKey('location')
-                ? accident['location']
-                : 'Unknown location';
-            final dateTime = accident.data().containsKey('date_time')
-                ? accident['date_time']
-                : 'Unknown time';
-
-            return Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              elevation: 10,
-              child: ListTile(
-                leading: const Icon(Icons.location_on),
-                title: Text('Accident at $location'),
-                subtitle: Text(
-                  'Time: $dateTime',
-                  style: const TextStyle(fontSize: 14),
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Error loading data: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
                 ),
-                trailing: ElevatedButton(
-                  onPressed: () {
-                    print('Opening dialog with accidentId: ${accident.id}');
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return OfficerValidationDialog(
-                          accept: accept,
-                          accidentId: accident.id, // Ensure this value is correct
-                        );
-                      },
+              );
+            }
+
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No new accidents reported.',
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+              );
+            }
+
+            var accidents = snapshot.data!.docs;
+
+            return ListView.builder(
+              itemCount: accidents.length,
+              itemBuilder: (context, index) {
+                var accident = accidents[index];
+
+                return FutureBuilder<String>(
+                  future:(accident.data() as Map<String, dynamic>).containsKey('location') &&
+                          accident['location'] is GeoPoint
+                      ? _getLocationName(accident['location'] as GeoPoint)
+                      : Future.value('Unknown location'),
+                  builder: (context, locationSnapshot) {
+                    // Safely handle dateTime (convert Timestamp to DateTime)
+                    String formattedDateTime = 'Unknown time';
+                    if ( (accident.data() as Map<String, dynamic>).containsKey('date_time') &&
+                        accident['date_time'] is Timestamp) {
+                      final timestamp = accident['date_time'] as Timestamp;
+                      final dateTime = timestamp.toDate();
+                      formattedDateTime =
+                          DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+                    }
+
+                    // Handle the location result
+                    final location = locationSnapshot.connectionState ==
+                                ConnectionState.done &&
+                            locationSnapshot.hasData
+                        ? locationSnapshot.data!
+                        : 'Fetching location...';
+
+                    return Card(
+                      key: ValueKey(
+                          accident.id), // Assign a unique key to each Card
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      elevation: 10,
+                      child: ListTile(
+                        leading: const Icon(Icons.location_on),
+                        title: Text('Accident at $location'),
+                        subtitle: Text(
+                          'Time: $formattedDateTime',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        trailing: ElevatedButton(
+                          onPressed: () {
+                            print(
+                                'Opening dialog with accidentId: ${accident.id}');
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return OfficerValidationDialog(
+                                  accidentId: accident.id,
+                                );
+                              },
+                            );
+                          },
+                          child: const Text('Accept'),
+                        ),
+                      ),
                     );
                   },
-                  child: const Text('Accept'),
-                ),
-              ),
+                );
+              },
             );
           },
         );

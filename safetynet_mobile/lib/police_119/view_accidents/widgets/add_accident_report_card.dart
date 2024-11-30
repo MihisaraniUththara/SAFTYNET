@@ -51,7 +51,7 @@ class AddAccidentReportCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(25.0),
           ),
           elevation: 20,
-          surfaceTintColor: const Color(0xfffbbe00),
+          color: Color.fromARGB(255, 208, 208, 208),
           shadowColor: Colors.black,
           borderOnForeground: true,
           child: Column(

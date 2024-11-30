@@ -3,12 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../map_toaccident.dart';
 
 class OfficerValidationDialog extends StatelessWidget {
-  final VoidCallback accept;
   final String accidentId;
 
   const OfficerValidationDialog({
     Key? key,
-    required this.accept,
     required this.accidentId,
   }) : super(key: key);
 
@@ -93,7 +91,6 @@ class OfficerValidationDialog extends StatelessWidget {
               'officer_id': officerIdAsNumber, // Store as number
               'accepted_time': FieldValue.serverTimestamp(),
             });
-            accept(); // Stop notification sound
 
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
