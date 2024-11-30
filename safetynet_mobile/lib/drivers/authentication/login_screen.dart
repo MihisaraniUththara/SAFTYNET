@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Check if user is in either the police or police_stations collections
         List<bool> isPolice = await Future.wait([
           FirebaseFirestore.instance
-              .collection('police')
+              .collection('police_stations')
               .doc(user.uid)
               .get()
               .then((doc) => doc.exists), // Check in 'police' collection
