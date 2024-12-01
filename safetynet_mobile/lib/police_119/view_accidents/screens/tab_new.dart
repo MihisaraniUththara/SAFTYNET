@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/accept_officer_validation_dialog.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class TabNew extends StatelessWidget {
   // Method to get a human-readable location name from a GeoPoint
@@ -133,16 +134,30 @@ class TabNew extends StatelessWidget {
                         ),
                         trailing: ElevatedButton(
                           onPressed: () {
-                            print(
-                                'Opening dialog with accidentId: ${accident.id}');
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return OfficerValidationDialog(
-                                  accidentId: accident.id,
-                                );
-                              },
-                            );
+                            if (accident['location'] is GeoPoint) {
+                              GeoPoint geoPoint = accident['location'];
+                              LatLng location =
+                                  LatLng(geoPoint.latitude, geoPoint.longitude);
+
+                              print(
+                                  'Opening dialog with accidentId: ${accident.id}');
+
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return OfficerValidationDialog(
+                                    accidentId: accident.id,
+                                    accidentLocation: location, // Pass location
+                                  );
+                                },
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Accident location is invalid')),
+                              );
+                            }
                           },
                           child: const Text('Accept'),
                         ),

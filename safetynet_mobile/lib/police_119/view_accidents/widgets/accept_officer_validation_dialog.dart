@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../map_toaccident.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class OfficerValidationDialog extends StatelessWidget {
   final String accidentId;
+  final LatLng accidentLocation; // Pass the accident location as LatLng
 
   const OfficerValidationDialog({
     Key? key,
     required this.accidentId,
+    required this.accidentLocation,
   }) : super(key: key);
 
   @override
