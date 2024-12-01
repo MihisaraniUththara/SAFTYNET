@@ -9,19 +9,19 @@ class TabNew extends StatelessWidget {
   // Method to get a human-readable location name from a GeoPoint
   Future<String> _getLocationName(GeoPoint geoPoint) async {
     try {
+      // Attempt reverse geocoding
       List<Placemark> placemarks = await placemarkFromCoordinates(
         geoPoint.latitude,
         geoPoint.longitude,
       );
       if (placemarks.isNotEmpty) {
-        // Fetch the first placemark's locality or name
-        return placemarks.first.locality ?? 'Unknown location';
+        final placemark = placemarks.first;
+        return placemark.locality ?? 'Unknown location';
       }
-      return 'Unknown location';
     } catch (e) {
       print('Error in reverse geocoding: $e');
-      return 'Unknown location';
     }
+    return 'Unknown location'; // Fallback if geocoding fails
   }
 
   // Method to get the logged-in user's email
@@ -93,14 +93,16 @@ class TabNew extends StatelessWidget {
                 var accident = accidents[index];
 
                 return FutureBuilder<String>(
-                  future:(accident.data() as Map<String, dynamic>).containsKey('location') &&
+                  future: (accident.data() as Map<String, dynamic>)
+                              .containsKey('location') &&
                           accident['location'] is GeoPoint
                       ? _getLocationName(accident['location'] as GeoPoint)
                       : Future.value('Unknown location'),
                   builder: (context, locationSnapshot) {
                     // Safely handle dateTime (convert Timestamp to DateTime)
                     String formattedDateTime = 'Unknown time';
-                    if ( (accident.data() as Map<String, dynamic>).containsKey('date_time') &&
+                    if ((accident.data() as Map<String, dynamic>)
+                            .containsKey('date_time') &&
                         accident['date_time'] is Timestamp) {
                       final timestamp = accident['date_time'] as Timestamp;
                       final dateTime = timestamp.toDate();
