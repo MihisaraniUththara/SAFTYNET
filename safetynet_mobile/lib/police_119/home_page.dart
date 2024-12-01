@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../drivers/authentication/login_screen.dart';
 import 'view_accidents/widgets/view_accidents_card.dart';
 import 'view_accidents/widgets/add_accident_report_card.dart';
+import 'services/accident_listener_service.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -81,7 +83,13 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.black),
             onPressed: () async {
+              // Access AccidentListenerService via Provider
+               Provider.of<AccidentListenerService>(context, listen: false).dispose();
+
+              // Sign out the user
               await FirebaseAuth.instance.signOut();
+
+              // Navigate to the login screen
               Get.off(LoginScreen());
             },
           ),
@@ -163,8 +171,9 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    userEmail == null ? Center(child: CircularProgressIndicator())
-          : ViewAccidentsCard(userEmail: userEmail!),
+                    userEmail == null
+                        ? Center(child: CircularProgressIndicator())
+                        : ViewAccidentsCard(userEmail: userEmail!),
                     const SizedBox(height: 40),
                     AddAccidentReportCard(),
                   ],
