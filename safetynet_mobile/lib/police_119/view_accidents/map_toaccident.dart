@@ -1,24 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:safetynet_mobile/drivers/pages/home.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../home_page.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: StartRidePage(),
-    );
-  }
-}
 
 class StartRidePage extends StatefulWidget {
   @override
@@ -26,58 +10,56 @@ class StartRidePage extends StatefulWidget {
 }
 
 class _StartRidePageState extends State<StartRidePage> {
-  static const LatLng _center = LatLng(6.9271, 79.8612); // Colombo Coordinates
+  final LatLng accidentLocation = LatLng(6.9271, 79.8612); // Example location
+  GoogleMapController? _mapController;
+
+  Future<void> _openGoogleMaps(LatLng location) async {
+    final latitude = location.latitude;
+    final longitude = location.longitude;
+
+    final googleMapsUrl =
+        'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving';
+
+    if (await canLaunch(googleMapsUrl)) {
+      await launch(googleMapsUrl);
+    } else {
+      throw 'Could not open Google Maps.';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFfbbe00),
-        title: Text('Map View', style: TextStyle(color: Colors.black)),
+        backgroundColor: const Color(0xFFfbbe00),
+        title: const Text('Accident Location', style: TextStyle(color: Colors.black)),
       ),
       body: Stack(
-        children: <Widget>[
-          FlutterMap(
-            options: MapOptions(
-              initialCenter: _center,
-              initialZoom: 15.0,
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: accidentLocation,
+              zoom: 15.0,
             ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                subdomains: ['a', 'b', 'c'],
-                userAgentPackageName: 'com.example.app',
+            markers: {
+              Marker(
+                markerId: MarkerId('accidentLocation'),
+                position: accidentLocation,
+                infoWindow: const InfoWindow(title: 'Accident Location'),
               ),
-              MarkerLayer(
-                markers: [
-                  // Marker(
-                  //   point: _center,
-                  //   builder: (ctx) => Icon(
-                  //     Icons.location_on,
-                  //     color: Colors.red,
-                  //     size: 40.0,
-                  //   ),
-                  // ),
-                ],
-              ),
-              RichAttributionWidget(
-                attributions: [
-                  TextSourceAttribution(
-                    'OpenStreetMap contributors',
-                    onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
-                  ),
-                ],
-              ),
-            ],
+            },
+            onMapCreated: (controller) {
+              _mapController = controller;
+            },
           ),
           Positioned(
             top: 16,
             left: 16,
             right: 16,
             child: Container(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               color: Colors.white,
-              child: Text(
+              child: const Text(
                 'Accident Location is 500m ahead',
                 style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
@@ -89,17 +71,33 @@ class _StartRidePageState extends State<StartRidePage> {
             left: 16,
             right: 16,
             child: Center(
-              child: FloatingActionButton(
-                onPressed: () { _showConfirmationDialog(context);},
-                backgroundColor: Colors.red,
-                child: Text(
-                  'STOP',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+              child: Column(
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () => _openGoogleMaps(accidentLocation),
+                    icon: const Icon(Icons.navigation),
+                    label: const Text("Open in Google Maps"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  FloatingActionButton(
+                    onPressed: () {
+                      _showConfirmationDialog(context);
+                    },
+                    backgroundColor: Colors.red,
+                    child: const Text(
+                      'STOP',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -107,31 +105,31 @@ class _StartRidePageState extends State<StartRidePage> {
       ),
     );
   }
-}
 
   void _showConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm'),
-          content: Text('Are you sure you want to stop?'),
+          title: const Text('Confirm'),
+          content: const Text('Are you sure you want to stop?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Dismiss the dialog
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 // Add stop logic here
                 Get.offAll(HomePage());
               },
-              child: Text('Yes'),
+              child: const Text('Yes'),
             ),
           ],
         );
       },
     );
   }
+}
