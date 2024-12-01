@@ -11,6 +11,12 @@ const ReportApproval = () => {
   const [officers, setOfficers] = useState({});
   const [selectedReport, setSelectedReport] = useState(null);
   const [station, setStation] = useState(null); // User's police station
+  const [filters, setFilters] = useState({
+    officerName: '',
+    accidentId: '',
+    severity: '',
+    date: '',
+  }); //filters
 
   // Fetch user's station based on currentUser email
   useEffect(() => {
@@ -215,6 +221,25 @@ const sendEmail = async (toEmail, accidentId, station, name) => {
     setSelectedReport(null); // Close details view
   };
 
+   // Filter reports based on filter input
+   const filteredReports = reports.filter((report) => {
+    const officerName = officers[report.officerID]?.name || '';
+    const Date = report.A?.A3 || '';
+    const severityText = getSeverityText(report.A?.A6);
+
+    return (
+      officerName.toLowerCase().includes(filters.officerName.toLowerCase()) &&
+      report.A?.A5?.toLowerCase().includes(filters.accidentId.toLowerCase()) &&
+      Date.includes(filters.date) &&
+      (!filters.severity || severityText === filters.severity)
+    );
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <div className="bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full">
       <strong>
@@ -223,6 +248,49 @@ const sendEmail = async (toEmail, accidentId, station, name) => {
         </h1>
       </strong>
       <div className="mt-3 p-3">
+
+            {/* Filters */}
+            <div className="mb-5 mt-1 flex gap-4">
+            <input
+          type="text"
+          placeholder="Filter by date"
+          name="date"
+          value={filters.date}
+          onChange={handleInputChange}
+          className="border px-2 py-1 rounded w-1/3"
+        />
+        
+        <input
+          type="text"
+          placeholder="Filter by Accident ID"
+          name="accidentId"
+          value={filters.accidentId}
+          onChange={handleInputChange}
+          className="border px-2 py-1 rounded w-1/3"
+        />
+        <input
+          type="text"
+          placeholder="Filter by Officer Incharge"
+          name="officerName"
+          value={filters.officerName}
+          onChange={handleInputChange}
+          className="border px-2 py-1 rounded w-1/3"
+        />
+        
+        <select
+          name="severity"
+          value={filters.severity}
+          onChange={handleInputChange}
+          className="border px-2 py-1 rounded w-1/3"
+        >
+          <option value="">Filter by Severity</option>
+          <option value="Fatal">Fatal</option>
+          <option value="Serious">Serious</option>
+          <option value="Minor">Minor</option>
+          <option value="Damages only">Damages only</option>
+        </select>
+      </div>
+
         <table className="w-full table-auto">
           <thead className="bg-gray-100 border-gray-400 font-semibold">
             <tr>
@@ -235,7 +303,7 @@ const sendEmail = async (toEmail, accidentId, station, name) => {
             </tr>
           </thead>
           <tbody>
-            {reports.map((report) => (
+            {filteredReports.map((report) => (
               <tr key={report.id} className="border-b">
                 <td className="p-3 text-center">{report.A?.A3 || 'N/A'}</td>
                 <td className="p-3 text-center">{report.A?.A5 || 'N/A'}</td>
