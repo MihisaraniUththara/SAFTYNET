@@ -1,21 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { collection, query, where, Timestamp, onSnapshot, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
+import AccidentDetailsModal from '../../Components/StationWise/Model/AccidentDetailsModalReject'
 import { AuthContext } from '../../Context/AuthContext';
-import AccidentDetailsModal from '../../Components/StationWise/Model/AccidentDetailsModal'
 
-const AccidentProgressMyCases = () => {
+const AccidentProgressReject = () => {
   const { currentUser } = useContext(AuthContext); // Access user context
   const [badgeNumber, setBadgeNumber] = useState(null); // Badge number of current user
-  const [accidentData, setAccidentData] = useState([]); // Accident reports
   const [selectedReport, setSelectedReport] = useState(null);
-  const [allAccidentData, setAllAccidentData] = useState([]); // New state to hold original data
-  const [filters, setFilters] = useState({
-    accidentId: '',
-    startDate: '',
-    endDate: '',
-    status: 'All', // Default to 'All' for no filtering by status
-  });
+  const [accidentData, setAccidentData] = useState([]); // Accident reports
 
   useEffect(() => {
     const fetchBadgeNumber = async () => {
@@ -48,14 +41,15 @@ const AccidentProgressMyCases = () => {
   useEffect(() => {
     if (!badgeNumber) return;
 
-    // Calculate timestamp for 30 days ago
-    const thirtyDaysAgo = Timestamp.fromDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+    // // Calculate timestamp for 30 days ago
+    // const thirtyDaysAgo = Timestamp.fromDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
 
     // Real-time Firestore listener for accident reports
     const accidentQuery = query(
       collection(db, 'accident_report'),
       where('officerID', '==', badgeNumber),
-      where('createdAt', '>=', thirtyDaysAgo),
+    //   where('createdAt', '>=', thirtyDaysAgo),
+      where('reject', '==', true),
       orderBy('createdAt', 'desc')
     );
 
@@ -71,8 +65,8 @@ const AccidentProgressMyCases = () => {
           AccidentId: accidentInfo.A5 || 'N/A',
           InchargeOfficer: docData.officerID || 'N/A',
           submit: docData.submit || 0, 
-          oicApp: docData.oicApp || 0, 
-          headApp: docData.headApp || 0,
+          reject: docData.reject || false,
+          rejectH: docData.rejectH || false,
           Urban_Rural: accidentInfo.A7 || '0',
           A8: accidentInfo.A8 || '0',
           A9: accidentInfo.A9 || '0',
@@ -90,11 +84,13 @@ const AccidentProgressMyCases = () => {
           A28: accidentInfo.A28 || '60',
           A29: accidentInfo.A29 || '40',
           A31: accidentInfo.A31 || 'No prosecution',
+          oicApp: docData.oicApp || 0,
+          headApp: docData.headApp || 0,
+
         };
       });
 
       setAccidentData(data);
-      setAllAccidentData(data); // Store original data
     });
 
     return () => unsubscribe();
@@ -469,41 +465,55 @@ const AccidentProgressMyCases = () => {
     );
   };
 
-  const getStatus = (submit, oicApp, headApp) => {
-    if (submit === 1 && oicApp === 0 && headApp === 0) {
-      return (
-        <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-          Pending
-        </span>
-      );
-    }
-    if (submit === 1 && oicApp === 1 && headApp === 0) {
-      return (
-        <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-          In Progress
-        </span>
-      );
-    }
-    if (submit === 1 && oicApp === 1 && headApp === 1) {
-      return (
-        <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-          Completed
-        </span>
-      );
-    }
-    if (submit === 0 && oicApp === 0 && headApp === 0) {
+  const getStatus = (submit, reject, rejectH) => {
+    if (submit === 0 && reject == true) {
       return (
         <span className="inline-flex items-center rounded-md bg-red-200 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-          Rejected
+          Rejected by OIC
+        </span>
+      );
+    }
+    if (submit === 0 && rejectH == true) {
+      return (
+        <span className="inline-flex items-center rounded-md bg-red-200 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+          Rejected by Head Office
         </span>
       );
     }
     return (
       <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-        hell
+        Rejected
       </span>
     );
   };
+
+  const getStatus1 = (submit, oicApp, headApp) => {
+    if (submit === 1 && oicApp === 0 && headApp === 0) {
+      return <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+      Pending
+    </span>;
+    }
+    if (submit === 1 && oicApp === 1 && headApp === 0) {
+      return <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+      In Progress
+    </span>;
+    }
+    if (submit === 1 && oicApp === 1 && headApp === 1) {
+      return <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+      Completed
+    </span>;
+    }
+    if (submit === 0 && oicApp === 0 && headApp === 0) {
+      return <span className="inline-flex items-center rounded-md bg-purple-200 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-600/10">
+      Re Checking
+    </span>;
+    }
+    return <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+    Unknown
+  </span>
+;
+  };
+
 
   const handleDetails = (report) => {
     setSelectedReport(report);
@@ -513,108 +523,12 @@ const AccidentProgressMyCases = () => {
     setSelectedReport(null);
   };
 
-  const applyFilters = () => {
-    const filtered = allAccidentData.filter((accident) => {
-      const { submit, oicApp, headApp } = accident;
-      
-      const createdAt = accident.createdAt?.toDate(); // Convert Firestore timestamp to JavaScript Date
-  
-      // Status filter
-      const matchesStatus =
-        filters.status === 'All' ||
-        (filters.status === 'Pending' && submit === 1 && oicApp === 0 && headApp === 0) ||
-        (filters.status === 'In Progress' && submit === 1 && oicApp === 1 && headApp === 0) ||
-        (filters.status === 'Reject' && submit === 0 && oicApp === 0 && headApp === 0) ||
-        (filters.status === 'Completed' && submit === 1 && oicApp === 1 && headApp === 1);
-  
-      // AccidentID Name filter
-      const matchesAccidentId = !filters.accidentId || 
-      accident.AccidentId?.toLowerCase().includes(filters.accidentId.toLowerCase());
-  
-      // Date filter
-      const matchesDate =
-      (!filters.startDate || (accident.createdAt && new Date(filters.startDate) <= accident.createdAt)) &&
-      (!filters.endDate || (accident.createdAt && new Date(filters.endDate) >= accident.createdAt));
-  
-      return matchesStatus  && matchesAccidentId && matchesDate;
-    });
-  
-    setAccidentData(filtered);
-  };
-
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
-  };
-  
-  useEffect(() => {
-    applyFilters();
-  }, [filters]);
-  
-  
-
   return (
     <div className='bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full'>
-      <strong><h1><center>My Recent Cases</center></h1></strong>
-
-      <div className="flex flex-wrap items-center gap-10 p-3 mt-2 bg-gray-100 rounded-md">
-      
-      <div className="flex items-center gap-4 ml-10">
-        <label className="font-medium" htmlFor="startDate">Start Date:</label>
-        <input
-          type="date"
-          id="startDate"
-          name="startDate"
-          value={filters.startDate}
-          onChange={handleFilterChange}
-          className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-      <div className="flex items-center gap-4">
-        <label className="font-medium" htmlFor="endDate">End Date:</label>
-        <input
-          type="date"
-          id="endDate"
-          name="endDate"
-          value={filters.endDate}
-          onChange={handleFilterChange}
-          className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-      <div className="flex items-center gap-4">
-        <label className="font-medium" htmlFor="officerName">Accident ID:</label>
-        <input
-          type="text"
-          id="accidentId"
-          name="accidentId"
-          value={filters.accidentId}
-          onChange={handleFilterChange}
-          className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-    
-      <div className="flex items-center gap-4">
-        <label className="font-medium" htmlFor="status">Status:</label>
-        <select
-          id="status"
-          name="status"
-          value={filters.status}
-          onChange={handleFilterChange}
-          className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="All">All</option>
-          <option value="Pending">Pending</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-          <option value="Reject">Rejected</option>
-        </select>
-      </div>
-    </div>
-    
-
+      <strong><h1><center>Rejected Cases</center></h1></strong>
       <div className='mt-3 p-3'>
         {accidentData.length === 0 ? (
-          <p className='text-center text-gray-500'>No cases assigned to you in the last 30 days.</p>
+          <p className='text-center text-gray-500'>No cases Rejected in the last 30 days.</p>
         ) : (
           <table className='w-full table-auto'>
             <thead className='bg-gray-100 border-gray-400 font-semibold'>
@@ -633,7 +547,7 @@ const AccidentProgressMyCases = () => {
                   <td className='text-center p-3'>{accident.AccidentId}</td>
                   <td className='text-center p-3'>{accident.InchargeOfficer}</td>
                   <td className='text-center p-3 font-semibold'>
-                  {getStatus(accident.submit, accident.oicApp, accident.headApp)}
+                  {getStatus(accident.submit, accident.reject)}
                   </td>
                   <td className='text-center p-3'>
                     <button className='bg-yellow-button hover:bg-yellow text-black font-semibold py-1 px-1 rounded text-sm'
@@ -648,10 +562,12 @@ const AccidentProgressMyCases = () => {
           </table>
         )}
       </div>
+
       {selectedReport && (
         <AccidentDetailsModal
           report={selectedReport}
           getStatus={getStatus}
+          getStatus1={getStatus1}
           getUrban={getUrban}
           A8F={A8F}
           A9F={A9F}
@@ -671,4 +587,9 @@ const AccidentProgressMyCases = () => {
   );
 };
 
-export default AccidentProgressMyCases;
+export default AccidentProgressReject
+
+
+
+  
+

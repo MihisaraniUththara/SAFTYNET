@@ -1,122 +1,121 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { collection, query, where, Timestamp, onSnapshot, orderBy, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase';
-import { AuthContext } from '../../Context/AuthContext';
-import AccidentDetailsModal from './Model/AccidentDetailsModal'; // Import the shared component
+import React, { useEffect, useState } from 'react';
+import { collection, query, where, getDocs, Timestamp, orderBy } from 'firebase/firestore';
+import AccidentDetailsModal from './../Components/StationWise/Model/AccidentDetailsModal';
+import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker';
+import { db } from '../firebase'; // Ensure you configure Firebase correctly
 
-const AccidentProgress = () => {
-  const { currentUser } = useContext(AuthContext);
-  const [station, setStation] = useState(null);
-  const [accidentData, setAccidentData] = useState([]);
-  const [officers, setOfficers] = useState({});
+const AccidentDetails = () => {
+  const [accidents, setAccidents] = useState([]);
   const [selectedReport, setSelectedReport] = useState(null);
-  const [allAccidentData, setAllAccidentData] = useState([]); // New state to hold original data
-  const [filters, setFilters] = useState({
-    officerName: '',
-    startDate: '',
-    endDate: '',
-    status: 'All', // Default to 'All' for no filtering by status
-  });
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [selectedSeverity, setSelectedSeverity] = useState('');
+  const [stationFilter, setStationFilter] = useState(''); 
 
-  useEffect(() => {
-    const fetchStation = async () => {
-      if (currentUser?.email) {
-        try {
-          const stationQuery = query(
-            collection(db, 'police'),
-            where('email', '==', currentUser.email.toLowerCase())
-          );
-          onSnapshot(stationQuery, (querySnapshot) => {
-            if (!querySnapshot.empty) {
-              const policeStation = querySnapshot.docs[0].data()?.station || 'Unknown';
-              setStation(policeStation.toLowerCase());
-            } else {
-              setStation(null);
-            }
-          });
-        } catch (error) {
-          console.error('Error fetching station:', error);
-        }
-      }
-    };
 
-    fetchStation();
-  }, [currentUser]);
-
-  const fetchOfficers = async () => {
+  const fetchAccidentData = async () => {
     try {
-      const officerSnapshot = await getDocs(collection(db, 'police'));
-      const officerData = {};
-      officerSnapshot.forEach((docSnap) => {
+      // Query to filter accident reports based on submit, oicApp, and headApp
+      let q = query(
+        collection(db, 'accident_report'),
+        orderBy('createdAt', 'desc'),
+        where('submit', '==', 1),
+        where('oicApp', '==', 1),
+        where('headApp', '==', 1)
+      );
+
+      if (startDate && endDate) {
+        q = query(
+          q,
+          where('createdAt', '>=', Timestamp.fromDate(startDate)),
+          where('createdAt', '<=', Timestamp.fromDate(endDate))
+        );
+      }
+
+      if (selectedSeverity) {
+        q = query(q, where('A.A6', '==', (selectedSeverity)));
+      }
+
+      if (stationFilter.trim()) {
+        // Case-insensitive filtering
+        q = query(q, where('A.A2', '>=', stationFilter.toLowerCase()), where('A.A2', '<=', stationFilter.toLowerCase() + '\uf8ff'));
+      }
+  
+      
+
+      const querySnapshot = await getDocs(q);
+      const accidentData = [];
+
+
+
+      querySnapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        if (data.badgeNumber && data.email) {
-          officerData[data.badgeNumber] = { name: data.name, email: data.email };
+
+        if (data.A) {
+          accidentData.push({
+            date: data.A?.A3 || 'N/A', // A3 is Date
+            time: data.A?.A4 || 'N/A', // A4 is Time
+            accidentId: data.A?.A5 || 'N/A', // A5 is Accident ID
+            station: data.A?.A2 || 'N/A', // A2 is Station
+            action: data.A?.A30 || null, // A30 is Action
+            severity: data.A?.A6 || null,// A6 is Severity
+            AccidentId: data.A?.A5 || 'N/A',
+            Urban_Rural: data.A?.A7 || '0',
+            A8: data.A?.A8 || '0',
+            A9: data.A?.A9 || '0',
+            A10: data.A?.A10 || 'NO Road Number',
+            A11: data.A?.A11 || 'No Road Name',
+            A20: data.A?.A20 || '0',
+            A21: data.A?.A21 || '0',
+            A22: data.A?.A22 || '0',
+            A23: data.A?.A23 || '0',
+            A24: data.A?.A24 || '0',
+            A25: data.A?.A25 || '0',
+            A26: data.A?.A26 || '0',
+            A27: data.A?.A27 || '0',
+            A30: data.A?.A30 || '0',
+            A28: data.A?.A28 || '60',
+            A29: data.A?.A29 || '40',
+            A31: data.A?.A31 || 'No prosecution',
+            submit: data.submit || 0,
+            oicApp: data.oicApp || 0,
+            headApp: data.headApp || 0,
+          });
         }
       });
-      setOfficers(officerData);
+
+      setAccidents(accidentData);
     } catch (error) {
-      console.error('Error fetching officers:', error);
+      console.error('Error fetching accident data:', error);
     }
   };
 
   useEffect(() => {
-    fetchOfficers();
-  }, []);
+    fetchAccidentData();
+  }, [startDate, endDate, selectedSeverity, stationFilter]);
 
-  useEffect(() => {
-    if (!station) return;
+  const getActionText = (actionCode) => {
+    const actions = {
+      1: 'Prosecution initiated',
+      2: 'No prosecution',
+      3: 'Parties Settled',
+      4: 'Offender unknown',
+      5: 'Not known',
+      null: 'NULL',
+    };
+    return actions[actionCode] || 'Unknown';
+  };
 
-    const thirtyDaysAgo = Timestamp.fromDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
-
-    const accidentQuery = query(
-      collection(db, 'accident_report'),
-      orderBy('createdAt', 'desc'),
-      where('A.A2', '==', station.toLowerCase()),
-      where('createdAt', '>=', thirtyDaysAgo)
-    );
-
-    const unsubscribe = onSnapshot(accidentQuery, (querySnapshot) => {
-      const data = querySnapshot.docs.map((doc) => {
-        const docData = doc.data();
-        const accidentInfo = docData.A || {};
-        const officerId = docData.officerID || 'N/A';
-
-        return {
-          date: accidentInfo.A3 || 'N/A',
-          AccidentId: accidentInfo.A5 || 'N/A',
-          InchargeOfficer: officerId || 'N/A',
-          time: accidentInfo.A4 || 'N/A',
-          Urban_Rural: accidentInfo.A7 || '0',
-          A8: accidentInfo.A8 || '0',
-          A9: accidentInfo.A9 || '0',
-          A10: accidentInfo.A10 || 'NO Road Number',
-          A11: accidentInfo.A11 || 'No Road Name',
-          A20: accidentInfo.A20 || '0',
-          A21: accidentInfo.A21 || '0',
-          A22: accidentInfo.A22 || '0',
-          A23: accidentInfo.A23 || '0',
-          A24: accidentInfo.A24 || '0',
-          A25: accidentInfo.A25 || '0',
-          A26: accidentInfo.A26 || '0',
-          A27: accidentInfo.A27 || '0',
-          A30: accidentInfo.A30 || '0',
-          A28: accidentInfo.A28 || '60',
-          A29: accidentInfo.A29 || '40',
-          A31: accidentInfo.A31 || 'No prosecution',
-          // A33: accidentInfo.A28 || '60', //casualties how save in db
-
-          submit: docData.submit || 0,
-          oicApp: docData.oicApp || 0,
-          headApp: docData.headApp || 0,
-        };
-      });
-
-      setAccidentData(data);
-      setAllAccidentData(data); // Store original data
-    });
-
-    return () => unsubscribe();
-  }, [station]);
+  const getSeverityText = (severityCode) => {
+    const severities = {
+      1: 'Fatal',
+      2: 'Serious',
+      3: 'Minor',
+      4: 'Damages only',
+    };
+    return severities[severityCode] || 'Unknown';
+  };
 
   const getUrban = (Urban_Rural) => {
     if (Urban_Rural == '1') {
@@ -523,101 +522,68 @@ const AccidentProgress = () => {
     setSelectedReport(null);
   };
 
-  const applyFilters = () => {
-    const filtered = allAccidentData.filter((accident) => {
-      const { submit, oicApp, headApp } = accident;
-      const officerName = officers[accident.InchargeOfficer]?.name || '';
-      const createdAt = accident.createdAt?.toDate(); // Convert Firestore timestamp to JavaScript Date
-  
-      // Status filter
-      const matchesStatus =
-        filters.status === 'All' ||
-        (filters.status === 'Pending' && submit === 1 && oicApp === 0 && headApp === 0) ||
-        (filters.status === 'In Progress' && submit === 1 && oicApp === 1 && headApp === 0) ||
-        (filters.status === 'Reject' && submit === 0 && oicApp === 0 && headApp === 0) ||
-        (filters.status === 'Completed' && submit === 1 && oicApp === 1 && headApp === 1);
-  
-      // Officer Name filter
-      const matchesOfficerName = officerName.toLowerCase().includes(filters.officerName.toLowerCase());
-  
-      // Date filter
-      const matchesDate =
-        (!filters.startDate || (createdAt && new Date(filters.startDate) <= createdAt)) &&
-        (!filters.endDate || (createdAt && new Date(filters.endDate) >= createdAt));
-  
-      return matchesStatus && matchesOfficerName && matchesDate;
-    });
-  
-    setAccidentData(filtered);
-  };
-
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
-  };
-  
-  useEffect(() => {
-    applyFilters();
-  }, [filters]);
-  
-  
 
   return (
     <div className='bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full'>
-      <strong><h1><center>Recent Accidents</center></h1></strong>
+      <strong>
+        <h1>
+          <center>Accident Details</center>
+        </h1>
+      </strong>
 
-      <div className="flex flex-wrap items-center gap-10 p-3 mt-2 bg-gray-100 rounded-md">
-      
-  <div className="flex items-center gap-4 ml-10">
-    <label className="font-medium" htmlFor="startDate">Start Date:</label>
-    <input
-      type="date"
-      id="startDate"
-      name="startDate"
-      value={filters.startDate}
-      onChange={handleFilterChange}
+      <div className="date-filters flex flex-wrap items-center gap-4 p-3 mt-2 bg-gray-100 rounded-md">
+  <div className="flex items-center gap-3 ml-8">
+    <label className="font-medium">Start Date:</label>
+    <DatePicker
       className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-    />
-  </div>
-  <div className="flex items-center gap-4">
-    <label className="font-medium" htmlFor="endDate">End Date:</label>
-    <input
-      type="date"
-      id="endDate"
-      name="endDate"
-      value={filters.endDate}
-      onChange={handleFilterChange}
-      className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-    />
-  </div>
-  <div className="flex items-center gap-4">
-    <label className="font-medium" htmlFor="officerName">Officer Name:</label>
-    <input
-      type="text"
-      id="officerName"
-      name="officerName"
-      value={filters.officerName}
-      onChange={handleFilterChange}
-      className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+      selected={startDate}
+      onChange={(date) => setStartDate(date)}
     />
   </div>
 
-  <div className="flex items-center gap-4">
-    <label className="font-medium" htmlFor="status">Status:</label>
+  <div className="flex items-center gap-3">
+    <label className="font-medium">End Date:</label>
+    <DatePicker
+      className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+      selected={endDate}
+      onChange={(date) => setEndDate(date)}
+    />
+  </div>
+
+  <div className="flex items-center gap-3">
+    <label className="font-medium">Severity:</label>
     <select
-      id="status"
-      name="status"
-      value={filters.status}
-      onChange={handleFilterChange}
       className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+      value={selectedSeverity}
+      onChange={(e) => setSelectedSeverity(e.target.value)}
     >
-      <option value="All">All</option>
-      <option value="Pending">Pending</option>
-      <option value="In Progress">In Progress</option>
-      <option value="Completed">Completed</option>
-      <option value="Reject">Rejected</option>
+      <option value="">All</option>
+      <option value="1">Fatal</option>
+      <option value="2">Serious</option>
+      <option value="3">Minor</option>
+      <option value="4">Damages only</option>
     </select>
   </div>
+
+  <div className="flex items-center gap-3">
+          <label className="font-medium">Station:</label>
+          <input
+            type="text"
+            className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+            placeholder="Type station name"
+            value={stationFilter}
+            onChange={(e) => setStationFilter(e.target.value)}
+          />
+        </div>
+
+  {/* <div className="flex justify-end mt-2 sm:mt-0">
+    <button
+      className="bg-yellow-button hover:bg-yellow text-black font-semibold py-2 px-4 rounded text-sm"
+      onClick={fetchAccidentData}
+    >
+      Apply
+    </button>
+  </div> */}
 </div>
 
 
@@ -626,24 +592,26 @@ const AccidentProgress = () => {
           <thead className='bg-gray-100 border-gray-400 font-semibold'>
             <tr>
               <th className='p-3 tracking-wide'>Date</th>
+              <th className='p-3 tracking-wide'>Time</th>
               <th className='p-3 tracking-wide'>Accident Id</th>
-              <th className='p-3 tracking-wide'>Incharge Officer</th>
-              <th className='p-3 tracking-wide'>Status</th>
+              <th className='p-3 tracking-wide'>Station</th>
+              <th className='p-3 tracking-wide'>Action</th>
+              <th className='p-3 tracking-wide'>Severity</th>
               <th className='p-3 tracking-wide'>Option</th>
             </tr>
           </thead>
           <tbody>
-            {accidentData.map((accident, index) => (
-              <tr key={index}>
+            {accidents.map((accident, index) => (
+              <tr key={index} className='border-b'>
                 <td className='text-center p-3'>{accident.date}</td>
-                <td className='text-center p-3'>{accident.AccidentId}</td>
-                <td className='text-center p-3'>{officers[accident.InchargeOfficer]?.name || 'Unknown'}</td>
-                <td className='text-center p-3 font-semibold'>
-                  {getStatus(accident.submit, accident.oicApp, accident.headApp)}
-                </td>
+                <td className='text-center p-3'>{accident.time}</td>
+                <td className='text-center p-3'>{accident.accidentId}</td>
+                <td className='text-center p-3'>{accident.station}</td>
+                <td className='text-center p-3'>{getActionText(accident.action)}</td>
+                <td className='text-center p-3'>{getSeverityText(accident.severity)}</td>
                 <td className='text-center p-3'>
                   <button className='bg-yellow-button hover:bg-yellow text-black font-semibold py-1 px-1 rounded text-sm'
-                    onClick={() => handleDetails(accident)}
+                  onClick={() => handleDetails(accident)}
                   >
                     Details
                   </button>
@@ -677,4 +645,4 @@ const AccidentProgress = () => {
   );
 };
 
-export default AccidentProgress;
+export default AccidentDetails;

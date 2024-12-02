@@ -9,7 +9,7 @@ import LogOut from './../Pages/SignOut'
 
 const linkClasses = 'text-black flex item-center gap-3 font-medium px-3 py-5 hover:bg-yellow-button hover:no-underline active:bg-neutral-600 rounded-sm text-base'
 
-const SideBarHead = () => {
+const SideBarAdmin = () => {
   return (
     <div className='bg-yellow w-60 p-3 flex flex-col'>
         <div className='flex items-center gap-1 px-2 py-2'>
@@ -39,5 +39,5 @@ function SidebarLinks({ item }) {
      )
   }
 
-export default SideBarHead
+export default SideBarAdmin
 
