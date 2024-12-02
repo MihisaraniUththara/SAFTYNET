@@ -3,20 +3,26 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../home_page.dart';
+import '../models/accident_location.dart';
 
 class StartRidePage extends StatefulWidget {
+  final AccidentLocation accidentLocation;
+
+  const StartRidePage({
+    Key? key,
+    required this.accidentLocation,
+  }) : super(key: key);
+
   @override
   _StartRidePageState createState() => _StartRidePageState();
 }
 
 class _StartRidePageState extends State<StartRidePage> {
-  final LatLng accidentLocation = LatLng(6.9271, 79.8612); // Example location
   GoogleMapController? _mapController;
 
-  Future<void> _openGoogleMaps(LatLng location) async {
-    final latitude = location.latitude;
-    final longitude = location.longitude;
-
+  Future<void> _openGoogleMaps() async {
+    final latitude = widget.accidentLocation.latitude;
+    final longitude = widget.accidentLocation.longitude;
     final googleMapsUrl =
         'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving';
 
@@ -29,23 +35,30 @@ class _StartRidePageState extends State<StartRidePage> {
 
   @override
   Widget build(BuildContext context) {
+    final location = widget.accidentLocation.toLatLng();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFfbbe00),
-        title: const Text('Accident Location', style: TextStyle(color: Colors.black)),
+        title: const Text('Accident Location', 
+          style: TextStyle(color: Colors.black)
+        ),
       ),
       body: Stack(
         children: [
           GoogleMap(
             initialCameraPosition: CameraPosition(
-              target: accidentLocation,
+              target: location,
               zoom: 15.0,
             ),
             markers: {
               Marker(
-                markerId: MarkerId('accidentLocation'),
-                position: accidentLocation,
-                infoWindow: const InfoWindow(title: 'Accident Location'),
+                markerId: const MarkerId('accidentLocation'),
+                position: location,
+                infoWindow: InfoWindow(
+                  title: 'Accident Location',
+                  snippet: widget.accidentLocation.address,
+                ),
               ),
             },
             onMapCreated: (controller) {
@@ -59,9 +72,12 @@ class _StartRidePageState extends State<StartRidePage> {
             child: Container(
               padding: const EdgeInsets.all(8.0),
               color: Colors.white,
-              child: const Text(
-                'Accident Location is 500m ahead',
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              child: Text(
+                'Location: ${widget.accidentLocation.address ?? "Unknown"}',
+                style: const TextStyle(
+                  color: Colors.red, 
+                  fontWeight: FontWeight.bold
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -72,21 +88,23 @@ class _StartRidePageState extends State<StartRidePage> {
             right: 16,
             child: Center(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: () => _openGoogleMaps(accidentLocation),
+                    onPressed: _openGoogleMaps,
                     icon: const Icon(Icons.navigation),
                     label: const Text("Open in Google Maps"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20, 
+                        vertical: 10
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
                   FloatingActionButton(
-                    onPressed: () {
-                      _showConfirmationDialog(context);
-                    },
+                    onPressed: () => _showConfirmationDialog(context),
                     backgroundColor: Colors.red,
                     child: const Text(
                       'STOP',
@@ -115,16 +133,11 @@ class _StartRidePageState extends State<StartRidePage> {
           content: const Text('Are you sure you want to stop?'),
           actions: <Widget>[
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                // Add stop logic here
-                Get.offAll(HomePage());
-              },
+              onPressed: () => Get.offAll(HomePage()),
               child: const Text('Yes'),
             ),
           ],
