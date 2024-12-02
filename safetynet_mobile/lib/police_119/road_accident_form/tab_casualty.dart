@@ -8,16 +8,16 @@ import 'input_fields.dart';
 class TabCasualty extends StatefulWidget {
   final String officerID;   // Accept officerID
   final Map<String, dynamic>? draftData;  //Accept draft data
+  final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier 
 
   // Pass officerID via the constructor
   const TabCasualty({
     super.key,
     required this.officerID,
     this.draftData,
+    required this.uniqueIdNotifier,
   });
   
-  
-
   @override
   State<TabCasualty> createState() => _TabCasualtyState();
 }
@@ -230,7 +230,7 @@ class _TabCasualtyState extends State<TabCasualty> {
 
   Future<void> saveCasualtyDraft() async {
     String draftID =
-        "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+        "${widget.officerID}_${widget.uniqueIdNotifier.value}"; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);

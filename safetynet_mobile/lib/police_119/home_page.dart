@@ -1,21 +1,66 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../drivers/authentication/login_screen.dart';
-import 'road_accident_form/accident_report.dart';
-import 'accident_details_page.dart';
+import 'view_accidents/widgets/view_accidents_card.dart';
+import 'view_accidents/widgets/add_accident_report_card.dart';
+import 'services/accident_listener_service.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String? divisionName = 'Loading...';
+  String? divisionNumber = '';
+  String? stationName = 'Loading...';
+  String? stationNumber = '';
+  String? userEmail;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchStationDetails();
+  }
+
+  Future<void> _fetchStationDetails() async {
+    try {
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) return;
+
+      userEmail = currentUser.email!;
+
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('police_stations')
+          .where('email', isEqualTo: userEmail)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        var data = snapshot.docs.first.data() as Map<String, dynamic>;
+        setState(() {
+          divisionName = data['division'] ?? 'Unknown Division';
+          divisionNumber = data['dno'] ?? 'Unknown';
+          stationName = data['station_name'] ?? 'Unknown Station';
+          stationNumber = data['sno'] ?? 'Unknown';
+        });
+      }
+    } catch (e) {
+      print('Error fetching station details: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFfbbe00),
-        leadingWidth:
-            150, // Increase leading width to allow the title to be on the left
-        titleSpacing: 0, // Reduce title spacing to align with the left
+        leadingWidth: 300,
+        titleSpacing: 0,
         automaticallyImplyLeading: false,
         title: Row(
           children: [
@@ -28,220 +73,109 @@ class HomePage extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
             ),
+            Container(
+              height: 15.0,
+              color: const Color(0xFFfbbe00),
+            ),
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: _logout,
-            child: const Icon(
-              Icons.logout,
-              color: Colors.black,
-            ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.black),
+            onPressed: () async {
+              // Access AccidentListenerService via Provider
+               Provider.of<AccidentListenerService>(context, listen: false).dispose();
+
+              // Sign out the user
+              await FirebaseAuth.instance.signOut();
+
+              // Navigate to the login screen
+              Get.off(LoginScreen());
+            },
           ),
         ],
-        //elevation: 10.0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: AccidentView(),
-      ),
-    );
-  }
-}
-
-Future<void> _logout() async {
-  await FirebaseAuth.instance.signOut();
-  Get.off(LoginScreen()); // Redirect to login screen after logout
-}
-
-class AccidentView extends StatefulWidget {
-  @override
-  _AccidentViewState createState() => _AccidentViewState();
-}
-
-class _AccidentViewState extends State<AccidentView> {
-  bool _newNotification = false;
-  Timer? _timer;
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  bool _isAlerting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Simulating new accident notification after 5 seconds
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      if (!_isAlerting) {
-        setState(() {
-          _newNotification = true;
-        });
-        _playNotificationSound();
-      }
-    });
-  }
-
-  void _playNotificationSound() async {
-    await _audioPlayer.play(AssetSource('sounds/beep.wav'), volume: 1.0);
-  }
-
-  void _stopNotificationSound() {
-    _audioPlayer.stop();
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _audioPlayer.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // First Card with blinking effect
-          InkWell(
-            onTap: () {
-              // Handle viewing details
-              setState(() {
-                _newNotification = false;
-                _isAlerting = true;
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => AccidentDetailsPage(accept: () {
-                          setState(() {
-                            _isAlerting = false;
-                            _stopNotificationSound();
-                          });
-                        })),
-              );
-            },
-            child: AnimatedContainer(
-              duration: Duration(seconds: 1),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25.0),
-                boxShadow: _newNotification
-                    ? [
-                        BoxShadow(
-                          color: Colors.red,
-                          blurRadius: 10.0,
-                          spreadRadius: 2.0,
-                        ),
-                      ]
-                    : null,
-              ),
-              curve: Curves.easeInOut,
-              child: SizedBox(
-                height: 200,
-                width: 300,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                  elevation: 20,
-                  color: _newNotification ? Colors.red : Colors.white,
-                  shadowColor: _newNotification ? Colors.red : Colors.black,
-                  borderOnForeground: true,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ListTile(
-                        leading: Icon(Icons.warning,
-                            color:
-                                _newNotification ? Colors.white : Colors.white),
-                        title: Text(
-                            _newNotification
-                                ? 'New Accident Reported'
-                                : 'View Accidents',
-                            style: TextStyle(
-                                color: _newNotification
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25)),
-                        subtitle: Text(
-                            _newNotification ? 'Click to view details' : '',
-                            style: TextStyle(
-                                color: _newNotification
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 15)),
-                      ),
-                    ],
-                  ),
-                ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 208, 208, 208),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+                bottomLeft: Radius.circular(20.0),
+                bottomRight: Radius.circular(20.0),
               ),
             ),
-          ),
-          SizedBox(height: 40), // Space between the cards
-          // Second Card as a regular button
-          InkWell(
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  TextEditingController _officerId = TextEditingController();
-                  return AlertDialog(
-                    title: const Text('Enter Officer ID'),
-                    content: TextField(
-                      controller: _officerId,
-                      decoration:
-                          const InputDecoration(hintText: "Enter Officer ID"),
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$divisionName Division',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
-                    actions: [
-                      // Cancel Button
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Closes the dialog
-                        },
-                        child: const Text('Cancel'),
+                    Text(
+                      '$stationName Station',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
                       ),
-                      // Submit Button
-                      TextButton(
-                        onPressed: () {
-                          String officerID = _officerId.text;
-                          //navigate to the accident form
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AccidentReportForm(
-                                  officerID: officerID), // Pass the Officer ID
-                            ),
-                          );
-                        },
-                        child: const Text('Submit'),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            child: SizedBox(
-              height: 200,
-              width: 300,
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
+                    ),
+                  ],
                 ),
-                elevation: 20,
-                surfaceTintColor: const Color(0xfffbbe00),
-                shadowColor: Colors.black,
-                borderOnForeground: true,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'no : $divisionNumber',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      'no : $stationNumber',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          Container(
+            color: const Color(0xFFfbbe00),
+            height: 10.0,
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ListTile(
-                      title: Text('Add New Accident Report',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                          )),
-                    ),
+                    userEmail == null
+                        ? Center(child: CircularProgressIndicator())
+                        : ViewAccidentsCard(userEmail: userEmail!),
+                    const SizedBox(height: 40),
+                    AddAccidentReportCard(),
                   ],
                 ),
               ),

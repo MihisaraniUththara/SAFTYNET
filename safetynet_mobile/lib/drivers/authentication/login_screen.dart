@@ -20,88 +20,83 @@ class _LoginScreenState extends State<LoginScreen> {
   var isObsecure = true.obs;
 
   Future<void> login() async {
-  if (formkey.currentState!.validate()) {
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
+    if (formkey.currentState!.validate()) {
+      try {
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
 
-      User? user = userCredential.user;
-      if (user != null) {
-        // Check if user is in the drivers collection
-        DocumentSnapshot driverDoc = await FirebaseFirestore.instance
-            .collection('drivers')
-            .doc(user.uid)
-            .get();
-        if (driverDoc.exists) {
-          // User is a driver
-          String fullName = driverDoc['fullName'];
-          Get.snackbar(
-            "Success",
-            "Driver login successful",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
-          );
-          Get.off(() => DriverHomePage(fullName: fullName));
-          return;
-        }
-
-        // Check if user is in either the police or police_stations collections
-        List<bool> isPolice = await Future.wait([
-          FirebaseFirestore.instance
-              .collection('police')
+        User? user = userCredential.user;
+        if (user != null) {
+          // Check if user is in the drivers collection
+          DocumentSnapshot driverDoc = await FirebaseFirestore.instance
+              .collection('drivers')
               .doc(user.uid)
-              .get()
-              .then((doc) => doc.exists), // Check in 'police' collection
-          FirebaseFirestore.instance
-              .collection('police_stations')
-              .doc(user.uid)
-              .get()
-              .then((doc) => doc.exists), // Check in 'police_stations' collection
-        ]);
+              .get();
+          if (driverDoc.exists) {
+            // User is a driver
+            String fullName = driverDoc['fullName'];
+            Get.snackbar(
+              "Success",
+              "Driver login successful",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+            Get.off(() => DriverHomePage(fullName: fullName));
+            return;
+          }
 
-        if (isPolice.any((exists) => exists)) {
-          // User is in either police or police_stations collection
+          // Check if user is in police_stations collections
+          List<bool> isPoliceStation = await Future.wait([
+            FirebaseFirestore.instance
+                .collection('police_stations')
+                .doc(user.uid)
+                .get()
+                .then((doc) =>
+                    doc.exists), // Check in 'police_stations' collection
+          ]);
+
+          if (isPoliceStation.any((exists) => exists)) {
+            // User is in either police or police_stations collection
+            Get.snackbar(
+              "Success",
+              "Police Station login successful",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+            Get.off(() => HomePage());
+            return;
+          }
+
+          // User is not found in any collection
           Get.snackbar(
-            "Success",
-            "Police login successful",
+            "Login Failed",
+            "Police station not found in the system",
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
+            backgroundColor: Colors.red,
           );
-          Get.off(() => HomePage());
-          return;
         }
-
-        // User is not found in any collection
+      } on FirebaseAuthException catch (e) {
+        print("FirebaseAuthException: ${e.message}");
         Get.snackbar(
           "Login Failed",
-          "User not found in the system",
+          e.message!,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+        );
+      } catch (e) {
+        print("Unknown Error: $e");
+        Get.snackbar(
+          "Login Failed",
+          "An unknown error occurred: $e",
+          snackPosition: SnackPosition.BOTTOM,
         );
       }
-    } on FirebaseAuthException catch (e) {
-      print("FirebaseAuthException: ${e.message}");
-      Get.snackbar(
-        "Login Failed",
-        e.message!,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } catch (e) {
-      print("Unknown Error: $e");
-      Get.snackbar(
-        "Login Failed",
-        "An unknown error occurred: $e",
-        snackPosition: SnackPosition.BOTTOM,
-      );
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -181,28 +176,32 @@ class _LoginScreenState extends State<LoginScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             borderSide: const BorderSide(
-                                              color: Colors.black, // Black border
+                                              color:
+                                                  Colors.black, // Black border
                                             ),
                                           ),
                                           enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             borderSide: const BorderSide(
-                                              color: Colors.black, // Black border
+                                              color:
+                                                  Colors.black, // Black border
                                             ),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             borderSide: const BorderSide(
-                                              color: Colors.black, // Black border
+                                              color:
+                                                  Colors.black, // Black border
                                             ),
                                           ),
                                           disabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             borderSide: const BorderSide(
-                                              color: Colors.black, // Black border
+                                              color:
+                                                  Colors.black, // Black border
                                             ),
                                           ),
                                           contentPadding:
@@ -210,7 +209,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                             horizontal: 14,
                                             vertical: 6,
                                           ),
-                                          fillColor: Color(0xFFF8F8F8), // Off-white background
+                                          fillColor: Color(
+                                              0xFFF8F8F8), // Off-white background
                                           filled: true,
                                         ),
                                       ),
@@ -247,32 +247,32 @@ class _LoginScreenState extends State<LoginScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                               borderSide: const BorderSide(
-                                                color:
-                                                    Colors.black, // Black border
+                                                color: Colors
+                                                    .black, // Black border
                                               ),
                                             ),
                                             enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                               borderSide: const BorderSide(
-                                                color:
-                                                    Colors.black, // Black border
+                                                color: Colors
+                                                    .black, // Black border
                                               ),
                                             ),
                                             focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                               borderSide: const BorderSide(
-                                                color:
-                                                    Colors.black, // Black border
+                                                color: Colors
+                                                    .black, // Black border
                                               ),
                                             ),
                                             disabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                               borderSide: const BorderSide(
-                                                color:
-                                                    Colors.black, // Black border
+                                                color: Colors
+                                                    .black, // Black border
                                               ),
                                             ),
                                             contentPadding:
@@ -280,8 +280,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                               horizontal: 14,
                                               vertical: 6,
                                             ),
-                                            fillColor:
-                                                Color(0xFFF8F8F8), // Off-white background
+                                            fillColor: Color(
+                                                0xFFF8F8F8), // Off-white background
                                             filled: true,
                                           ),
                                         ),

@@ -6,15 +6,23 @@ import 'input_fields.dart';
 class TabAccident extends StatefulWidget {
   final String officerID; // Accept officerID
   final Map<String, dynamic>? draftData; // Accept draft data
+  final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier
+
 
   // Pass officerID via the constructor
-  const TabAccident({super.key, required this.officerID, this.draftData,});
+  const TabAccident({
+    super.key,
+    required this.officerID,
+    this.draftData,
+    required this.uniqueIdNotifier,
+  });
 
   @override
   State<TabAccident> createState() => _TabAccidentState();
 }
 
 class _TabAccidentState extends State<TabAccident> {
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _saveAttempted = false; // Flag to track if the form has been submitted
 
@@ -60,14 +68,19 @@ class _TabAccidentState extends State<TabAccident> {
   void initState() {
     super.initState();
     // Populate fields with draft data if available
-    if (widget.draftData != null) {
+    if (widget.draftData != null ) {
       _loadDraftData();
     }
+
+    // Listen for changes in the text field
+    _uniqueIdController.addListener(() {
+      widget.uniqueIdNotifier.value = _uniqueIdController.text;
+    });
   }
 
   void _loadDraftData() {
     final dataA = widget.draftData!['A'];
-    if (dataA != null) {
+    if (dataA != null && dataA['A5'] != null) {
       _divisionController.text = dataA['A1'] ?? '';
       _stationController.text = dataA['A2'] ?? '';
       _dateController.text = dataA['A3'] ?? '';
@@ -102,18 +115,20 @@ class _TabAccidentState extends State<TabAccident> {
       _bReportController.text = dataA['A32'] ?? '';
       _casualties = dataA['A33'] ?? '';
       _researchPurposeController.text = dataA['A34'] ?? '';
+
+      widget.uniqueIdNotifier.value = dataA['A5']; // Notify listeners
     }
   }
 
   // Method to save accident data to Firestore
   Future<void> saveAccidentDraft() async {
-    /*setState(() {
+   /* setState(() {
       _saveAttempted =
           true; // Mark the form as submitted when the user clicks save
     });*/
 
     String draftID =
-        "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+        "${widget.officerID}_${_uniqueIdController.text}"; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);

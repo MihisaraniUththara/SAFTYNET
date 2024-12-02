@@ -23,13 +23,13 @@ export const DASHBOARD_SIDEBAR_LINKS_TRAFFIC = [
 	{
 		key: 'T-accident-details',
 		label: 'Accident Details',
-		path: '/',
+		path: '/Traffic/AccidentDetails',
 		icon: <FaInfoCircle />
 	},
 	{
 		key: 'T-report',
 		label: 'Report',
-		path: '/',
+		path: '/Traffic/Report',
 		icon: <MdEditNote />
 	},
 	{
@@ -51,37 +51,37 @@ export const DASHBOARD_SIDEBAR_LINKS_OIC = [
 	{
 		key: 'O-dashboard',
 		label: 'Dashboard',
-		path: '/',
+		path: '/Oic',
 		icon: <HiOutlineViewGrid />
 	},
 	{
 		key: 'O-accident-on-progress',
 		label: 'Accident On Progress',
-		path: '/',
+		path: '/Oic/AccidentProgress',
 		icon: <FaHourglassHalf />
 	},
 	{
 		key: 'O-accident-details',
 		label: 'Accident Details',
-		path: '/',
+		path: '/Oic/AccidentDetails',
 		icon: <FaInfoCircle />
 	},
 	{
 		key: 'o-ReportApp',
 		label: 'Report Approval',
-		path: '/',
+		path: '/Oic/ReportApproval',
 		icon: <TbReportSearch />
 	},
 	{
 		key: 'o-duty',
 		label: 'Duty List',
-		path: '/',
+		path: '/Oic/Duty',
 		icon: <FaListCheck />
 	},
 	{
 		key: 'O-report',
 		label: 'Report',
-		path: '/',
+		path: '/Oic/Report',
 		icon: <MdEditNote />
 	},
 	{
@@ -94,43 +94,79 @@ export const DASHBOARD_SIDEBAR_LINKS_OIC = [
 ]
 
 
+
 export const DASHBOARD_SIDEBAR_LINKS_HEAD = [
 	{
 		key: 'H-dashboard',
 		label: 'Dashboard',
-		path: '/',
+		path: '/Head',
 		icon: <HiOutlineViewGrid />
 	},
 	{
 		key: 'H-accident-on-progress',
 		label: 'Accident On Progress',
-		path: '/',
+		path: '/Head/AccidentProgress',
 		icon: <FaHourglassHalf />
 	},
 	{
 		key: 'H-accident-details',
 		label: 'Accident Details',
-		path: '/',
+		path: '/Head/AccidentDetails',
 		icon: <FaInfoCircle />
 	},
 	{
 		key: 'H-ReportSub',
 		label: 'Report Submission',
-		path: '/',
+		path: '/Head/ReportSubmit',
 		icon: <SiTicktick />
 	},
 	{
 		key: 'H-report',
 		label: 'Report',
-		path: '/',
+		path: '#',
 		icon: <MdEditNote />
 	},
 	{
 		key: 'H-analysis',
 		label: 'Analysis',
-		path: '/',
+		path: '/Head/Analysis',
 		icon: <FaChartLine />
 	},
+	
+]
+
+export const DASHBOARD_SIDEBAR_LINKS_ADMIN = [
+	{
+		key: 'A-dashboard',
+		label: 'Dashboard',
+		path: '#',
+		icon: <HiOutlineViewGrid />
+	},
+	{
+		key: 'Register-Officer',
+		label: 'Register Officer',
+		path: '#',
+		icon: <FaHourglassHalf />
+	},
+	{
+		key: 'officer',
+		label: 'Officer',
+		path: '#',
+		icon: <FaInfoCircle />
+	},
+	{
+		key: 'driver',
+		label: 'Driver',
+		path: '#',
+		icon: <TbReportSearch />
+	},
+	{
+		key: 'station',
+		label: 'Station',
+		path: '#',
+		icon: <FaListCheck />
+	},
+	
 	
 ]
 
@@ -144,6 +180,25 @@ export const SUBMENU_LINKS_TRAFFIC = [
 		key: 'T-myCases',
 		label: 'MY CASES',
 		path: '/Traffic/AccidentProgress/mycases',
+	},
+	{
+		key: 'T-reject',
+		label: 'REJECTED',
+		path: '/Traffic/AccidentProgress/Reject',
+	}
+	
+]
+
+export const SUBMENU_LINKS_DUTY = [
+	{
+		key: 'Day',
+		label: 'DAY SHIFT',
+		path: '/Oic/Duty',
+	},
+	{
+		key: 'Night',
+		label: 'NIGHT SHIFT',
+		path: '/Oic/Duty/Night',
 	}
 	
 ]

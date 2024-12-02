@@ -1,14 +1,10 @@
 import React from 'react'
-import SideBar from './../../Components/SideBarOic'
-import Header from './../../Components/HeaderOic'
+import StatCards from '../../Components/StationWise/StatCards'
 
 const Dashboad = () => {
   return (
-    <div className='flex flex-row bg-neutral-100 h-screen w-screen overflow-y-hidden'>
-        <SideBar />
-        <div className='flex-1'>
-           <Header /> 
-        </div>
+    <div className='flex gap-4 flex-col'>
+      <StatCards />
     </div>
   )
 }
