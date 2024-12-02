@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../models/accident_location.dart';
-import '../map_toaccident.dart';
+import '../../road_accident_form/accident_report.dart';
 
 class OfficerValidationDialog extends StatelessWidget {
-  final String accidentId;
-  final AccidentLocation accidentLocation;
-
-  const OfficerValidationDialog({
-    Key? key,
-    required this.accidentId,
-    required this.accidentLocation,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +23,16 @@ class OfficerValidationDialog extends StatelessWidget {
           child: const Text('Cancel'),
         ),
         TextButton(
-          onPressed: () => _validateAndNavigate(context, officerIdController.text),
+          onPressed: () => _validateAndNavigate(
+              context, officerIdController.text),
           child: const Text('Submit'),
         ),
       ],
     );
   }
 
-  Future<void> _validateAndNavigate(BuildContext context, String officerId) async {
+  Future<void> _validateAndNavigate(
+      BuildContext context, String officerId) async {
     if (officerId.isEmpty) {
       _showError(context, 'Officer ID is required');
       return;
@@ -52,6 +45,7 @@ class OfficerValidationDialog extends StatelessWidget {
         return;
       }
 
+      // Validate Officer ID
       QuerySnapshot officerQuerySnapshot = await FirebaseFirestore.instance
           .collection('police')
           .where('badgeNumber', isEqualTo: officerIdAsNumber)
@@ -63,33 +57,22 @@ class OfficerValidationDialog extends StatelessWidget {
         return;
       }
 
+      // Check duty status
       DocumentSnapshot officerSnapshot = officerQuerySnapshot.docs.first;
       final officerData = officerSnapshot.data() as Map<String, dynamic>;
-
       if (officerData['day'] == true || officerData['night'] == true) {
-        DocumentReference accidentDoc = FirebaseFirestore.instance
-            .collection('driver_accidents')
-            .doc(accidentId);
 
-        accidentDoc.get().then((docSnapshot) async {
-          if (docSnapshot.exists) {
-            await accidentDoc.update({
-              'accepted': true,
-              'officer_id': officerIdAsNumber,
-              'accepted_time': FieldValue.serverTimestamp(),
-            });
+        final officerIdAsString = officerData['badgeNumber'].toString();
 
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => StartRidePage(
-                  accidentLocation: accidentLocation,
-                ),
-              ),
-            );
-          } else {
-            _showError(context, 'Accident not found.');
-          }
-        });
+        // Navigate to the Accident Report Form
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AccidentReportForm(
+              officerID: officerIdAsString , // Pass Officer ID
+            ),
+          ),
+        );
       } else {
         _showError(context, 'Officer is off duty today');
       }

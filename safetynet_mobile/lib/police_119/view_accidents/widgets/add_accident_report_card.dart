@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../road_accident_form/accident_report.dart';
+import 'package:safetynet_mobile/police_119/view_accidents/widgets/report_officer_validation_dialog.dart';
+
 
 class AddAccidentReportCard extends StatelessWidget {
   @override
@@ -9,37 +10,7 @@ class AddAccidentReportCard extends StatelessWidget {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            TextEditingController _officerId = TextEditingController();
-            return AlertDialog(
-              title: const Text('Enter Officer ID'),
-              content: TextField(
-                controller: _officerId,
-                decoration: const InputDecoration(hintText: "Enter Officer ID"),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Closes the dialog
-                  },
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    String officerID = _officerId.text;
-
-                    // Navigate to the Accident Report Form
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AccidentReportForm(
-                            officerID: officerID), // Pass the Officer ID
-                      ),
-                    );
-                  },
-                  child: const Text('Submit'),
-                ),
-              ],
-            );
+            return OfficerValidationDialog(); // Replace 123 with the actual accident number
           },
         );
       },

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/police_station_provider.dart';
 import 'tab_accident.dart';
 import 'tab_element.dart';
 import 'tab_casualty.dart';
@@ -19,13 +21,14 @@ class AccidentReportForm extends StatefulWidget {
   _AccidentReportFormState createState() => _AccidentReportFormState();
 }
 
-class _AccidentReportFormState extends State<AccidentReportForm>{
-  
+class _AccidentReportFormState extends State<AccidentReportForm> {
   // ValueNotifier for shared unique ID state
   final ValueNotifier<String?> uniqueIdNotifier = ValueNotifier(null);
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<PoliceStationProvider>();
+
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -44,10 +47,11 @@ class _AccidentReportFormState extends State<AccidentReportForm>{
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const <Widget>[
-                    Text("Station 21", style: TextStyle(fontSize: 20.0)),
+                  children: <Widget>[
+                    Text("Station ${provider.stationNumber}",
+                        style: TextStyle(fontSize: 20.0)),
                     Text("AR-no 118", style: TextStyle(fontSize: 20.0)),
-                    Text('2024', style: TextStyle(fontSize: 20.0)),
+                    Text('${DateTime.now().year}', style: TextStyle(fontSize: 20.0)),
                     Text("Police 297 B",
                         style: TextStyle(
                             fontSize: 20.0,

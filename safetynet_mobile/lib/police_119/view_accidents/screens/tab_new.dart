@@ -2,34 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/accept_officer_validation_dialog.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../services/location_service.dart';
+import '../../models/accident_location.dart';
 
 class TabNew extends StatelessWidget {
-  // Method to get a human-readable location name from a GeoPoint
-  Future<String> _getLocationName(GeoPoint geoPoint) async {
-    try {
-      // Attempt reverse geocoding
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        geoPoint.latitude,
-        geoPoint.longitude,
-      );
-      if (placemarks.isNotEmpty) {
-        final placemark = placemarks.first;
-        return placemark.locality ?? 'Unknown location';
-      }
-    } catch (e) {
-      print('Error in reverse geocoding: $e');
-    }
-    return 'Unknown location'; // Fallback if geocoding fails
-  }
-
-  // Method to get the logged-in user's email
   Future<String?> _getUserEmail() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
-      return user?.email; // Return the logged-in user's email
+      return user?.email;
     } catch (e) {
       print("Error fetching user email: $e");
       return null;
@@ -39,7 +20,7 @@ class TabNew extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String?>(
-      future: _getUserEmail(), // Fetch the logged-in user's email
+      future: _getUserEmail(),
       builder: (context, userEmailSnapshot) {
         if (userEmailSnapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -60,8 +41,7 @@ class TabNew extends StatelessWidget {
           stream: FirebaseFirestore.instance
               .collection('driver_accidents')
               .where('accepted', isEqualTo: false)
-              .where('police_station_email',
-                  isEqualTo: userEmail) // Filter by logged-in user's email
+              .where('police_station_email', isEqualTo: userEmail)
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -86,41 +66,27 @@ class TabNew extends StatelessWidget {
               );
             }
 
-            var accidents = snapshot.data!.docs;
-
             return ListView.builder(
-              itemCount: accidents.length,
+              itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                var accident = accidents[index];
+                var accident = snapshot.data!.docs[index];
+                var data = accident.data() as Map<String, dynamic>;
 
                 return FutureBuilder<String>(
-                  future: (accident.data() as Map<String, dynamic>)
-                              .containsKey('location') &&
-                          accident['location'] is GeoPoint
-                      ? _getLocationName(accident['location'] as GeoPoint)
+                  future: data['location'] is GeoPoint
+                      ? LocationService.getLocationName(data['location'])
                       : Future.value('Unknown location'),
                   builder: (context, locationSnapshot) {
-                    // Safely handle dateTime (convert Timestamp to DateTime)
                     String formattedDateTime = 'Unknown time';
-                    if ((accident.data() as Map<String, dynamic>)
-                            .containsKey('date_time') &&
-                        accident['date_time'] is Timestamp) {
-                      final timestamp = accident['date_time'] as Timestamp;
-                      final dateTime = timestamp.toDate();
-                      formattedDateTime =
-                          DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+                    if (data['date_time'] is Timestamp) {
+                      final dateTime = (data['date_time'] as Timestamp).toDate();
+                      formattedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
                     }
 
-                    // Handle the location result
-                    final location = locationSnapshot.connectionState ==
-                                ConnectionState.done &&
-                            locationSnapshot.hasData
-                        ? locationSnapshot.data!
-                        : 'Fetching location...';
+                    final location = locationSnapshot.data ?? 'Fetching location...';
 
                     return Card(
-                      key: ValueKey(
-                          accident.id), // Assign a unique key to each Card
+                      key: ValueKey(accident.id),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
@@ -134,28 +100,22 @@ class TabNew extends StatelessWidget {
                         ),
                         trailing: ElevatedButton(
                           onPressed: () {
-                            if (accident['location'] is GeoPoint) {
-                              GeoPoint geoPoint = accident['location'];
-                              LatLng location =
-                                  LatLng(geoPoint.latitude, geoPoint.longitude);
-
-                              print(
-                                  'Opening dialog with accidentId: ${accident.id}');
+                            if (data['location'] is GeoPoint) {
+                              final geoPoint = data['location'] as GeoPoint;
+                              final accidentLocation = AccidentLocation.fromGeoPoint(geoPoint);
 
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return OfficerValidationDialog(
                                     accidentId: accident.id,
-                                    accidentLocation: location, // Pass location
+                                    accidentLocation: accidentLocation,
                                   );
                                 },
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content:
-                                        Text('Accident location is invalid')),
+                                const SnackBar(content: Text('Accident location is invalid')),
                               );
                             }
                           },

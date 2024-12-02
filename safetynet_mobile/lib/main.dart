@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'police_119/services/accident_listener_service.dart';
+import 'police_119/services/police_station_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +14,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AccidentListenerService()),
+        ChangeNotifierProvider(create: (_) => PoliceStationProvider()),
       ],
       child: DevicePreview(
         enabled: true,
