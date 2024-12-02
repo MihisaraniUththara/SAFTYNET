@@ -83,7 +83,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                 physics: NeverScrollableScrollPhysics(),
                 mainAxisSpacing: 16, // Adjust the spacing between rows
                 crossAxisSpacing: 4, // Adjust the spacing between columns
-                childAspectRatio: 0.8, // Maintain aspect ratio of cards
+                childAspectRatio: 0.7, // Maintain aspect ratio of cards
                 children: [
                   _buildCard(
                       Icons.directions_car, 'Start Ride', Colors.green, () {
