@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
+import 'package:geocoding/geocoding.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,12 +34,27 @@ class _ReportAccidentPageState extends State<ReportAccidentPage> {
   List<Map<String, dynamic>> _vehicles = [];
   String? _selectedVehicleId;
 
+//late TwilioFlutter twilioFlutter;
+
+final TwilioFlutter twilioFlutter = TwilioFlutter(
+    accountSid: 'ACf6f9c962abe12e079d4e38ac7d4f9efb', 
+    authToken: '3bf39f0bb6a87276a6287b9fad632ec8',   
+    twilioNumber: '+12183664378' 
+  );
+
   @override
   void initState() {
     super.initState();
     _getLocation();
     _fetchVehicles();
+    //  twilioFlutter = TwilioFlutter(
+    //   accountSid: 'ACf6f9c962abe12e079d4e38ac7d4f9efb',
+    //   authToken: '3bf39f0bb6a87276a6287b9fad632ec8',
+    //   twilioNumber: '+12183664378',
+    // );
   }
+   
+  
 
   Future<void> _fetchVehicles() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -59,13 +76,32 @@ class _ReportAccidentPageState extends State<ReportAccidentPage> {
     });
   }
 
-  Future<void> _getLocation() async {
+ Future<void> _getLocation() async {
+  try {
+    // Fetch the user's current position
     Position position = await _determinePosition();
+
+    // Fetch the address from coordinates
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+
+    Placemark place = placemarks[0];
+    String address = "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+
+    // Update the state to display the human-readable address
     setState(() {
       _driverPosition = position;
-      _location = 'Lat: ${position.latitude}, Long: ${position.longitude}';
+      _location = address; // Display the address
+    });
+  } catch (e) {
+    setState(() {
+      _location = 'Failed to fetch location: ';
     });
   }
+}
+
 
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
@@ -96,7 +132,7 @@ class _ReportAccidentPageState extends State<ReportAccidentPage> {
         forceAndroidLocationManager: true,
       );
     } catch (e) {
-      return Future.error('Failed to get location: $e');
+      return Future.error('Failed to get location: ');
     }
   }
 
@@ -146,6 +182,50 @@ class _ReportAccidentPageState extends State<ReportAccidentPage> {
         nearestPoliceStationEmail = nearestStationEmail;
         nearestPoliceStationName = nearestStationName;
       });
+    }
+  }
+
+  Future<void> _sendSMS(String number, String message) async {
+  try {
+    TwilioResponse response = await twilioFlutter.sendSMS(
+      toNumber: number,
+      messageBody: message,
+    );
+    //print('SMS sent successfully: ${response.messageSid}');
+  } catch (e) {
+    print('Failed to send SMS: $e');
+  }
+}
+
+
+  Future<void> _informContacts() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    if (_informEmergencyContacts) {
+      DocumentSnapshot driverSnapshot = await FirebaseFirestore.instance
+          .collection('drivers')
+          .doc(user.uid)
+          .get();
+
+      String? emergencyContact = driverSnapshot['emergencyContactNumber'];
+      if (emergencyContact != null) {
+        print("$emergencyContact");
+        String message = 'Emergency! Accident reported at $_location.';
+        await _sendSMS(emergencyContact, message);
+      }
+    }
+
+    if (_informInsuranceAgent && _selectedVehicleId != null) {
+      Map<String, dynamic> selectedVehicle = _vehicles.firstWhere(
+          (vehicle) => vehicle['id'] == _selectedVehicleId,
+          orElse: () => {});
+      String? agentContact = selectedVehicle['agentContactNumber'];
+      if (agentContact != null) {
+        String message =
+            'Accident reported for vehicle ${selectedVehicle['licensePlate']} at $_location.';
+        await _sendSMS(agentContact, message);
+      }
     }
   }
 
@@ -202,6 +282,8 @@ class _ReportAccidentPageState extends State<ReportAccidentPage> {
 
     try {
       await accidents.add(accidentReport);
+       // Call _informContacts after reporting the accident
+    await _informContacts();
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
@@ -298,7 +380,14 @@ class _ReportAccidentPageState extends State<ReportAccidentPage> {
             SizedBox(height: 24),
             Center(
               child: ElevatedButton(
-                onPressed: _reportAccident,
+               onPressed: () async {
+                // TwilioResponse response = await twilioFlutter.sendSMS(
+                // toNumber: '+94774854162', // Replace with recipient's number
+                // messageBody: 'Hello from Flutter!');
+     
+    //await _informContacts();
+     _reportAccident();
+  },
                 child: Text('Report Accident'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFfbbe00),
