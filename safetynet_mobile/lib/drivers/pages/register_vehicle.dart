@@ -10,7 +10,6 @@ class RegisterVehiclePage extends StatefulWidget {
 class _RegisterVehiclePageState extends State<RegisterVehiclePage> {
   final _auth = FirebaseAuth.instance;
 
-  // Fetching registered vehicles for the current driver
   Stream<QuerySnapshot> _getRegisteredVehicles() {
     final user = _auth.currentUser;
     if (user != null) {
@@ -133,18 +132,18 @@ class _RegisterVehiclePageState extends State<RegisterVehiclePage> {
                     return Center(child: Text('No registered vehicles.'));
                   }
                   return ListView(
-                    padding: EdgeInsets.all(8.0),  // Padding for the ListView
+                    padding: EdgeInsets.all(8.0),
                     children: snapshot.data!.docs.map((doc) {
-                      return Card(  // Using Card widget for individual items to add styling
-                        elevation: 4,  // Elevation for shadow effect
-                        margin: EdgeInsets.symmetric(vertical: 8.0),  // Margin between items
+                      return Card(
+                        elevation: 4,
+                        margin: EdgeInsets.symmetric(vertical: 8.0),
                         child: ListTile(
-                          contentPadding: EdgeInsets.all(16.0),  // Padding inside ListTile
+                          contentPadding: EdgeInsets.all(16.0),
                           title: Text(
                             '${doc['model']}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,  // Larger font size for title
+                              fontSize: 18,
                               color: Colors.black,
                             ),
                           ),
@@ -152,7 +151,7 @@ class _RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             'Year: ${doc['year']}, License Plate: ${doc['licensePlate']}',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey[600],  // Lighter color for subtitle
+                              color: Colors.grey[600],
                             ),
                           ),
                           trailing: Row(
@@ -217,7 +216,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
   final _modelController = TextEditingController();
   final _yearController = TextEditingController();
   final _licensePlateController = TextEditingController();
-  final _agentContactNumberController = TextEditingController();
+  final _agentContactNumberController = TextEditingController(text: '+94'); // Pre-filled +94
   final _auth = FirebaseAuth.instance;
 
   @override
@@ -248,6 +247,43 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
         Navigator.of(context).pop();
       }
     }
+  }
+
+  Widget _buildTextFormField({
+    required TextEditingController controller,
+    required String labelText,
+    String? validatorMessage,
+    TextInputType keyboardType = TextInputType.text,
+    bool isPhoneField = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(),
+      ),
+      keyboardType: keyboardType,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return validatorMessage;
+        }
+        if (isPhoneField && !value.startsWith('+94')) {
+          return 'Phone number must start with +94';
+        }
+        if (isPhoneField && value.length != 12) {
+          return 'Phone number must be exactly 12 characters including +94';
+        }
+        return null;
+      },
+      onChanged: (value) {
+        if (isPhoneField && !value.startsWith('+94')) {
+          controller.text = '+94';
+          controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: controller.text.length),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -283,6 +319,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
                 controller: _agentContactNumberController,
                 labelText: 'Insurance Agent Tele (Optional)',
                 keyboardType: TextInputType.phone,
+                isPhoneField: true,
               ),
             ],
           ),
@@ -290,41 +327,19 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
       ),
       actions: [
         TextButton(
-          child: Text('Cancel'),
           onPressed: () {
             Navigator.of(context).pop();
           },
+          child: Text('Cancel'),
         ),
         ElevatedButton(
           onPressed: _registerVehicle,
-          child: Text('Register Vehicle'),
+          child: Text('Register'),
           style: ElevatedButton.styleFrom(
             backgroundColor: Color(0xFFfbbe00),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildTextFormField({
-    required TextEditingController controller,
-    required String labelText,
-    String? validatorMessage,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: labelText,
-        border: OutlineInputBorder(),
-      ),
-      keyboardType: keyboardType,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return validatorMessage;
-        }
-        return null;
-      },
     );
   }
 }
