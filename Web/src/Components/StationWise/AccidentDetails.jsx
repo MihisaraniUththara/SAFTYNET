@@ -10,7 +10,14 @@ const AccidentDetails = () => {
     const [station, setStation] = useState(null);
     const [selectedReport, setSelectedReport] = useState(null);
     const [officers, setOfficers] = useState({}); // Store badgeNumber -> name mapping
-
+    const [allAccidentData, setAllAccidentData] = useState([]); // New state to hold original data
+  const [filters, setFilters] = useState({
+    officerName: '',
+    startDate: '',
+    endDate: '',
+    status: 'All',
+    severity: 'All', // Default to 'All' for no filtering by status
+  });
     useEffect(() => {
         const fetchStation = async () => {
             if (currentUser?.email) {
@@ -109,6 +116,7 @@ const AccidentDetails = () => {
                 }
             });
             setAccidents(accidentData);
+            setAllAccidentData(accidentData);
         });
 
         // Cleanup subscription on component unmount
@@ -542,6 +550,46 @@ const AccidentDetails = () => {
         setSelectedReport(null);
       };
 
+      const applyFilters = () => {
+        const filtered = allAccidentData.filter((accident) => {
+          const { submit, oicApp, headApp } = accident;
+          const officerName = officers[accident.officerID]?.name || '';
+          const createdAt = accident.createdAt?.toDate(); // Convert Firestore timestamp to JavaScript Date
+      
+          // Status filter
+          const matchesStatus =
+            filters.status === 'All' ||
+            (filters.status === 'Pending' && submit === 1 && oicApp === 0 && headApp === 0) ||
+            (filters.status === 'In Progress' && submit === 1 && oicApp === 1 && headApp === 0) ||
+            (filters.status === 'Reject' && submit === 0 && oicApp === 0 && headApp === 0) ||
+            (filters.status === 'Completed' && submit === 1 && oicApp === 1 && headApp === 1);
+      
+          // Officer Name filter
+          const matchesOfficerName = officerName.toLowerCase().includes(filters.officerName.toLowerCase());
+          const matchesSeverity =
+  filters.severity === 'All' || String(accident.severity) === filters.severity;
+      
+          // Date filter
+          const matchesDate =
+            (!filters.startDate || (createdAt && new Date(filters.startDate) <= createdAt)) &&
+            (!filters.endDate || (createdAt && new Date(filters.endDate) >= createdAt));
+      
+          return matchesStatus && matchesOfficerName && matchesDate && matchesSeverity;
+        });
+      
+        setAccidents(filtered);
+      };
+    
+      const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters((prev) => ({ ...prev, [name]: value }));
+      };
+      
+      useEffect(() => {
+        applyFilters();
+      }, [filters]);
+      
+
     return (
         <div className='bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full'>
             <strong>
@@ -549,6 +597,61 @@ const AccidentDetails = () => {
                     <center>Accident Details</center>
                 </h1>
             </strong>
+
+            <div className="flex flex-wrap items-center gap-10 p-3 mt-2 bg-gray-100 rounded-md">
+      
+  <div className="flex items-center gap-4 ml-10">
+    <label className="font-medium" htmlFor="startDate">Start Date:</label>
+    <input
+      type="date"
+      id="startDate"
+      name="startDate"
+      value={filters.startDate}
+      onChange={handleFilterChange}
+      className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+  <div className="flex items-center gap-4">
+    <label className="font-medium" htmlFor="endDate">End Date:</label>
+    <input
+      type="date"
+      id="endDate"
+      name="endDate"
+      value={filters.endDate}
+      onChange={handleFilterChange}
+      className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+  <div className="flex items-center gap-4">
+    <label className="font-medium" htmlFor="officerName">Officer Name:</label>
+    <input
+      type="text"
+      id="officerName"
+      name="officerName"
+      value={filters.officerName}
+      onChange={handleFilterChange}
+      className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <div className="flex items-center gap-4">
+    <label className="font-medium" htmlFor="status">Severity:</label>
+    <select
+    id="severity"
+    name="severity"
+    value={filters.severity}
+    onChange={handleFilterChange}
+    className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+  >
+    <option value="All">All</option>
+    <option value="1">Fatal</option>
+    <option value="2">Serious</option>
+    <option value="3">Minor</option>
+    <option value="4">Damages only</option>
+  </select>
+  </div>
+</div>
+
             <div className='mt-3 p-3'>
                 <table className='w-full table-auto'>
                     <thead className='bg-gray-100 border-gray-400 font-semibold'>
@@ -565,23 +668,20 @@ const AccidentDetails = () => {
                     <tbody>
                         {accidents.map((accident, index) => (
                             <tr key={index} className='border-b'>
-                                <td className='text-center p-3'>{accident.date}</td>
-                                <td className='text-center p-3'>{accident.time}</td>
-                                <td className='text-center p-3'>{accident.accidentId}</td>
-                                <td className='text-center p-3'>
-    {officers[accident.officerID]?.name || 'N/A'}
-</td>
-
-
-                                <td className='text-center p-3'>{getActionText(accident.action)}</td>
-                                <td className='text-center p-3'>{getSeverityText(accident.severity)}</td>
-                                <td className='text-center p-3'>
-                                    <button className='bg-yellow-button hover:bg-yellow text-black font-semibold py-1 px-1 rounded text-sm'
-                                    onClick={() => handleDetails(accident)}
-                                        >
-                                        Details
-                                    </button>
-                                </td>
+                              <td className='text-center p-3'>{accident.date}</td>
+                              <td className='text-center p-3'>{accident.time}</td>
+                              <td className='text-center p-3'>{accident.accidentId}</td>
+                              <td className='text-center p-3'>
+                                {officers[accident.officerID]?.name || 'N/A'}
+                              </td>
+                              <td className='text-center p-3'>{getActionText(accident.action)}</td>
+                              <td className='text-center p-3'>{getSeverityText(accident.severity)}</td>
+                              <td className='text-center p-3'>
+                                <button className='bg-yellow-button hover:bg-yellow text-black font-semibold py-1 px-1 rounded text-sm'
+                                  onClick={() => handleDetails(accident)}>
+                                  Details
+                                </button>
+                              </td>
                             </tr>
                         ))}
                     </tbody>

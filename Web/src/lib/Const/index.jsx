@@ -29,7 +29,7 @@ export const DASHBOARD_SIDEBAR_LINKS_TRAFFIC = [
 	{
 		key: 'T-report',
 		label: 'Report',
-		path: '/',
+		path: '/Traffic/Report',
 		icon: <MdEditNote />
 	},
 	{
@@ -81,7 +81,7 @@ export const DASHBOARD_SIDEBAR_LINKS_OIC = [
 	{
 		key: 'O-report',
 		label: 'Report',
-		path: '/',
+		path: '/Oic/Report',
 		icon: <MdEditNote />
 	},
 	{
@@ -92,6 +92,7 @@ export const DASHBOARD_SIDEBAR_LINKS_OIC = [
 	},
 	
 ]
+
 
 
 export const DASHBOARD_SIDEBAR_LINKS_HEAD = [
@@ -131,6 +132,41 @@ export const DASHBOARD_SIDEBAR_LINKS_HEAD = [
 		path: '/Head/Analysis',
 		icon: <FaChartLine />
 	},
+	
+]
+
+export const DASHBOARD_SIDEBAR_LINKS_ADMIN = [
+	{
+		key: 'A-dashboard',
+		label: 'Dashboard',
+		path: '#',
+		icon: <HiOutlineViewGrid />
+	},
+	{
+		key: 'Register-Officer',
+		label: 'Register Officer',
+		path: '#',
+		icon: <FaHourglassHalf />
+	},
+	{
+		key: 'officer',
+		label: 'Officer',
+		path: '#',
+		icon: <FaInfoCircle />
+	},
+	{
+		key: 'driver',
+		label: 'Driver',
+		path: '#',
+		icon: <TbReportSearch />
+	},
+	{
+		key: 'station',
+		label: 'Station',
+		path: '#',
+		icon: <FaListCheck />
+	},
+	
 	
 ]
 

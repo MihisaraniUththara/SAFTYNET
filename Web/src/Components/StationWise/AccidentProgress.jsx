@@ -10,6 +10,7 @@ const AccidentProgress = () => {
   const [accidentData, setAccidentData] = useState([]);
   const [officers, setOfficers] = useState({});
   const [selectedReport, setSelectedReport] = useState(null);
+  const [allAccidentData, setAllAccidentData] = useState([]); // New state to hold original data
   const [filters, setFilters] = useState({
     officerName: '',
     startDate: '',
@@ -111,6 +112,7 @@ const AccidentProgress = () => {
       });
 
       setAccidentData(data);
+      setAllAccidentData(data); // Store original data
     });
 
     return () => unsubscribe();
@@ -522,7 +524,7 @@ const AccidentProgress = () => {
   };
 
   const applyFilters = () => {
-    const filtered = accidentData.filter((accident) => {
+    const filtered = allAccidentData.filter((accident) => {
       const { submit, oicApp, headApp } = accident;
       const officerName = officers[accident.InchargeOfficer]?.name || '';
       const createdAt = accident.createdAt?.toDate(); // Convert Firestore timestamp to JavaScript Date
@@ -564,7 +566,7 @@ const AccidentProgress = () => {
     <div className='bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full'>
       <strong><h1><center>Recent Accidents</center></h1></strong>
 
-      <div className="flex flex-wrap items-center gap- p-3 mt-2 bg-gray-100 rounded-md">
+      <div className="flex flex-wrap items-center gap-10 p-3 mt-2 bg-gray-100 rounded-md">
       
   <div className="flex items-center gap-4 ml-10">
     <label className="font-medium" htmlFor="startDate">Start Date:</label>
@@ -574,7 +576,7 @@ const AccidentProgress = () => {
       name="startDate"
       value={filters.startDate}
       onChange={handleFilterChange}
-      className="border p-2 rounded"
+      className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
     />
   </div>
   <div className="flex items-center gap-4">
@@ -585,7 +587,7 @@ const AccidentProgress = () => {
       name="endDate"
       value={filters.endDate}
       onChange={handleFilterChange}
-      className="border p-2 rounded"
+      className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
     />
   </div>
   <div className="flex items-center gap-4">
@@ -596,7 +598,7 @@ const AccidentProgress = () => {
       name="officerName"
       value={filters.officerName}
       onChange={handleFilterChange}
-      className="border p-2 rounded"
+      className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
     />
   </div>
 
@@ -607,7 +609,7 @@ const AccidentProgress = () => {
       name="status"
       value={filters.status}
       onChange={handleFilterChange}
-      className="border p-2 rounded"
+      className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
     >
       <option value="All">All</option>
       <option value="Pending">Pending</option>

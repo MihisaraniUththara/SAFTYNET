@@ -9,6 +9,13 @@ const AccidentProgressMyCases = () => {
   const [badgeNumber, setBadgeNumber] = useState(null); // Badge number of current user
   const [accidentData, setAccidentData] = useState([]); // Accident reports
   const [selectedReport, setSelectedReport] = useState(null);
+  const [allAccidentData, setAllAccidentData] = useState([]); // New state to hold original data
+  const [filters, setFilters] = useState({
+    accidentId: '',
+    startDate: '',
+    endDate: '',
+    status: 'All', // Default to 'All' for no filtering by status
+  });
 
   useEffect(() => {
     const fetchBadgeNumber = async () => {
@@ -87,6 +94,7 @@ const AccidentProgressMyCases = () => {
       });
 
       setAccidentData(data);
+      setAllAccidentData(data); // Store original data
     });
 
     return () => unsubscribe();
@@ -505,9 +513,105 @@ const AccidentProgressMyCases = () => {
     setSelectedReport(null);
   };
 
+  const applyFilters = () => {
+    const filtered = allAccidentData.filter((accident) => {
+      const { submit, oicApp, headApp } = accident;
+      
+      const createdAt = accident.createdAt?.toDate(); // Convert Firestore timestamp to JavaScript Date
+  
+      // Status filter
+      const matchesStatus =
+        filters.status === 'All' ||
+        (filters.status === 'Pending' && submit === 1 && oicApp === 0 && headApp === 0) ||
+        (filters.status === 'In Progress' && submit === 1 && oicApp === 1 && headApp === 0) ||
+        (filters.status === 'Reject' && submit === 0 && oicApp === 0 && headApp === 0) ||
+        (filters.status === 'Completed' && submit === 1 && oicApp === 1 && headApp === 1);
+  
+      // AccidentID Name filter
+      const matchesAccidentId = !filters.accidentId || 
+      accident.AccidentId?.toLowerCase().includes(filters.accidentId.toLowerCase());
+  
+      // Date filter
+      const matchesDate =
+      (!filters.startDate || (accident.createdAt && new Date(filters.startDate) <= accident.createdAt)) &&
+      (!filters.endDate || (accident.createdAt && new Date(filters.endDate) >= accident.createdAt));
+  
+      return matchesStatus  && matchesAccidentId && matchesDate;
+    });
+  
+    setAccidentData(filtered);
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+  
+  useEffect(() => {
+    applyFilters();
+  }, [filters]);
+  
+  
+
   return (
     <div className='bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full'>
       <strong><h1><center>My Recent Cases</center></h1></strong>
+
+      <div className="flex flex-wrap items-center gap-10 p-3 mt-2 bg-gray-100 rounded-md">
+      
+      <div className="flex items-center gap-4 ml-10">
+        <label className="font-medium" htmlFor="startDate">Start Date:</label>
+        <input
+          type="date"
+          id="startDate"
+          name="startDate"
+          value={filters.startDate}
+          onChange={handleFilterChange}
+          className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div className="flex items-center gap-4">
+        <label className="font-medium" htmlFor="endDate">End Date:</label>
+        <input
+          type="date"
+          id="endDate"
+          name="endDate"
+          value={filters.endDate}
+          onChange={handleFilterChange}
+          className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div className="flex items-center gap-4">
+        <label className="font-medium" htmlFor="officerName">Accident ID:</label>
+        <input
+          type="text"
+          id="accidentId"
+          name="accidentId"
+          value={filters.accidentId}
+          onChange={handleFilterChange}
+          className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+    
+      <div className="flex items-center gap-4">
+        <label className="font-medium" htmlFor="status">Status:</label>
+        <select
+          id="status"
+          name="status"
+          value={filters.status}
+          onChange={handleFilterChange}
+          className="p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="All">All</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+          <option value="Reject">Rejected</option>
+        </select>
+      </div>
+    </div>
+    
+
       <div className='mt-3 p-3'>
         {accidentData.length === 0 ? (
           <p className='text-center text-gray-500'>No cases assigned to you in the last 30 days.</p>
