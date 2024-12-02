@@ -193,10 +193,10 @@ const sendEmail = async (toEmail, accidentId, station, name) => {
     try {
       const result = await emailjs.send(
         'service_hwz175y', // service ID
-        'template_khztu4f', // template ID
+        'template_rvx2rl2', // template ID
         {
           to_email: toEmail,
-          name: name || 'Officer', // Default name fallback
+          // name: name || 'Officer', // Default name fallback
           date: new Date().toLocaleDateString(),
           accident_id: accidentId,
         },

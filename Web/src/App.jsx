@@ -36,7 +36,7 @@ import HeadReportSubmit from './Pages/Head/ReportSubmit'
 import HeadAnalysis from './Pages/Head/Analysis'
 
 import AdminLayout from './Pages/Admin/Layout'
-import AdminOfficers from './Pages/Admin/Officers'
+
 import { AuthContext } from './Context/AuthContext';
 
 
@@ -102,7 +102,6 @@ function App() {
         {/* Admin */}
 
         <Route path='Admin' element={<AdminLayout/>}>
-          <Route path='Officers' element={<AdminOfficers/>}/>
         </Route>
       </Route>
     </Routes>
