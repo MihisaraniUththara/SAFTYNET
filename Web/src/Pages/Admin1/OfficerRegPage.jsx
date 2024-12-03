@@ -25,7 +25,7 @@ import {
 import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase'; // Ensure firebase is initialized here
 import { useNavigate } from 'react-router-dom';
-import Spinner from '../../components/Spinner';
+// import Spinner from '../../components/Spinner';
 import emailjs from 'emailjs-com';
 
 // Define the roles for the select field
