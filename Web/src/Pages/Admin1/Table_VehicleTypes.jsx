@@ -7,13 +7,14 @@ import {
 
 // Sample data for 2023 with icons
 const data2023 = [
-  { name: 'Motor cycles', value: 33, icon: <TwoWheeler /> },
-  { name: 'Three wheelers', value: 17, icon: <DirectionsTransit /> },
-  { name: 'Lorries', value: 48, icon: <LocalShipping /> },
-  { name: 'Cycles', value: 13, icon: <DirectionsBike /> },
-  { name: 'Cars', value: 15, icon: <DirectionsCar /> },
-  { name: 'Buses', value: 6, icon: <DirectionsBus /> },
-  { name: 'Other', value: 5, icon: <EmojiTransportation /> },
+  { name: 'Motor cycles', value: 33, icon: <TwoWheeler sx={{ color: 'black' }} /> },
+  { name: 'Three wheelers', value: 17, icon: <DirectionsTransit sx={{ color: 'black' }} /> },
+  { name: 'Lorries', value: 48, icon: <LocalShipping sx={{ color: 'black' }} /> },
+  { name: 'Cycles', value: 13, icon: <DirectionsBike sx={{ color: 'black' }} /> },
+  { name: 'Cars', value: 15, icon: <DirectionsCar sx={{ color: 'black' }} /> },
+  { name: 'Buses', value: 6, icon: <DirectionsBus sx={{ color: 'black' }} /> },
+  { name: 'Other', value: 5, icon: <EmojiTransportation sx={{ color: 'black' }} /> },
+
 ];
 
 // Year options
@@ -45,7 +46,7 @@ const VehicleTypesTable = () => {
   return (
     <div className="border border-gray-300 rounded-lg shadow-lg p-4 bg-white">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-semibold">Vehicle Types</h3>
+        <h3 className="text-black text-xl font-semibold">Vehicle Types</h3>
         <Dropdown
           options={years}
           value={selectedYear}
@@ -59,8 +60,8 @@ const VehicleTypesTable = () => {
       <table className="w-full border-collapse mt-4">
         <thead>
           <tr>
-            <th className="border border-gray-300 p-2 bg-gray-100 text-left">Vehicle Type</th>
-            <th className="border border-gray-300 p-2 bg-gray-100 text-left">Count</th>
+            <th className="border border-gray-300 p-2 bg-gray-100 text-black text-left">Vehicle Type</th>
+            <th className="border border-gray-300 p-2 bg-gray-100 text-black text-left">Count</th>
           </tr>
         </thead>
         <tbody>
@@ -70,9 +71,9 @@ const VehicleTypesTable = () => {
               <tr key={item.name} style={{ backgroundColor: getBackgroundColor(percentage) }}>
                 <td className="border border-gray-300 p-2 flex items-center">
                   {item.icon}
-                  <span className="ml-2">{item.name}</span>
+                  <span className="ml-2 text-black">{item.name}</span>
                 </td>
-                <td className="border border-gray-300 p-2">{item.value}</td>
+                <td className="border border-gray-300 p-2 text-black">{item.value}</td>
               </tr>
             );
           })}
