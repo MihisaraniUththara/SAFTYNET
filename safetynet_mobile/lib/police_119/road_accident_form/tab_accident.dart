@@ -29,11 +29,13 @@ class _TabAccidentState extends State<TabAccident> {
 
   // Controllers for text and numeric fields
   final _divisionController = TextEditingController();
+  final _dnoController = TextEditingController();
   final _stationController = TextEditingController();
+  final _snoController = TextEditingController();
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
   final _uniqueIdController = TextEditingController();
-  //final _dayOfWeek = TextEditingController();
+  final _dayOfWeek = TextEditingController();
   final _roadNumberController = TextEditingController();
   final _streetNameController = TextEditingController();
   final _nearestLowerkmPostController = TextEditingController();
@@ -49,10 +51,12 @@ class _TabAccidentState extends State<TabAccident> {
   final _researchPurposeController = TextEditingController();
   final _gazettedSpeedLimitForLightVehiclesController = TextEditingController();
   final _gazettedSpeedLimitForHeavyVehiclesController = TextEditingController();
-  final _casualtiesController = TextEditingController();
+  //final _casualtiesController = TextEditingController();
   final _fatalController = TextEditingController();
   final _grievousController = TextEditingController();
   final _nonGrievousController = TextEditingController();
+  final _arNumberController = TextEditingController();
+  final _yearController = TextEditingController();
 
   // Variables to store checkbox selections
   String? _classOfAccident;
@@ -72,28 +76,81 @@ class _TabAccidentState extends State<TabAccident> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Accessing PoliceStationProvider inside didChangeDependencies
     final policeStationProvider = context.read<PoliceStationProvider>();
+
+    // Fetch Police Station Details
     policeStationProvider.fetchPoliceStationDetails();
 
-    if (policeStationProvider != null) {
-      _divisionController.text =
-          '${policeStationProvider.division}';
-      _stationController.text =
-          '${policeStationProvider.station}';
-    }
+    // Fetch Date-Time from Firestore
+    _fetchDateTimeFromDriverAccidents().then((dateTime) {
+      _dateController.text = dateTime['date'] ?? '';
+      _timeController.text = dateTime['time'] ?? '';
 
-    if (widget.draftData != null) {
-      _loadDraftData();
-    }
+      // Load Draft Data (if exists)
+      if (widget.draftData != null) {
+        _loadDraftData();
+      } else {
+        //Auto-Fill Remaining Fields if Draft Data is Not Found
+        _autoFillFields(policeStationProvider, dateTime['date'], dateTime['time']);
+      }
+    });
 
-    // Notify changes when unique ID updates
+    // Step 5: Set Unique ID Notifier Listener
     _uniqueIdController.addListener(() {
       widget.uniqueIdNotifier.value = _uniqueIdController.text;
     });
   }
 
+  Future<Map<String, String>> _fetchDateTimeFromDriverAccidents() async {
+    String? _fetchedDate;
+    String? _fetchedTime;
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('driver_accidents')
+          .doc(
+              'some_unique_id') // Replace with your logic to identify the document
+          .get();
+
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        if (data != null && data['date_time'] != null) {
+          DateTime dateTime = (data['date_time'] as Timestamp).toDate();
+          _fetchedDate =
+              '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
+          _fetchedTime =
+              '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+        }
+      }
+    } catch (e) {
+      print('Error fetching date-time: $e');
+    }
+
+    return {
+      'date': _fetchedDate ?? '',
+      'time': _fetchedTime ?? '',
+    };
+  }
+
+  void _autoFillFields(PoliceStationProvider policeStationProvider, String? fetchedDate, String? fetchedTime) {
+    // Auto-fill police station details
+    _divisionController.text = policeStationProvider.division;
+    _dnoController.text = policeStationProvider.divisionNumber;
+    _stationController.text = policeStationProvider.station;
+    _snoController.text = policeStationProvider.stationNumber;
+
+    // Auto-fill date and time (fetched from Firestore earlier)
+    _dateController.text = fetchedDate ?? ''; // Fallback empty if not fetched
+    _timeController.text = fetchedTime ?? ''; // Fallback empty if not fetched
+  }
+
   void _loadDraftData() {
+    if (widget.draftData != null) {
+      _yearController.text = widget.draftData?['year'] ?? '';
+      _arNumberController.text = widget.draftData?['ARno'] ?? '';
+      _dnoController.text = widget.draftData?['dno'] ?? '';
+      _snoController.text = widget.draftData?['sno'] ?? '';
+    }
     final dataA = widget.draftData!['A'];
     if (dataA != null && dataA['A5'] != null) {
       _divisionController.text = dataA['A1'] ?? '';
@@ -104,7 +161,7 @@ class _TabAccidentState extends State<TabAccident> {
       _classOfAccident = dataA['A6'] ?? '';
       _urbanOrRural = dataA['A7'] ?? '';
       _workdayOrHoliday = dataA['A8'] ?? '';
-      //_dayOfWeek.text = dataA['A9'] ?? '';
+      _dayOfWeek.text = dataA['A9'] ?? '';
       _roadNumberController.text = dataA['A10'] ?? '';
       _streetNameController.text = dataA['A11'] ?? '';
       _nearestLowerkmPostController.text = dataA['A12'] ?? '';
@@ -133,7 +190,6 @@ class _TabAccidentState extends State<TabAccident> {
       _grievousController.text = dataA['A33']?['2'] ?? '';
       _nonGrievousController.text = dataA['A33']?['3'] ?? '';
       _researchPurposeController.text = dataA['A34'] ?? '';
-
       widget.uniqueIdNotifier.value = dataA['A5']; // Notify listeners
     }
   }
@@ -157,15 +213,17 @@ class _TabAccidentState extends State<TabAccident> {
       // Try to update the document if it exists
       await draftRef.update({
         'A': {
-          'A1': _divisionController.text.trim(),
-          'A2': _stationController.text.trim(),
+          //'A1': _divisionController.text.trim(),
+          //'dno':_dnoController.text.trim(),
+          //'A2': _stationController.text.trim(),
+          //'sno': _snoController.text.trim(),
           'A3': _dateController.text.trim(),
           'A4': _timeController.text.trim(),
           'A5': _uniqueIdController.text.trim(),
           'A6': _classOfAccident,
           'A7': _urbanOrRural,
           'A8': _workdayOrHoliday,
-          //'A9': _dayOfWeek.text.trim(),
+          'A9': _dayOfWeek.text.trim(),
           'A10': _roadNumberController.text.trim(),
           'A11': _streetNameController.text.trim(),
           'A12': _nearestLowerkmPostController.text.trim(),
@@ -196,6 +254,10 @@ class _TabAccidentState extends State<TabAccident> {
           },
           'A34': _researchPurposeController.text.trim(),
         }, // Save A data
+        'year': _yearController.text.trim(),
+        //'ARno': _arNumberController.text.trim(),
+        //'dno':_dnoController.text.trim(),
+        //'sno': _snoController.text.trim(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
       ScaffoldMessenger.of(context).showSnackBar(
@@ -214,7 +276,7 @@ class _TabAccidentState extends State<TabAccident> {
             'A6': _classOfAccident,
             'A7': _urbanOrRural,
             'A8': _workdayOrHoliday,
-            //'A9': _dayOfWeek.text.trim(),
+            'A9': _dayOfWeek.text.trim(),
             'A10': _roadNumberController.text.trim(),
             'A11': _streetNameController.text.trim(),
             'A12': _nearestLowerkmPostController.text.trim(),
@@ -245,8 +307,11 @@ class _TabAccidentState extends State<TabAccident> {
             },
             'A34': _researchPurposeController.text.trim(),
           },
+          'dno': _dnoController.text.trim(),
+          'sno': _snoController.text.trim(),
+          'year': _yearController.text.trim(),
+          'ARno': _arNumberController.text.trim(),
           'officerID': widget.officerID,
-          //'accidentID': accidentID,
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         });
@@ -342,8 +407,30 @@ class _TabAccidentState extends State<TabAccident> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _buildReadOnlyTextField('A1 Division', _divisionController),
-              _buildReadOnlyTextField('A2 Station', _stationController),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildReadOnlyTextField(
+                        'A1 Division', _divisionController),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: _buildReadOnlyTextField(' no', _dnoController),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildReadOnlyTextField(
+                        'A2 Station', _stationController),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: _buildReadOnlyTextField(' no', _snoController),
+                  ),
+                ],
+              ),
               _buildTextField('A3 Date', _dateController,
                   hintText: 'YYYY-MM-DD', maxchars: 10),
               _buildTextField('A4 Time of accident', _timeController,
@@ -713,16 +800,6 @@ class _TabAccidentState extends State<TabAccident> {
         ),
       ),
     );
-
-    @override
-    void dispose() {
-      _divisionController.dispose();
-      _stationController.dispose();
-      _uniqueIdController.dispose();
-      _dateController.dispose();
-      _timeController.dispose();
-      super.dispose();
-    }
   }
 
   Widget _buildTextField(String label, TextEditingController controller,

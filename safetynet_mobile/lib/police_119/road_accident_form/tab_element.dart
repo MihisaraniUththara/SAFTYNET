@@ -766,7 +766,7 @@ class _TabElementState extends State<TabElement> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _addColumnsAndFields,
-                child: Text('Add Traffic Element'),
+                child: Text('Add a Traffic Element'),
               ),
               const SizedBox(height: 50.0),
               SizedBox(

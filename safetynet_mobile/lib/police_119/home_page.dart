@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:get/get.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../drivers/authentication/login_screen.dart';
 import 'view_accidents/widgets/view_accidents_card.dart';
 import 'view_accidents/widgets/add_accident_report_card.dart';
 import 'services/accident_listener_service.dart';
 import 'package:provider/provider.dart';
+import 'services/police_station_provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,47 +14,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? divisionName = 'Loading...';
-  String? divisionNumber = '';
-  String? stationName = 'Loading...';
-  String? stationNumber = '';
-  String? userEmail;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchStationDetails();
-  }
-
-  Future<void> _fetchStationDetails() async {
-    try {
-      User? currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) return;
-
-      userEmail = currentUser.email!;
-
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('police_stations')
-          .where('email', isEqualTo: userEmail)
-          .limit(1)
-          .get();
-
-      if (snapshot.docs.isNotEmpty) {
-        var data = snapshot.docs.first.data() as Map<String, dynamic>;
-        setState(() {
-          divisionName = data['division'] ?? 'Unknown Division';
-          divisionNumber = data['dno'] ?? 'Unknown';
-          stationName = data['station_name'] ?? 'Unknown Station';
-          stationNumber = data['sno'] ?? 'Unknown';
-        });
-      }
-    } catch (e) {
-      print('Error fetching station details: $e');
-    }
-  }
+  
+  String? userEmail = FirebaseAuth.instance.currentUser?.email;
 
   @override
   Widget build(BuildContext context) {
+    final policeStationProvider = context.watch<PoliceStationProvider>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFfbbe00),
@@ -84,7 +49,8 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.logout, color: Colors.black),
             onPressed: () async {
               // Access AccidentListenerService via Provider
-               Provider.of<AccidentListenerService>(context, listen: false).dispose();
+              Provider.of<AccidentListenerService>(context, listen: false)
+                  .dispose();
 
               // Sign out the user
               await FirebaseAuth.instance.signOut();
@@ -115,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$divisionName Division',
+                      '${policeStationProvider.division} Division',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -123,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Text(
-                      '$stationName Station',
+                      '${policeStationProvider.station} Station',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -136,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'no : $divisionNumber',
+                      'no : ${policeStationProvider.divisionNumber}',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -144,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Text(
-                      'no : $stationNumber',
+                      'no : ${policeStationProvider.stationNumber}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
