@@ -29,7 +29,7 @@ const Login = () => {
               // Redirect user based on role
               switch (userData.role) {
                 case "Admin":
-                  navigate("/");
+                  navigate("/Admin");
                   break;
                 case "OON":
                   navigate("/Traffic");
@@ -46,9 +46,6 @@ const Login = () => {
                 case "OIC":
                   navigate("/oic");
                   break;
-                  case "Admin":
-                    navigate("/Admin");
-                    break;
                 case "Other":
                   setError(true);
                   console.log("Other role")
