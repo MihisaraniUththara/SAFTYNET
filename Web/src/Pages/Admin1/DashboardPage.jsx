@@ -14,7 +14,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7 p-4">
     <div className="bg-white shadow-lg rounded-lg p-5 flex items-center hover:shadow-xl transition-shadow h-25">
         <div className="flex-shrink-0">
-        <FiUsers size={36} className="text-primary" />
+        <FiUsers size={36} className="text-black" />
         </div>
         <div className="flex flex-col ml-auto text-right">
         <span className="text-gray-600 text-sm font-semibold">Drivers</span>
@@ -41,7 +41,7 @@ const Dashboard = () => {
     </div>
     <div className="bg-white shadow-lg rounded-lg p-5 flex items-center hover:shadow-xl transition-shadow h-25">
         <div className="flex-shrink-0">
-        <FiSlash size={36} className="text-yellow-500" />
+        <FiSlash size={36} className="text-yellow" />
         </div>
         <div className="flex flex-col ml-auto text-right">
         <span className="text-gray-600 text-sm font-semibold">Suspends</span>
