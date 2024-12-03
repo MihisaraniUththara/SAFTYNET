@@ -5,13 +5,13 @@ import { DirectionsCar, PedalBike, DirectionsBus, People, TwoWheeler, EmojiTrans
 
 // Sample data for 2023 with corresponding icons
 const data2023 = [
-  { name: 'Pedestrians', value: 750, icon: <DirectionsWalk /> },
-  { name: 'Cycle', value: 200, icon: <PedalBike /> },
-  { name: 'Back Riders', value: 190, icon: <DirectionsBus /> },
-  { name: 'Passengers', value: 325, icon: <People /> },
-  { name: 'Motorcycle', value: 750, icon: <TwoWheeler /> },
-  { name: 'Drivers', value: 180, icon: <EmojiTransportation /> },
-  { name: 'Others', value: 70, icon: <DirectionsCar /> },
+  { name: 'Pedestrians', value: 750, icon: <DirectionsWalk sx={{ color: 'black' }} /> },
+  { name: 'Cycle', value: 200, icon: <PedalBike sx={{ color: 'black' }} /> },
+  { name: 'Back Riders', value: 190, icon: <DirectionsBus sx={{ color: 'black' }} /> },
+  { name: 'Passengers', value: 325, icon: <People sx={{ color: 'black' }} /> },
+  { name: 'Motorcycle', value: 750, icon: <TwoWheeler sx={{ color: 'black' }} /> },
+  { name: 'Drivers', value: 180, icon: <EmojiTransportation sx={{ color: 'black' }} /> },
+  { name: 'Others', value: 70, icon: <DirectionsCar sx={{ color: 'black' }} /> },
 ];
 
 // Year options
@@ -44,7 +44,7 @@ const AccidentStatTable = () => {
     <div className="border border-gray-300 rounded-lg shadow-lg p-4 bg-white">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
-          <h3 className="text-xl font-semibold">Accident Stats</h3>
+          <h3 className="text-black text-xl font-semibold">Accident Stats</h3>
         </div>
         <Dropdown
           options={years}
@@ -59,10 +59,10 @@ const AccidentStatTable = () => {
       <table className="w-full border-collapse mt-4">
         <thead>
           <tr>
-            <th className="border border-gray-300 p-2 bg-gray-100 text-left flex items-center">
+            <th className="border border-gray-300 p-2 bg-gray-100 text-black text-left flex items-center">
               <DirectionsCar className="mr-2" /> Type
             </th>
-            <th className="border border-gray-300 p-2 bg-gray-100 text-left">Count</th>
+            <th className="border border-gray-300 p-2 bg-gray-100 text-black text-left">Count</th>
           </tr>
         </thead>
         <tbody>
@@ -72,9 +72,9 @@ const AccidentStatTable = () => {
               <tr key={item.name} style={{ backgroundColor: getBackgroundColor(percentage) }}>
                 <td className="border border-gray-300 p-2 flex items-center">
                   {item.icon}
-                  <span className="ml-2">{item.name}</span>
+                  <span className="ml-2 text-black">{item.name}</span>
                 </td>
-                <td className="border border-gray-300 p-2">{item.value}</td>
+                <td className="border border-gray-300 p-2 text-black">{item.value}</td>
               </tr>
             );
           })}
