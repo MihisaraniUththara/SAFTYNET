@@ -3,7 +3,7 @@ import classNames from 'classname';
 
 
 import logo from './../assets/Images/logo1.png';
-import {DASHBOARD_SIDEBAR_LINKS_HEAD} from './../lib/Const/index'
+import {DASHBOARD_SIDEBAR_LINKS_ADMIN} from './../lib/Const/index'
 import { Link, useLocation } from 'react-router-dom';
 import LogOut from './../Pages/SignOut'
 
@@ -16,7 +16,7 @@ const SideBarAdmin = () => {
             <img src={logo} className="h-10" alt="Logo"/>
         </div>
         <div className='flex-1 py-8 flex flex-col gap-0.5'>
-            {DASHBOARD_SIDEBAR_LINKS_HEAD.map((item) => (
+            {DASHBOARD_SIDEBAR_LINKS_ADMIN.map((item) => (
                 <SidebarLinks key={item.key} item={item} />
             ))}
         </div>
