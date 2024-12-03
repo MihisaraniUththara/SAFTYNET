@@ -406,9 +406,9 @@ const OfficerReg = () => {
     setOpenSnackbar(false);
   };
 
-  if (loading) {
-    return <Spinner />;
-  }
+  // if (loading) {
+  //   return <Spinner />;
+  // }
 
   return (
     <div className="flex h-screen">
