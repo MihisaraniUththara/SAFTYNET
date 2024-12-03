@@ -5,11 +5,11 @@ import { Warning, SentimentVeryDissatisfied, Healing, Build } from '@mui/icons-m
 
 // Sample data for 2023 with icons
 const data2023 = [
-  { name: 'Fetal', value: 1900, icon: <SentimentVeryDissatisfied /> },
-  { name: 'Serious', value: 6000, icon: <Warning /> },
-  { name: 'Minor', value: 8000, icon: <Healing /> },
-  { name: 'Damage Only', value: 6000, icon: <Build /> },
-  { name: 'Deaths', value: 2000, icon: <SentimentVeryDissatisfied /> },
+  { name: 'Fetal', value: 1900, icon: <SentimentVeryDissatisfied sx={{ color: 'black' }} /> },
+  { name: 'Serious', value: 6000, icon: <Warning sx={{ color: 'black' }} /> },
+  { name: 'Minor', value: 8000, icon: <Healing sx={{ color: 'black' }} /> },
+  { name: 'Damage Only', value: 6000, icon: <Build sx={{ color: 'black' }} /> },
+  { name: 'Deaths', value: 2000, icon: <SentimentVeryDissatisfied sx={{ color: 'black' }} /> },
 ];
 
 // Year options
@@ -39,7 +39,7 @@ const SeverityTable = () => {
   return (
     <div className="border border-gray-300 rounded-lg shadow-lg p-4 bg-white">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-semibold">Severity Stat</h3>
+        <h3 className="text-black text-xl font-semibold">Severity Stat</h3>
         <Dropdown
           options={years}
           value={selectedYear}
@@ -53,8 +53,8 @@ const SeverityTable = () => {
       <table className="w-full border-collapse mt-4">
         <thead>
           <tr>
-            <th className="border border-gray-300 p-2 bg-gray-100 text-left">Severity</th>
-            <th className="border border-gray-300 p-2 bg-gray-100 text-left">Count</th>
+            <th className="border border-gray-300 p-2 bg-gray-100 text-black text-left">Severity</th>
+            <th className="border border-gray-300 p-2 bg-gray-100 text-black text-left">Count</th>
           </tr>
         </thead>
         <tbody>
@@ -64,9 +64,9 @@ const SeverityTable = () => {
               <tr key={item.name} style={{ backgroundColor: getBackgroundColor(percentage) }}>
                 <td className="border border-gray-300 p-2 flex items-center">
                   {item.icon}
-                  <span className="ml-2">{item.name}</span>
+                  <span className="ml-2 text-black">{item.name}</span>
                 </td>
-                <td className="border border-gray-300 p-2">{item.value}</td>
+                <td className="border border-gray-300 p-2 text-black">{item.value}</td>
               </tr>
             );
           })}
