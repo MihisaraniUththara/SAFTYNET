@@ -27,6 +27,7 @@ import { db } from '../../firebase'; // Ensure firebase is initialized here
 import { useNavigate } from 'react-router-dom';
 // import Spinner from '../../components/Spinner';
 import emailjs from 'emailjs-com';
+import SideBarAdmin from '../../Components/SideBarAdmin';
 
 // Define the roles for the select field
 const roles = ['Traffic', 'OIC', 'OONH'];
@@ -411,11 +412,11 @@ const OfficerReg = () => {
   // }
 
   return (
-    <div className="flex h-screen">
-      <SidebarHeader />
+    <div className="flex h-screen w-screen bg-neutral-100">
+      <SideBarAdmin />
       <div className="flex-1 flex flex-col overflow-y-auto mt-16">
         <header className="text-center mt-4">
-          <h1 className="text-3xl font-bold mb-3">Officer Registration</h1>
+          <h1 className="text-3xl font-bold mb-3 text-black">Officer Registration</h1>
         </header>
         <main className="flex-1 overflow-auto p-4">
           <Container
