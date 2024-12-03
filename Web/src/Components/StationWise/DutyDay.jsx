@@ -289,7 +289,7 @@ const DutyDay = () => {
   return (
     <div className='bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full'>
       <strong>
-        <h1>
+      <h1 className="text-2xl font-bold text-center text-black">
           <center>Day Shift</center>
         </h1>
       </strong>

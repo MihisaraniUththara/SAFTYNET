@@ -78,7 +78,7 @@ const Duty = () => {
 
   return (
     <div>
-      <h2 className='bg-gray-100 text-center text-black font-bold text-3xl py-2'>Duty Roster</h2>
+      <h1 className="text-2xl font-bold text-center text-black">Duty Roster</h1>
       <div className='text-black'>
         <h3 className='text-black'>{station && station.charAt(0).toUpperCase() + station.slice(1)}</h3>
         <h3>{station}@gmail.com</h3>

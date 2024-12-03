@@ -555,7 +555,7 @@ const AccidentProgressMyCases = () => {
 
   return (
     <div className='bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full'>
-      <strong><h1><center>My Recent Cases</center></h1></strong>
+      <strong><h1 className="text-2xl font-bold text-center text-black"><center>My Recent Cases</center></h1></strong>
 
       <div className="flex flex-wrap items-center gap-10 p-3 mt-2 bg-gray-100 rounded-md">
       

@@ -35,7 +35,7 @@ export const DASHBOARD_SIDEBAR_LINKS_TRAFFIC = [
 	{
 		key: 'T-analysis',
 		label: 'Analysis',
-		path: '',
+		path: '/Traffic/Analysis',
 		icon: <FaChartLine />
 	}
 	// {
