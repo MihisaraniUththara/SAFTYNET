@@ -49,16 +49,21 @@ class _LoginScreenState extends State<LoginScreen> {
             return;
           }
 
-          // Check if user is in the police collection
-          DocumentSnapshot policeDoc = await FirebaseFirestore.instance
-              .collection('police')
-              .doc(user.uid)
-              .get();
-          if (policeDoc.exists) {
-            // User is a police officer
+          // Check if user is in police_stations collections
+          List<bool> isPoliceStation = await Future.wait([
+            FirebaseFirestore.instance
+                .collection('police_stations')
+                .doc(user.uid)
+                .get()
+                .then((doc) =>
+                    doc.exists), // Check in 'police_stations' collection
+          ]);
+
+          if (isPoliceStation.any((exists) => exists)) {
+            // User is in either police or police_stations collection
             Get.snackbar(
               "Success",
-              "Police login successful",
+              "Police Station login successful",
               snackPosition: SnackPosition.BOTTOM,
               backgroundColor: Colors.green,
               colorText: Colors.white,
@@ -67,11 +72,12 @@ class _LoginScreenState extends State<LoginScreen> {
             return;
           }
 
-          // User is not found in either collection
+          // User is not found in any collection
           Get.snackbar(
             "Login Failed",
-            "User not found",
+            "Police station not found in the system",
             snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
           );
         }
       } on FirebaseAuthException catch (e) {
@@ -170,28 +176,32 @@ class _LoginScreenState extends State<LoginScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             borderSide: const BorderSide(
-                                              color: Colors.black, // Black border
+                                              color:
+                                                  Colors.black, // Black border
                                             ),
                                           ),
                                           enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             borderSide: const BorderSide(
-                                              color: Colors.black, // Black border
+                                              color:
+                                                  Colors.black, // Black border
                                             ),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             borderSide: const BorderSide(
-                                              color: Colors.black, // Black border
+                                              color:
+                                                  Colors.black, // Black border
                                             ),
                                           ),
                                           disabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             borderSide: const BorderSide(
-                                              color: Colors.black, // Black border
+                                              color:
+                                                  Colors.black, // Black border
                                             ),
                                           ),
                                           contentPadding:
@@ -199,7 +209,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                             horizontal: 14,
                                             vertical: 6,
                                           ),
-                                          fillColor: Color(0xFFF8F8F8), // Off-white background
+                                          fillColor: Color(
+                                              0xFFF8F8F8), // Off-white background
                                           filled: true,
                                         ),
                                       ),
@@ -236,32 +247,32 @@ class _LoginScreenState extends State<LoginScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                               borderSide: const BorderSide(
-                                                color:
-                                                    Colors.black, // Black border
+                                                color: Colors
+                                                    .black, // Black border
                                               ),
                                             ),
                                             enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                               borderSide: const BorderSide(
-                                                color:
-                                                    Colors.black, // Black border
+                                                color: Colors
+                                                    .black, // Black border
                                               ),
                                             ),
                                             focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                               borderSide: const BorderSide(
-                                                color:
-                                                    Colors.black, // Black border
+                                                color: Colors
+                                                    .black, // Black border
                                               ),
                                             ),
                                             disabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                               borderSide: const BorderSide(
-                                                color:
-                                                    Colors.black, // Black border
+                                                color: Colors
+                                                    .black, // Black border
                                               ),
                                             ),
                                             contentPadding:
@@ -269,8 +280,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                               horizontal: 14,
                                               vertical: 6,
                                             ),
-                                            fillColor:
-                                                Color(0xFFF8F8F8), // Off-white background
+                                            fillColor: Color(
+                                                0xFFF8F8F8), // Off-white background
                                             filled: true,
                                           ),
                                         ),

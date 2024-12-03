@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 import 'input_fields.dart';
+import '../services/police_station_provider.dart';
 
 class TabAccident extends StatefulWidget {
   final String officerID; // Accept officerID
   final Map<String, dynamic>? draftData; // Accept draft data
+  final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier
 
   // Pass officerID via the constructor
-  const TabAccident({super.key, required this.officerID, this.draftData});
+  const TabAccident({
+    super.key,
+    required this.officerID,
+    this.draftData,
+    required this.uniqueIdNotifier,
+  });
+
   @override
   State<TabAccident> createState() => _TabAccidentState();
 }
 
 class _TabAccidentState extends State<TabAccident> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   bool _saveAttempted = false; // Flag to track if the form has been submitted
 
   // Controllers for text and numeric fields
@@ -39,6 +49,10 @@ class _TabAccidentState extends State<TabAccident> {
   final _researchPurposeController = TextEditingController();
   final _gazettedSpeedLimitForLightVehiclesController = TextEditingController();
   final _gazettedSpeedLimitForHeavyVehiclesController = TextEditingController();
+  final _casualtiesController = TextEditingController();
+  final _fatalController = TextEditingController();
+  final _grievousController = TextEditingController();
+  final _nonGrievousController = TextEditingController();
 
   // Variables to store checkbox selections
   String? _classOfAccident;
@@ -53,69 +67,92 @@ class _TabAccidentState extends State<TabAccident> {
   String? _trafficControl;
   String? _postedSpeedLimitSigns;
   String? _policeAction;
-  String? _casualties;
 
   @override
-  void initState() {
-    super.initState();
-    // Populate fields with draft data if available
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Accessing PoliceStationProvider inside didChangeDependencies
+    final policeStationProvider = context.read<PoliceStationProvider>();
+    policeStationProvider.fetchPoliceStationDetails();
+
+    if (policeStationProvider != null) {
+      _divisionController.text =
+          '${policeStationProvider.division}';
+      _stationController.text =
+          '${policeStationProvider.station}';
+    }
+
     if (widget.draftData != null) {
-      
-      _divisionController.text = widget.draftData?['A']?['A1'] ?? '';
-      _stationController.text = widget.draftData?['A']?['A2'] ?? '';
-      _dateController.text = widget.draftData?['A']?['A3'] ?? '';
-      _timeController.text = widget.draftData?['A']?['A4'] ?? '';
-      _uniqueIdController.text = widget.draftData?['A']?['A5'] ?? '';
-      _classOfAccident = widget.draftData?['A']?['A6'] ?? '';
-      _urbanOrRural = widget.draftData?['A']?['A7'] ?? '';
-      _workdayOrHoliday = widget.draftData?['A']?['A8'] ?? '';
-      //_dayOfWeek.text = widget.draftData?['A']?['A9'] ?? '';
-      _roadNumberController.text = widget.draftData?['A']?['A10'] ?? '';
-      _streetNameController.text = widget.draftData?['A']?['A11'] ?? '';
-      _nearestLowerkmPostController.text = widget.draftData?['A']?['A12'] ?? '';
-      _distanceFromNearestLowerKmPostController.text =
-          widget.draftData?['A']?['A13'] ?? '';
-      _nodeNumberController.text = widget.draftData?['A']?['A14'] ?? '';
-      _linkNumberController.text = widget.draftData?['A']?['A15'] ?? '';
-      _distanceFromNodeController.text = widget.draftData?['A']?['A16'] ?? '';
-      _eastCoordinateController.text = widget.draftData?['A']?['A17'] ?? '';
-      _northCoordinateController.text = widget.draftData?['A']?['A18'] ?? '';
-      _collisionTypeController.text = widget.draftData?['A']?['A19'] ?? '';
-      _secondCollisionOccurence = widget.draftData?['A']?['A20'] ?? '';
-      _roadSurfaceCondition = widget.draftData?['A']?['A21'] ?? '';
-      _weather = widget.draftData?['A']?['A22'] ?? '';
-      _lightCondition = widget.draftData?['A']?['A23'] ?? '';
-      _locationType = widget.draftData?['A']?['A24'] ?? '';
-      _locationTypeWhenPedestrianInvolved =
-          widget.draftData?['A']?['A25'] ?? '';
-      _trafficControl = widget.draftData?['A']?['A26'] ?? '';
-      _postedSpeedLimitSigns = widget.draftData?['A']?['A27'] ?? '';
-      _gazettedSpeedLimitForLightVehiclesController.text =
-          widget.draftData?['A']?['A28'] ?? '';
-      _gazettedSpeedLimitForHeavyVehiclesController.text =
-          widget.draftData?['A']?['A29'] ?? '';
-      _policeAction = widget.draftData?['A']?['A30'] ?? '';
-      _caseNumberController.text = widget.draftData?['A']?['A31'] ?? '';
-      _bReportController.text = widget.draftData?['A']?['A32'] ?? '';
-      _casualties = widget.draftData?['A']?['A33'] ?? '';
-      _researchPurposeController.text = widget.draftData?['A']?['A34'] ?? '';
+      _loadDraftData();
+    }
+
+    // Notify changes when unique ID updates
+    _uniqueIdController.addListener(() {
+      widget.uniqueIdNotifier.value = _uniqueIdController.text;
+    });
+  }
+
+  void _loadDraftData() {
+    final dataA = widget.draftData!['A'];
+    if (dataA != null && dataA['A5'] != null) {
+      _divisionController.text = dataA['A1'] ?? '';
+      _stationController.text = dataA['A2'] ?? '';
+      _dateController.text = dataA['A3'] ?? '';
+      _timeController.text = dataA['A4'] ?? '';
+      _uniqueIdController.text = dataA['A5'] ?? '';
+      _classOfAccident = dataA['A6'] ?? '';
+      _urbanOrRural = dataA['A7'] ?? '';
+      _workdayOrHoliday = dataA['A8'] ?? '';
+      //_dayOfWeek.text = dataA['A9'] ?? '';
+      _roadNumberController.text = dataA['A10'] ?? '';
+      _streetNameController.text = dataA['A11'] ?? '';
+      _nearestLowerkmPostController.text = dataA['A12'] ?? '';
+      _distanceFromNearestLowerKmPostController.text = dataA['A13'] ?? '';
+      _nodeNumberController.text = dataA['A14'] ?? '';
+      _linkNumberController.text = dataA['A15'] ?? '';
+      _distanceFromNodeController.text = dataA['A16'] ?? '';
+      _eastCoordinateController.text = dataA['A17'] ?? '';
+      _northCoordinateController.text = dataA['A18'] ?? '';
+      _collisionTypeController.text = dataA['A19'] ?? '';
+      _secondCollisionOccurence = dataA['A20'] ?? '';
+      _roadSurfaceCondition = dataA['A21'] ?? '';
+      _weather = dataA['A22'] ?? '';
+      _lightCondition = dataA['A23'] ?? '';
+      _locationType = dataA['A24'] ?? '';
+      _locationTypeWhenPedestrianInvolved = dataA['A25'] ?? '';
+      _trafficControl = dataA['A26'] ?? '';
+      _postedSpeedLimitSigns = dataA['A27'] ?? '';
+      _gazettedSpeedLimitForLightVehiclesController.text = dataA['A28'] ?? '';
+      _gazettedSpeedLimitForHeavyVehiclesController.text = dataA['A29'] ?? '';
+      _policeAction = dataA['A30'] ?? '';
+      _caseNumberController.text = dataA['A31'] ?? '';
+      _bReportController.text = dataA['A32'] ?? '';
+      //_casualtiesController.text = dataA['A33'] ?? '';
+      _fatalController.text = dataA['A33']?['1'] ?? '';
+      _grievousController.text = dataA['A33']?['2'] ?? '';
+      _nonGrievousController.text = dataA['A33']?['3'] ?? '';
+      _researchPurposeController.text = dataA['A34'] ?? '';
+
+      widget.uniqueIdNotifier.value = dataA['A5']; // Notify listeners
     }
   }
 
   // Method to save accident data to Firestore
   Future<void> saveAccidentDraft() async {
-    /*setState(() {
+    /* setState(() {
       _saveAttempted =
           true; // Mark the form as submitted when the user clicks save
     });*/
 
     String draftID =
-        "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+        "${widget.officerID}_${_uniqueIdController.text}"; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
 
     _formKey.currentState!.save();
+
     try {
       // Try to update the document if it exists
       await draftRef.update({
@@ -152,7 +189,11 @@ class _TabAccidentState extends State<TabAccident> {
           'A30': _policeAction,
           'A31': _caseNumberController.text.trim(),
           'A32': _bReportController.text.trim(),
-          'A33': _casualties,
+          'A33': {
+            '1': _fatalController.text.trim(),
+            '2': _grievousController.text.trim(),
+            '3': _nonGrievousController.text.trim(),
+          },
           'A34': _researchPurposeController.text.trim(),
         }, // Save A data
         'updatedAt': FieldValue.serverTimestamp(),
@@ -197,7 +238,11 @@ class _TabAccidentState extends State<TabAccident> {
             'A30': _policeAction,
             'A31': _caseNumberController.text.trim(),
             'A32': _bReportController.text.trim(),
-            'A33': _casualties,
+            'A33': {
+              ' 1': _fatalController.text.trim(),
+              ' 2': _grievousController.text.trim(),
+              ' 3': _nonGrievousController.text.trim(),
+            },
             'A34': _researchPurposeController.text.trim(),
           },
           'officerID': widget.officerID,
@@ -205,6 +250,7 @@ class _TabAccidentState extends State<TabAccident> {
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         });
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Draft created successfully')),
         );
@@ -296,30 +342,8 @@ class _TabAccidentState extends State<TabAccident> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTextField('A1 Division', _divisionController,
-                        maxchars: 30),
-                  ),
-                  SizedBox(width: 10),
-                  /* Expanded(
-                    child: _buildNumericField('no', maxchars: 2),
-                  ),*/
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTextField('A2 Station', _stationController,
-                        maxchars: 30),
-                  ),
-                  SizedBox(width: 10),
-                  /* Expanded(
-                    child: _buildNumericField('no', maxchars: 2),
-                  ),*/
-                ],
-              ),
+              _buildReadOnlyTextField('A1 Division', _divisionController),
+              _buildReadOnlyTextField('A2 Station', _stationController),
               _buildTextField('A3 Date', _dateController,
                   hintText: 'YYYY-MM-DD', maxchars: 10),
               _buildTextField('A4 Time of accident', _timeController,
@@ -336,10 +360,8 @@ class _TabAccidentState extends State<TabAccident> {
                   '3 Non-Grievous',
                   '4 Damage Only'
                 ],
-                onSaved: (selectedValue) {
-                  print('Selected Value: $selectedValue');
-                  _classOfAccident = selectedValue;
-                },
+                initialValue: _classOfAccident,
+                onSaved: (selectedValue) => _classOfAccident = selectedValue,
                 validator: () {
                   if (_saveAttempted && _classOfAccident == null) {
                     return 'Please select an option for Class of Accident';
@@ -350,9 +372,8 @@ class _TabAccidentState extends State<TabAccident> {
               SingleChoiceCheckboxInput(
                 topic: 'A7 Urban/Rural',
                 labels: ['1 Urban', '2 Rural'],
-                onSaved: (selectedValue) {
-                  _urbanOrRural = selectedValue;
-                },
+                initialValue: _urbanOrRural,
+                onSaved: (selectedValue) => _urbanOrRural = selectedValue,
                 validator: () {
                   if (_saveAttempted && _urbanOrRural == null) {
                     return 'Please select an option for Urban/Rural';
@@ -369,9 +390,8 @@ class _TabAccidentState extends State<TabAccident> {
                   '4 Festive day',
                   '5 Election day or 1st of May',
                 ],
-                onSaved: (selectedValue) {
-                  _workdayOrHoliday = selectedValue;
-                },
+                initialValue: _workdayOrHoliday,
+                onSaved: (selectedValue) => _workdayOrHoliday = selectedValue,
                 validator: () {
                   if (_saveAttempted && _workdayOrHoliday == null) {
                     return 'Please select an option for workday or holiday';
@@ -386,7 +406,7 @@ class _TabAccidentState extends State<TabAccident> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              _buildReadOnlyField(
+              _buildReadOnlyFieldCheckbox(
                   DateTime.now().weekday == DateTime.sunday
                       ? '1 Sunday'
                       : DateTime.now().weekday == DateTime.monday
@@ -433,10 +453,9 @@ class _TabAccidentState extends State<TabAccident> {
                   validatorMessage: " Node number is required", maxchars: 6),
               _buildTextField('A15 Link number', _linkNumberController,
                   validatorMessage: "Link number is required", maxchars: 7),
-              _buildNumericField(
-                  'A16 Distance from Node in metres',
-                  validatorMessage: "Distance from Node in metres is required",
+              _buildNumericField('A16 Distance from Node in metres',
                   _distanceFromNodeController,
+                  validatorMessage: "Distance from Node in metres is required",
                   maxchars: 5),
               _buildNumericField(
                   'A17 East co-ordinate', _eastCoordinateController,
@@ -459,9 +478,9 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Others',
                   '0 Not Applicable'
                 ],
-                onSaved: (selectedValue) {
-                  _secondCollisionOccurence = selectedValue;
-                },
+                initialValue: _secondCollisionOccurence,
+                onSaved: (selectedValue) =>
+                    _secondCollisionOccurence = selectedValue,
                 validator: () {
                   if (_saveAttempted && _secondCollisionOccurence == null) {
                     return 'Please select an option for Any second collision occurance';
@@ -479,9 +498,9 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Others',
                   '0 Not known'
                 ],
-                onSaved: (selectedValue) {
-                  _roadSurfaceCondition = selectedValue;
-                },
+                initialValue: _roadSurfaceCondition,
+                onSaved: (selectedValue) =>
+                    _roadSurfaceCondition = selectedValue,
                 validator: () {
                   if (_saveAttempted && _roadSurfaceCondition == null) {
                     return 'Please select an option for Road surface condition';
@@ -499,9 +518,8 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Others',
                   '0 Not known'
                 ],
-                onSaved: (selectedValue) {
-                  _weather = selectedValue;
-                },
+                initialValue: _weather,
+                onSaved: (selectedValue) => _weather = selectedValue,
                 validator: () {
                   if (_saveAttempted && _weather == null) {
                     return 'Please select an option for Weather';
@@ -519,9 +537,8 @@ class _TabAccidentState extends State<TabAccident> {
                   '5 Night,good street lighting',
                   '0 Not known',
                 ],
-                onSaved: (selectedValue) {
-                  _lightCondition = selectedValue;
-                },
+                initialValue: _lightCondition,
+                onSaved: (selectedValue) => _lightCondition = selectedValue,
                 validator: () {
                   if (_saveAttempted && _lightCondition == null) {
                     return 'Please select an option for Light condition';
@@ -543,9 +560,8 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Others',
                   '0 Not known/NA',
                 ],
-                onSaved: (selectedValue) {
-                  _locationType = selectedValue;
-                },
+                initialValue: _locationType,
+                onSaved: (selectedValue) => _locationType = selectedValue,
                 validator: () {
                   if (_saveAttempted && _locationType == null) {
                     return 'Please select an option for Type of location';
@@ -566,9 +582,9 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Other',
                   '0 Not known/NA',
                 ],
-                onSaved: (selectedValue) {
-                  _locationTypeWhenPedestrianInvolved = selectedValue;
-                },
+                initialValue: _locationTypeWhenPedestrianInvolved,
+                onSaved: (selectedValue) =>
+                    _locationTypeWhenPedestrianInvolved = selectedValue,
                 validator: () {
                   if (_saveAttempted &&
                       _locationTypeWhenPedestrianInvolved == null) {
@@ -589,9 +605,8 @@ class _TabAccidentState extends State<TabAccident> {
                   '9 Other',
                   '0 Not known/NA',
                 ],
-                onSaved: (selectedValue) {
-                  _trafficControl = selectedValue;
-                },
+                initialValue: _trafficControl,
+                onSaved: (selectedValue) => _trafficControl = selectedValue,
                 validator: () {
                   if (_saveAttempted && _trafficControl == null) {
                     return 'Please select an option for Traffic control';
@@ -602,9 +617,9 @@ class _TabAccidentState extends State<TabAccident> {
               SingleChoiceCheckboxInput(
                 topic: 'A27 Posted speed limit signs',
                 labels: ['1 Yes', '2 No'],
-                onSaved: (selectedValue) {
-                  _postedSpeedLimitSigns = selectedValue;
-                },
+                initialValue: _postedSpeedLimitSigns,
+                onSaved: (selectedValue) =>
+                    _postedSpeedLimitSigns = selectedValue,
                 validator: () {
                   if (_saveAttempted && _postedSpeedLimitSigns == null) {
                     return 'Please select an option for Posted speed limit signs';
@@ -633,9 +648,8 @@ class _TabAccidentState extends State<TabAccident> {
                   '4 Offender unknown',
                   '0 Not known/NA'
                 ],
-                onSaved: (selectedValue) {
-                  _policeAction = selectedValue;
-                },
+                initialValue: _policeAction,
+                onSaved: (selectedValue) => _policeAction = selectedValue,
                 validator: () {
                   if (_saveAttempted && _policeAction == null) {
                     return 'Please select an option for Action taken by police';
@@ -647,24 +661,41 @@ class _TabAccidentState extends State<TabAccident> {
                   hintText: "if available", maxchars: 10),
               _buildNumericField('A32 B report', _bReportController,
                   hintText: "if available", maxchars: 10),
-              SingleChoiceCheckboxInput(
-                topic: 'A33 Casualties',
-                labels: ['1 Fatal', '2 Grievous', '3 Non Grievous'],
-                onSaved: (selectedValue) {
-                  _casualties = selectedValue;
-                },
-                validator: () {
-                  if (_saveAttempted && _casualties == null) {
-                    return 'Please select an option for Casualties';
-                  }
-                  return null;
-                },
+              /*_buildNumericField('A33 Casualties', _casualtiesController,
+                  validatorMessage: "No of casualties is required",
+                  maxchars: 2),*/
+              Text(
+                'A33 Casualties',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildNumericField('1 Fatal', _fatalController,
+                        validatorMessage: "No of fatal casualties is required",
+                        maxchars: 2),
+                    _buildNumericField('2 Grievous', _grievousController,
+                        validatorMessage:
+                            "No of grievous casualties is required",
+                        maxchars: 2),
+                    _buildNumericField('3 Non Grievous', _nonGrievousController,
+                        validatorMessage:
+                            "No of non-grievous casualties is required",
+                        maxchars: 2),
+                  ],
+                ),
               ),
               _buildTextField(
                   'A34 For research purpose', _researchPurposeController,
                   maxchars: 2),
               SizedBox(height: 50.0),
-              Container(
+              SizedBox(
                 width: 150,
                 child: ElevatedButton(
                   child: Text(
@@ -682,6 +713,16 @@ class _TabAccidentState extends State<TabAccident> {
         ),
       ),
     );
+
+    @override
+    void dispose() {
+      _divisionController.dispose();
+      _stationController.dispose();
+      _uniqueIdController.dispose();
+      _dateController.dispose();
+      _timeController.dispose();
+      super.dispose();
+    }
   }
 
   Widget _buildTextField(String label, TextEditingController controller,
@@ -766,7 +807,7 @@ class _TabAccidentState extends State<TabAccident> {
     );
   }
 
-  Widget _buildReadOnlyField(
+  Widget _buildReadOnlyFieldCheckbox(
       String initialValue, void Function(String?) onSaved) {
     String? _extractPrefix(String label) {
       return label.split(' ')[0]; // Extract the prefix (e.g., '1', '2', etc.)
@@ -785,4 +826,40 @@ class _TabAccidentState extends State<TabAccident> {
       ),
     );
   }
+}
+
+Widget _buildReadOnlyTextField(String label, TextEditingController controller) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        textAlign: TextAlign.left,
+      ),
+      Container(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: TextFormField(
+          controller: controller,
+          readOnly: true,
+          maxLines: 1,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            filled: true,
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 12.0,
+              horizontal: 12.0,
+            ),
+          ),
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
+          ),
+        ),
+      ),
+    ],
+  );
 }

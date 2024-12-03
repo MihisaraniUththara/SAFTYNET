@@ -139,31 +139,31 @@ export const DASHBOARD_SIDEBAR_LINKS_ADMIN = [
 	{
 		key: 'A-dashboard',
 		label: 'Dashboard',
-		path: '#',
+		path: '/admin',
 		icon: <HiOutlineViewGrid />
 	},
 	{
 		key: 'Register-Officer',
 		label: 'Register Officer',
-		path: '#',
+		path: '/admin/officerReg',
 		icon: <FaHourglassHalf />
 	},
 	{
 		key: 'officer',
 		label: 'Officer',
-		path: '#',
+		path: '/admin/officers',
 		icon: <FaInfoCircle />
 	},
 	{
 		key: 'driver',
 		label: 'Driver',
-		path: '#',
+		path: '/admin/drivers',
 		icon: <TbReportSearch />
 	},
 	{
 		key: 'station',
 		label: 'Station',
-		path: '#',
+		path: '/admin/stations',
 		icon: <FaListCheck />
 	},
 	

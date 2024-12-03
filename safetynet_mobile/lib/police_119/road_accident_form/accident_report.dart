@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/police_station_provider.dart';
 import 'tab_accident.dart';
 import 'tab_element.dart';
 import 'tab_casualty.dart';
 import 'tab_other.dart';
 
 class AccidentReportForm extends StatefulWidget {
-
-  final String officerID; // Define officerID in the widget class
+  final String officerID; // Define officerID
   final Map<String, dynamic>? draftData; // Option to pass draft data
 
   // Pass officerID via the constructor
   AccidentReportForm({
     required this.officerID,
-    this.draftData, /*Nullable draft data*/
+    this.draftData,
+    /*Nullable draft data*/
   });
 
   @override
@@ -20,31 +22,12 @@ class AccidentReportForm extends StatefulWidget {
 }
 
 class _AccidentReportFormState extends State<AccidentReportForm> {
-
-  // Variables to store the draft data
-  //Map<String, dynamic>? _formData;
-
- // @override
-  /*void initState() {
-    super.initState();
-
-    // If draftData is provided, populate the form with it
-    if (widget.draftData != null) {
-      _formData = widget.draftData;
-    }
-  }*/
-
-  // Add form fields and populate them with _formData if available
-  //final _divisionController = TextEditingController();
-
+  // ValueNotifier for shared unique ID state
+  final ValueNotifier<String?> uniqueIdNotifier = ValueNotifier(null);
 
   @override
   Widget build(BuildContext context) {
-
-    // Initialize controllers with draft data if available
-    //if (_formData != null) {
-      ///_divisionController.text = _formData?['A']?['A1'] ?? '';
-    //}
+    final provider = context.watch<PoliceStationProvider>();
 
     return DefaultTabController(
       length: 4,
@@ -64,10 +47,11 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const <Widget>[
-                    Text("Station 21", style: TextStyle(fontSize: 20.0)),
+                  children: <Widget>[
+                    Text("Station ${provider.stationNumber}",
+                        style: TextStyle(fontSize: 20.0)),
                     Text("AR-no 118", style: TextStyle(fontSize: 20.0)),
-                    Text('2024', style: TextStyle(fontSize: 20.0)),
+                    Text('${DateTime.now().year}', style: TextStyle(fontSize: 20.0)),
                     Text("Police 297 B",
                         style: TextStyle(
                             fontSize: 20.0,
@@ -75,9 +59,8 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                             fontWeight: FontWeight.bold)),
                   ],
                 ),
-                TabBar(
-                  //controller: _tabController,
-                  tabs: const [
+                const TabBar(
+                  tabs: [
                     Tab(text: 'ACCIDENT'),
                     Tab(text: 'ELEMENTS'),
                     Tab(text: 'CASUALTY'),
@@ -89,24 +72,36 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
           ),
           backgroundColor: const Color(0xfffbbe00),
         ),
-        body: TabBarView(
-          //controller: _tabController,
-          children: [
-            TabAccident(officerID: widget.officerID,draftData: widget.draftData),
-            TabElement(officerID: widget.officerID),
-            TabCasualty(officerID: widget.officerID),
-            TabOther(officerID: widget.officerID),
-          ],
+        body: ValueListenableBuilder<String?>(
+          valueListenable: uniqueIdNotifier,
+          builder: (context, uniqueId, child) {
+            return TabBarView(
+              children: [
+                TabAccident(
+                  officerID: widget.officerID,
+                  draftData: widget.draftData,
+                  uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                ),
+                TabElement(
+                  officerID: widget.officerID,
+                  draftData: widget.draftData,
+                  uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                ),
+                TabCasualty(
+                  officerID: widget.officerID,
+                  draftData: widget.draftData,
+                  uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                ),
+                TabOther(
+                  officerID: widget.officerID,
+                  draftData: widget.draftData,
+                  uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
-
-
 }
-
-
-
-
-
-

@@ -127,6 +127,13 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                     endLocation: 'Location H',
                     status: 'Completed',
                   ),
+                   _buildActivityCard(
+                    date: '2024-09-26',
+                    startLocation: 'Location C',
+                    endLocation: 'Location H',
+                    status: 'Completed',
+                  ),
+                  
                 ],
               ),
             ),
