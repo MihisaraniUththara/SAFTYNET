@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StartRidePage extends StatefulWidget {
   @override
@@ -15,11 +16,7 @@ class _StartRidePageState extends State<StartRidePage> {
   AudioPlayer audioPlayer = AudioPlayer();
   bool alertPlayed = false;
   bool rideStarted = false;
-
-  final List<LatLng> accidentProneAreas = [
-    LatLng(6.8433, 80.0032), // Example location
-    LatLng(6.844, 80.0024),  // Example location
-  ];
+  List<LatLng> accidentProneAreas = []; // List to hold dynamic accident prone areas
 
   late StreamSubscription<Position> positionStream;
 
@@ -27,6 +24,7 @@ class _StartRidePageState extends State<StartRidePage> {
   void initState() {
     super.initState();
     _initializeLocationServices();
+    _loadAccidentProneAreas(); // Load accident-prone areas on initialization
   }
 
   // Initialize location services
@@ -44,6 +42,31 @@ class _StartRidePageState extends State<StartRidePage> {
           permission != LocationPermission.whileInUse) {
         throw Exception("Location permissions are denied");
       }
+    }
+  }
+
+  // Load accident-prone areas from Firestore
+  Future<void> _loadAccidentProneAreas() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    try {
+      QuerySnapshot snapshot = await firestore.collection('accident_prone_areas').get();
+      
+      if (snapshot.docs.isEmpty) {
+        print("No accident-prone areas found.");
+      } else {
+        List<LatLng> loadedAreas = snapshot.docs.map((doc) {
+          GeoPoint location = doc['center']; // 'center' should be a GeoPoint
+          return LatLng(location.latitude, location.longitude);
+        }).toList();
+
+        setState(() {
+          accidentProneAreas = loadedAreas; // Update accident-prone areas list
+          print("Loaded accident-prone areas: $accidentProneAreas");
+        });
+      }
+    } catch (e) {
+      print("Error fetching accident-prone areas: $e");
     }
   }
 
@@ -108,7 +131,7 @@ class _StartRidePageState extends State<StartRidePage> {
   // Play alert sound when entering the danger zone
   Future<void> _playAlertSound() async {
     try {
-      await audioPlayer.setReleaseMode(ReleaseMode.loop);// Play in loop mode
+      await audioPlayer.setReleaseMode(ReleaseMode.loop); // Play in loop mode
       await audioPlayer.play(AssetSource('sounds/beep.wav'), volume: 1.0);
     } catch (e) {
       print("Error playing sound: $e");
@@ -138,7 +161,7 @@ class _StartRidePageState extends State<StartRidePage> {
                   },
                   myLocationEnabled: true,
                   myLocationButtonEnabled: true,
-                  circles: Set<Circle>.of(_createDangerZoneCircles()),
+                  circles: Set<Circle>.of(_createDangerZoneCircles()), // Circles based on loaded accident-prone areas
                 ),
           Positioned(
             bottom: 20,
@@ -163,7 +186,7 @@ class _StartRidePageState extends State<StartRidePage> {
     );
   }
 
-  // Create danger zone circles on the map
+  // Create danger zone circles on the map based on accident-prone areas
   List<Circle> _createDangerZoneCircles() {
     return accidentProneAreas.map((LatLng dangerZone) {
       return Circle(
