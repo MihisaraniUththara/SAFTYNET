@@ -24,6 +24,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { collection, getDocs, updateDoc, deleteDoc, doc, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { GeoPoint } from 'firebase/firestore'; // Import GeoPoint
+import SideBarAdmin from '../../Components/SideBarAdmin';
 
 const Stations = () => {
   const [stations, setStations] = useState([]);
@@ -146,11 +147,11 @@ const Stations = () => {
   };
 
   return (
-    <div className="flex h-screen">
-      <SidebarHeader />
+    <div className="flex h-screen w-screen bg-neutral-100">
+      <SideBarAdmin />
       <div className="flex-1 flex flex-col overflow-hidden mt-16">
         <header className="text-center">
-          <h1 className="text-3xl text-center p-2 font-bold">Police Stations</h1>
+          <h1 className="text-3xl text-black text-center p-2 font-bold">Police Stations</h1>
         </header>
         <main className="flex-1 overflow-auto p-4">
           <div className="flex justify-between items-center mb-2">
