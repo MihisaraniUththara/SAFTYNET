@@ -1,6 +1,6 @@
 import React from 'react';
-import MonthlyReport from '../../Components/Report/StationWise/MonthlyReport';
-import AnnualReport from './../../Components/Report/StationWise/AnnualReport';
+import MonthlyReport from './../../Components/Report/MonthlyReport';
+import AnnualReport from './../../Components/Report/AnnualReport';
 
 const Report = () => {
   return (

@@ -43,7 +43,8 @@ const DutyNight = () => {
         collection(db, 'police'),
         where('station', '==', station),
         where('day', '==', false),
-        where('night', '==', false)
+        where('night', '==', false),
+        where('role', 'not-in', ['OIC', 'TrafficH'])
       );
 
       unsubscribe = onSnapshot(policeQuery, (snapshot) => {

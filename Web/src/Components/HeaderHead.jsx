@@ -4,7 +4,10 @@ import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 
 const HeaderHead = () => {
   return (
-    <div className='bg-white h-16 px-4 text-black flex justify-end items-center'>
+    <div className='bg-white h-16 px-4 text-black flex justify-between items-center'>
+        <div>
+            <span className='flex items-center gap-9 mr-2 font-semibold px-3'>HEAD OFFICE, COLOMBO 2</span>
+        </div>
         <div className='flex items-center gap-9 mr-2 font-semibold'>
             <Popover>
                 <PopoverButton className="block text-sm/6 font-semibold text-black/50 focus:outline-none">
@@ -21,7 +24,6 @@ const HeaderHead = () => {
                     </div>
                 </PopoverPanel>
             </Popover>
-            <HiOutlineBell fontSize={24}/>
         </div>
     </div>
   )
