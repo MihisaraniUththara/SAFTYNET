@@ -32,6 +32,7 @@ import DutyLayout from './Pages/Oic/DutyLayout'
 import DayDuty from './Pages/Oic/DayDuty'
 import NightDuty from './Pages/Oic/NightDuty'
 import Shift from './Components/StationWise/Duty'
+import OicAnalysis from './Pages/Oic/Analysis'
 
 import HeadLayout from './Pages/Head/Layout'
 import HeadDashboad from './Pages/Head/Dashboad'
@@ -108,6 +109,7 @@ function App() {
             <Route path='Day' element={<RequireAuth><DayDuty/></RequireAuth>} />
           </Route>
           <Route path='Report' element={<RequireAuth><OicReport/></RequireAuth>}/>
+          <Route path='Analysis' element={<RequireAuth><OicAnalysis /></RequireAuth>} />
         </Route>
 
         {/* Head Office */}

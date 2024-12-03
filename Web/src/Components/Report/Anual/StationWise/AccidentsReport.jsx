@@ -183,41 +183,48 @@ const AccidentsReport = () => {
   };
 
   const accidentColumns = [
-    { title: 'Year', dataIndex: 'year', key: 'year' },
-    { title: 'Fatal Accidents', dataIndex: 'fatal', key: 'fatal' },
-    { title: 'Serious Accidents', dataIndex: 'serious', key: 'serious' },
-    { title: 'Minor Accidents', dataIndex: 'minor', key: 'minor' },
-    { title: 'Damages Only Accidents', dataIndex: 'damageOnly', key: 'damageOnly' },
-    { title: 'Total Accidents', dataIndex: 'total', key: 'total' },
+    { title: 'Year', dataIndex: 'year', key: 'year', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Fatal Accidents', dataIndex: 'fatal', key: 'fatal', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Serious Accidents', dataIndex: 'serious', key: 'serious', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Minor Accidents', dataIndex: 'minor', key: 'minor', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Damages Only Accidents', dataIndex: 'damageOnly', key: 'damageOnly', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Total Accidents', dataIndex: 'total', key: 'total', className : 'border-collapse border border-gray-300 items-center text-center' },
+    
   ];
 
   const casualtiesColumns = [
-    { title: 'Year', dataIndex: 'year', key: 'year' },
-    { title: 'No. of Accidents', dataIndex: 'noOfAccidents', key: 'noOfAccidents' },
-    { title: 'Total Casualties', dataIndex: 'totalCasualties', key: 'totalCasualties' },
-    { title: 'Fatal', dataIndex: 'fatal', key: 'fatal' },
-    { title: 'Serious', dataIndex: 'serious', key: 'serious' },
-    { title: 'Minor', dataIndex: 'minor', key: 'minor' },
+    { title: 'Year', dataIndex: 'year', key: 'year', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'No. of Accidents', dataIndex: 'noOfAccidents', key: 'noOfAccidents', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Total Casualties', dataIndex: 'totalCasualties', key: 'totalCasualties', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Fatal', dataIndex: 'fatal', key: 'fatal', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Serious', dataIndex: 'serious', key: 'serious', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Minor', dataIndex: 'minor', key: 'minor', className : 'border-collapse border border-gray-300 items-center text-center' },
   ];
 
   const reasonsColumns = [
-    { title: 'Year', dataIndex: 'year', key: 'year' },
-    { title: 'Speeding', dataIndex: 'speeding', key: 'speeding' },
-    { title: 'Aggressive Driving', dataIndex: 'aggressiveDriving', key: 'aggressiveDriving' },
-    { title: 'Error in Judgement', dataIndex: 'errorJudgement', key: 'errorJudgement' },
-    { title: 'Alcohol', dataIndex: 'alcohol', key: 'alcohol' },
-    { title: 'Poor Eye Sight', dataIndex: 'poorEyeSight', key: 'poorEyeSight' },
+    { title: 'Year', dataIndex: 'year', key: 'year', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Speeding', dataIndex: 'speeding', key: 'speeding', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Aggressive Driving', dataIndex: 'aggressiveDriving', key: 'aggressiveDriving', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Error in Judgement', dataIndex: 'errorJudgement', key: 'errorJudgement', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Alcohol', dataIndex: 'alcohol', key: 'alcohol', className : 'border-collapse border border-gray-300 items-center text-center' },
+    { title: 'Poor Eye Sight', dataIndex: 'poorEyeSight', key: 'poorEyeSight', className : 'border-collapse border border-gray-300 items-center text-center' },
   ];
 
+  const capitalizeFirstLetter = (string) => {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">
+    <div className="p-6 bg-white text-center w-screen h-screen flex items-center justify-center flex-col">
+      <h1 className="text-2xl font-bold mb-4 text-black">
         {reportType === 'accidents'
-          ? 'Accidents Report'
+          ? 'Number of Accidents Report'
           : reportType === 'casualties'
-          ? 'Casualties Report'
-          : 'Reasons Report'}{' '}
-        ({startYear} - {endYear})
+          ? 'Number of Casualties Report'
+          : 'Reasons for Accidents Report'}{' '}
+        <br/>{capitalizeFirstLetter(station)}
+        <br />({startYear} - {endYear})
       </h1>
       {loading ? (
         <Spin size="large" />
@@ -234,6 +241,7 @@ const AccidentsReport = () => {
           bordered
           pagination={false}
           rowKey="year"
+          className="table-auto border-collapse border border-gray-300 items-center text-center"
         />
       )}
     </div>

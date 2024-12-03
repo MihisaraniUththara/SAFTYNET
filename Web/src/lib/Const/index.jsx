@@ -87,7 +87,7 @@ export const DASHBOARD_SIDEBAR_LINKS_OIC = [
 	{
 		key: 'O-analysis',
 		label: 'Analysis',
-		path: '',
+		path: '/Oic/Analysis',
 		icon: <FaChartLine />
 	},
 	
