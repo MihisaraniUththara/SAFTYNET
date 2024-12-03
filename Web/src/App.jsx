@@ -17,6 +17,10 @@ import TrafficAccidentProgressReject from './Pages/Traffic/AccidentProgressRejec
 import TrafficAccidentDetails from './Pages/Traffic/AccidentDetails'
 import TrafficReport from './Pages/Traffic/Report'
 import ReportMonthly from './Components/Report/Monthly/ReportDisplay'
+import ReportMonthlyStationWise from './Components/Report/Monthly/StationWise/ReportDisplay'
+import ReportAnnualStationWise from './Components/Report/Anual/StationWise/AccidentsReport'
+import TrafficAnalysis from './Pages/Traffic/Analysis'
+import TrafficAnalysischarts from './Components/StationWise/AnalyzedData'
 
 import OicLayout from './Pages/Oic/Layout'
 import OicDashboad from './Pages/Oic/Dashboad'
@@ -83,10 +87,13 @@ function App() {
           </Route>
           <Route path='AccidentDetails' element={<RequireAuth><TrafficAccidentDetails /></RequireAuth>} />
           <Route path='Report' element={<RequireAuth><TrafficReport/></RequireAuth>}/>
-          
+          <Route path='Analysis' element={<RequireAuth><TrafficAnalysis /></RequireAuth>} />
         </Route>
         <Route path='Report/monthly' element={<RequireAuth><ReportMonthly/></RequireAuth>}/>
+        <Route path='Report/Station/monthly' element={<RequireAuth><ReportMonthlyStationWise/></RequireAuth>}/>
+        <Route path='Reports/Station/annual' element={<RequireAuth><ReportAnnualStationWise/></RequireAuth>}/>
         <Route path='DutyList' element={<RequireAuth><DutyList/></RequireAuth>}/>
+        <Route path='Analysis/Station/annual' element={<RequireAuth><TrafficAnalysischarts/></RequireAuth>}/>
 
         {/* OIC */}
 
