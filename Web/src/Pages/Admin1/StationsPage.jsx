@@ -25,6 +25,10 @@ import { collection, getDocs, updateDoc, deleteDoc, doc, addDoc } from 'firebase
 import { db } from '../../firebase';
 import { GeoPoint } from 'firebase/firestore'; // Import GeoPoint
 import SideBarAdmin from '../../Components/SideBarAdmin';
+import Header from '../../Components/Admin/Header';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Stations = () => {
   const [stations, setStations] = useState([]);
@@ -83,8 +87,10 @@ const Stations = () => {
         await updateDoc(stationDocRef, { password: newPassword });
         setEditDialogOpen(false);
         fetchStationData(); // Refresh data
+        toast.success('Station updated successfully!');
       } catch (error) {
         console.error('Error updating station:', error);
+        toast.error('Failed to update station. Please try again.');
       }
     }
   };
@@ -103,7 +109,7 @@ const Stations = () => {
     const regex = new RegExp(`(${search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
     const parts = text.split(regex);
     return parts.map((part, index) =>
-      regex.test(part) ? <span key={index} className="bg-yellow-200">{part}</span> : part
+      regex.test(part) ? <span key={index} className="bg-yellow">{part}</span> : part
     );
   };
 
@@ -129,8 +135,10 @@ const Stations = () => {
       });
       setAddDialogOpen(false);
       fetchStationData(); // Refresh data
+      toast.success('Station added successfully!');
     } catch (error) {
       console.error('Error adding station:', error);
+      toast.error('Failed to add station. Please try again.');
     }
   };
 
@@ -147,9 +155,12 @@ const Stations = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-neutral-100">
-      <SideBarAdmin />
-      <div className="flex-1 flex flex-col overflow-hidden mt-16">
+    <div className="flex h-screen bg-neutral-100 w-screen overflow-hidden">
+    <SideBarAdmin />
+    <div className="flex-1 flex flex-col">
+      <Header />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
         <header className="text-center">
           <h1 className="text-3xl text-black text-center p-2 font-bold">Police Stations</h1>
         </header>
@@ -346,6 +357,19 @@ const Stations = () => {
           </DialogActions>
         </Dialog>
       </div>
+      </div>
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 };
