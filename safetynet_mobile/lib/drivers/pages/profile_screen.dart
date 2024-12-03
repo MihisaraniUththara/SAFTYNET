@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
 import 'package:safetynet_mobile/drivers/pages/activity_screen.dart';
 import 'package:safetynet_mobile/drivers/pages/notification_screen.dart';
+import 'package:safetynet_mobile/drivers/pages/bottom_navigation.dart'; // Import the custom BNB
+import 'package:safetynet_mobile/drivers/pages/NotificationService.dart';
 
 import 'home.dart'; // Import the Home Page
 
@@ -23,12 +25,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _emergencyNameController = TextEditingController();
   final _emergencyPhoneNumberController = TextEditingController();
 
-  int _selectedIndex = 3; // Start at Profile tab
+  int _selectedIndex = 2; // Start at Profile tab
+   bool _newNotification = false;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _fetchUserData();
+  // }
 
   @override
   void initState() {
     super.initState();
     _fetchUserData();
+  
+    String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? ''; // Get user ID from Firebase Auth
+    // Get this dynamically from Firebase or a local source
+    NotificationService(currentUserId: currentUserId)
+      .listenForNewNotifications()
+      .listen((hasNewNotification) {
+        setState(() {
+          _newNotification = hasNewNotification;  // Update the state when a new notification is detected
+        });
+      });
   }
 
   Future<void> _fetchUserData() async {
@@ -96,14 +115,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Get.to(() => DriverHomePage(fullName: _nameController.text));
           break;
         case 1:
-          // Navigate to Activities Screen
-          Get.to(() => ActivitiesPage());
-          break;
-        case 2:
           // Navigate to Notifications Screen
           Get.to(() => NotificationPage());
           break;
-        case 3:
+        case 2:
           // Stay on Profile Screen
           break;
       }
@@ -196,30 +211,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_car),
-            label: 'Activities',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFFfbbe00),
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
+       bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+        showNotificationIndicator: _newNotification, 
       ),
     );
   }
