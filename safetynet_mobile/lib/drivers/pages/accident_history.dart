@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
+import 'package:geocoding/geocoding.dart';
 
-void main() {
-  runApp(MaterialApp(
-    home: AccidentHistoryPage(),
-  ));
-}
 
 class AccidentHistoryPage extends StatefulWidget {
   @override
@@ -15,6 +12,18 @@ class AccidentHistoryPage extends StatefulWidget {
 }
 
 class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
+  // To store the human-readable location
+  String humanReadableLocation = "Loading...";
+
+  // Fetch accident data for the logged-in driver
+  Stream<QuerySnapshot> getAccidentHistory() {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    return FirebaseFirestore.instance
+        .collection('driver_accidents')
+        .where('driver_id', isEqualTo: userId) 
+        .snapshots();
+  }
+
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
     Get.off(LoginScreen()); // Redirect to login screen after logout
@@ -26,77 +35,56 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
       appBar: AppBar(
         title: Text('Driver Accident History'),
         backgroundColor: Color(0xFFfbbe00),
-        // Uncomment the following lines if you want to add a logout button
-        // actions: [
-        //   TextButton(
-        //     onPressed: _logout,
-        //     child: Icon(
-        //       Icons.logout,
-        //       color: Colors.black,
-        //     ),
-        //   ),
-        // ],
+        actions: [
+          TextButton(
+            onPressed: _logout,
+            child: Icon(
+              Icons.logout,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Vehicle Selection Dropdown
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Choose your vehicle:',
-                  style: TextStyle(fontSize: 16),
-                ),
-                DropdownButton<String>(
-                  value: 'KH9024',
-                  items: <String>['KH9024', 'CAA1789', 'ND4957'].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    // Handle vehicle selection change
-                  },
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
             Expanded(
-              child: ListView(
-                children: [
-                  _buildAccidentCard(
-                    date: '2023-01-01',
-                    time: '14:30',
-                    location: '1st Lane, Kirulapone',
-                    status: 'Fatal',
-                    color: Colors.red,
-                  ),
-                  _buildAccidentCard(
-                    date: '2022-12-15',
-                    time: '09:15',
-                    location: 'Highlevel Road, Nugegoda',
-                    status: 'Grievous',
-                    color: Colors.orange,
-                  ),
-                  _buildAccidentCard(
-                    date: '2021-11-10',
-                    time: '17:45',
-                    location: 'Market St, Homagama',
-                    status: 'Non Grievous',
-                    color: Color(0xFFfbbe00),
-                  ),
-                  _buildAccidentCard(
-                    date: '2020-10-05',
-                    time: '08:00',
-                    location: '5th Ave, Maharagama',
-                    status: 'Damage Only',
-                    color: Colors.green,
-                  ),
-                ],
+              child: StreamBuilder<QuerySnapshot>(
+                stream: getAccidentHistory(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No accident history found.',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    );
+                  }
+
+                  // Fetch and sort accidents by date_time descending
+                  final accidents = snapshot.data!.docs;
+                  accidents.sort((a, b) {
+                    Timestamp timeA = a['date_time'];
+                    Timestamp timeB = b['date_time'];
+                    return timeB.compareTo(timeA); // Sort descending
+                  });
+
+                  return ListView.builder(
+                    itemCount: accidents.length,
+                    itemBuilder: (context, index) {
+                      final accident = accidents[index];
+                      return _buildAccidentCard(
+                        dateTime: accident['date_time'],
+                        location: accident['location'] as GeoPoint,
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ],
@@ -105,13 +93,10 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
     );
   }
 
-  Widget _buildAccidentCard({
-    required String date,
-    required String time,
-    required String location,
-    required String status,
-    required Color color,
-  }) {
+  // Update the location fetching logic to use FutureBuilder
+  Widget _buildAccidentCard({required Timestamp dateTime, required GeoPoint location}) {
+    final DateTime date = dateTime.toDate();
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -119,49 +104,50 @@ class _AccidentHistoryPageState extends State<AccidentHistoryPage> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Date: $date',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Time: $time',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Location: $location',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ],
-              ),
+            Text(
+              'Date: ${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                status,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+            SizedBox(height: 8),
+            Text(
+              'Time: ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}',
+              style: TextStyle(fontSize: 14),
+            ),
+            SizedBox(height: 8),
+            // Use FutureBuilder to fetch the human-readable location
+            FutureBuilder<String>(
+              future: _getHumanReadableLocation(location.latitude, location.longitude),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("Loading location...");
+                }
+                if (snapshot.hasError) {
+                  return Text("Error fetching location");
+                }
+                return Text(
+                  'Location: ${snapshot.data}',
+                  style: TextStyle(fontSize: 14),
+                );
+              },
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<String> _getHumanReadableLocation(double latitude, double longitude) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      Placemark place = placemarks.first;
+
+      // Construct the address string
+      return "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+    } catch (e) {
+      return "Unknown location";
+    }
   }
 }

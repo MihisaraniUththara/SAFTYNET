@@ -44,6 +44,12 @@ import DutyList from './Pages/Oic/Duty'
 
 import { AuthContext } from './Context/AuthContext';
 
+import Dashboard from './Pages/Admin1/DashboardPage';
+import OfficerReg from './Pages/Admin1/OfficerRegPage';
+import Officers from './Pages/Admin1/OfficersPage';
+import Drivers from './Pages/Admin1/DriversPage';
+import Stations from './Pages/Admin1/StationsPage';
+
 
 
 function App() {
@@ -111,7 +117,12 @@ function App() {
 
         {/* Admin */}
 
-        <Route path='Admin' element={<AdminLayout/>}>
+        <Route path='Admin1' element={<Dashboard />}>
+          <Route index element={<RequireAuth><Dashboard /></RequireAuth>} />
+          <Route path='officerReg' element={<RequireAuth><OfficerReg/></RequireAuth>}/>
+          <Route path='officers' element={<RequireAuth><Officers/></RequireAuth>}/>
+          <Route path='drivers' element={<RequireAuth><Drivers/></RequireAuth>}/>
+          <Route path='stations' element={<RequireAuth><Stations/></RequireAuth>}/>
         </Route>
       </Route>
     </Routes>

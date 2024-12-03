@@ -82,9 +82,6 @@ class _SignupScreenState extends State<SignupScreen> {
 }
 
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -343,13 +340,21 @@ class _SignupScreenState extends State<SignupScreen> {
                               // Phone Number
                               TextFormField(
                                 controller: phoneNumberController,
-                                validator: (val) => val == "" ? "Please enter your phone number" : null,
+                                keyboardType: TextInputType.phone,
+                                validator: (val) {
+                                  if (val == null || val.isEmpty) {
+                                    return "Please enter your phone number";
+                                  } else if (!val.startsWith("+94")) {
+                                    return "Phone number should start with +94";
+                                  }
+                                  return null;
+                                },
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(
                                     Icons.phone,
                                     color: Colors.black,
                                   ),
-                                  hintText: "Phone Number 077-1234567",
+                                  hintText: "Phone Number +94xxxxxxxxx",
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                     borderSide: const BorderSide(
@@ -381,7 +386,15 @@ class _SignupScreenState extends State<SignupScreen> {
                                   fillColor: Colors.white,
                                   filled: true,
                                 ),
+                                onChanged: (value) {
+                                  // Automatically add +94 if the user starts typing a number
+                                  if (value.isNotEmpty && !value.startsWith("+94")) {
+                                    phoneNumberController.text = "+94" + value.replaceFirst(RegExp(r'^[^+94]'), '');
+                                    phoneNumberController.selection = TextSelection.fromPosition(TextPosition(offset: phoneNumberController.text.length));
+                                  }
+                                },
                               ),
+
                               const SizedBox(height: 18),
 
                               // Emergency Name
@@ -431,13 +444,21 @@ class _SignupScreenState extends State<SignupScreen> {
                               // Emergency Contact Number
                               TextFormField(
                                 controller: emergencyphoneNumberController,
-                                validator: (val) => val == "" ? "Please enter emergency contact number" : null,
+                                keyboardType: TextInputType.phone,
+                                validator: (val) {
+                                  if (val == null || val.isEmpty) {
+                                    return "Please enter your emergency contact number";
+                                  } else if (!val.startsWith("+94")) {
+                                    return "Phone number should start with +94";
+                                  }
+                                  return null;
+                                },
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(
                                     Icons.phone,
                                     color: Colors.black,
                                   ),
-                                  hintText: "Emergency Contact Number",
+                                  hintText: "Phone Number +94xxxxxxxxx",
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                     borderSide: const BorderSide(
@@ -469,6 +490,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                   fillColor: Colors.white,
                                   filled: true,
                                 ),
+                                onChanged: (value) {
+                                  // Automatically add +94 if the user starts typing a number
+                                  if (value.isNotEmpty && !value.startsWith("+94")) {
+                                    emergencyphoneNumberController.text = "+94" + value.replaceFirst(RegExp(r'^[^+94]'), '');
+                                    emergencyphoneNumberController.selection = TextSelection.fromPosition(TextPosition(offset: phoneNumberController.text.length));
+                                  }
+                                },
                               ),
                               const SizedBox(height: 18),
 

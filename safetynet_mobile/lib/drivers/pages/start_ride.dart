@@ -1,22 +1,8 @@
+import 'dart:async'; // For Timer
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:get/get.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:safetynet_mobile/drivers/pages/home.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: StartRidePage(),
-    );
-  }
-}
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class StartRidePage extends StatefulWidget {
   @override
@@ -24,113 +10,170 @@ class StartRidePage extends StatefulWidget {
 }
 
 class _StartRidePageState extends State<StartRidePage> {
-  static const LatLng _center = LatLng(6.9271, 79.8612); // Colombo Coordinates
+  GoogleMapController? _mapController;
+  Position? _currentPosition;
+  AudioPlayer audioPlayer = AudioPlayer();
+  bool alertPlayed = false;
+  bool rideStarted = false;
+
+  final List<LatLng> accidentProneAreas = [
+    LatLng(6.8433, 80.0032), // Example location
+    LatLng(6.844, 80.0024),  // Example location
+  ];
+
+  late StreamSubscription<Position> positionStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeLocationServices();
+  }
+
+  // Initialize location services
+  Future<void> _initializeLocationServices() async {
+    await _checkLocationPermissions();
+  }
+
+  // Method to check and request location permissions
+  Future<void> _checkLocationPermissions() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.always &&
+          permission != LocationPermission.whileInUse) {
+        throw Exception("Location permissions are denied");
+      }
+    }
+  }
+
+  void _startRide() {
+    setState(() {
+      rideStarted = true;
+    });
+    _getCurrentLocation();
+  }
+
+  void _stopRide() {
+    setState(() {
+      rideStarted = false;
+      alertPlayed = false; // Reset alert state
+    });
+    positionStream.cancel(); // Stop the location stream when the ride is stopped
+    audioPlayer.stop(); // Stop the sound when the ride ends
+  }
+
+  // Method to start getting continuous location updates
+  Future<void> _getCurrentLocation() async {
+    if (rideStarted) {
+      positionStream = Geolocator.getPositionStream(
+        locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
+      ).listen((Position position) {
+        if (rideStarted) {
+          setState(() {
+            _currentPosition = position;
+          });
+          _checkProximityToDangerZone(); // Check proximity with each location update
+        }
+      });
+    }
+  }
+
+  // Check proximity to accident-prone areas
+  void _checkProximityToDangerZone() {
+    if (_currentPosition != null) {
+      for (var dangerZone in accidentProneAreas) {
+        double distance = Geolocator.distanceBetween(
+          _currentPosition!.latitude,
+          _currentPosition!.longitude,
+          dangerZone.latitude,
+          dangerZone.longitude,
+        );
+
+        if (distance < 500 && !alertPlayed) { // If within 500 meters
+          _playAlertSound();
+          setState(() {
+            alertPlayed = true; // Mark the alert as played
+          });
+        } else if (distance >= 500 && alertPlayed) { // If out of the 500 meters
+          setState(() {
+            alertPlayed = false; // Reset alert state
+          });
+          audioPlayer.stop(); // Stop the sound when out of the danger zone
+        }
+      }
+    }
+  }
+
+  // Play alert sound when entering the danger zone
+  Future<void> _playAlertSound() async {
+    try {
+      await audioPlayer.setReleaseMode(ReleaseMode.loop);// Play in loop mode
+      await audioPlayer.play(AssetSource('sounds/beep.wav'), volume: 1.0);
+    } catch (e) {
+      print("Error playing sound: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFfbbe00),
-        title: Text('Map View', style: TextStyle(color: Colors.black)),
+        title: Text("Driver Ride"),
       ),
       body: Stack(
-        children: <Widget>[
-          FlutterMap(
-            options: MapOptions(
-              initialCenter: _center,
-              initialZoom: 15.0,
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                subdomains: ['a', 'b', 'c'],
-                userAgentPackageName: 'com.example.app',
-              ),
-              MarkerLayer(
-                markers: [
-                  // Marker(
-                  //   point: _center,
-                  //   builder: (ctx) => Icon(
-                  //     Icons.location_on,
-                  //     color: Colors.red,
-                  //     size: 40.0,
-                  //   ),
-                  // ),
-                ],
-              ),
-              RichAttributionWidget(
-                attributions: [
-                  TextSourceAttribution(
-                    'OpenStreetMap contributors',
-                    onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
+        children: [
+          _currentPosition == null
+              ? Center(child: CircularProgressIndicator())
+              : GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(
+                      _currentPosition!.latitude,
+                      _currentPosition!.longitude,
+                    ),
+                    zoom: 14.0,
                   ),
-                ],
-              ),
-            ],
-          ),
-          Positioned(
-            top: 16,
-            left: 16,
-            right: 16,
-            child: Container(
-              padding: EdgeInsets.all(8.0),
-              color: Colors.white,
-              child: Text(
-                'Accident prone area is 300m ahead',
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 16,
-            left: 16,
-            right: 16,
-            child: Center(
-              child: FloatingActionButton(
-                onPressed: () { _showConfirmationDialog(context);},
-                backgroundColor: Colors.red,
-                child: Text(
-                  'STOP',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  onMapCreated: (GoogleMapController controller) {
+                    _mapController = controller;
+                  },
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  circles: Set<Circle>.of(_createDangerZoneCircles()),
                 ),
-              ),
+          Positioned(
+            bottom: 20,
+            left: 20,
+            right: 20,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: rideStarted ? null : _startRide,
+                  child: Text("Start Ride"),
+                ),
+                ElevatedButton(
+                  onPressed: rideStarted ? _stopRide : null,
+                  child: Text("Stop Ride"),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
-}
 
-  void _showConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirm'),
-          content: Text('Are you sure you want to stop?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Add your stop logic here
-                Navigator.of(context).pop(); 
-                 Navigator.of(context).pop(); 
-              },
-              child: Text('Yes'),
-            ),
-          ],
-        );
-      },
-    );
+  // Create danger zone circles on the map
+  List<Circle> _createDangerZoneCircles() {
+    return accidentProneAreas.map((LatLng dangerZone) {
+      return Circle(
+        circleId: CircleId(dangerZone.toString()),
+        center: dangerZone,
+        radius: 500, // 500 meters
+        fillColor: Colors.red.withOpacity(0.5),
+        strokeColor: Colors.red,
+        strokeWidth: 2,
+      );
+    }).toList();
   }
+}

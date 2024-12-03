@@ -1,13 +1,20 @@
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'input_fields.dart';
 
 class TabElement extends StatefulWidget {
-
   final String officerID; // Accept officerID
+  final Map<String, dynamic>? draftData;
+  final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier
 
   // Pass officerID via the constructor
-  const TabElement({super.key, required this.officerID});
+  const TabElement({
+    super.key,
+    required this.officerID,
+    this.draftData,
+    required this.uniqueIdNotifier,
+  });
 
   @override
   State<TabElement> createState() => _TabElementState();
@@ -18,6 +25,23 @@ class _TabElementState extends State<TabElement> {
 
   // Declare the elementData map to store all form values
   Map<String, dynamic> elementData = {};
+
+  // Controllers for text fields
+  final Map<String, List<TextEditingController>> _textControllers = {
+    'E2': [], // Vehicle Registration number
+    'E6': [], // Direction of movement
+    'E9': [], // Driving License number
+    'E22': [], // For research purpose
+  };
+
+  // Controllers for integer fields
+  final Map<String, List<TextEditingController>> _integerControllers = {
+    'E3': [], // Vehicle year of manufacture
+    'E4': [], // Age of vehicle
+    'E8': [], // Driver/Rider/Pedestrian age
+    'E11': [], // Year of issue of Driving License
+    'E12': [], // Number of years since first issue of driving license
+  };
 
   // Store the checkbox states for each section
   final Map<String, List<List<bool>>> _checkboxStates = {
@@ -67,24 +91,210 @@ class _TabElementState extends State<TabElement> {
             List.generate(3, (_) => false)), // Driver/Rider/Pedestrian at fault
   };
 
-  // Keep track of the number of columns for each section
-  final List<int> _columnsCount = [
-    3, // Initial number of checkbox columns for Element Type
-    3, // Initial number of checkbox columns for Vehicle Ownership
-    3, // Initial number of checkbox columns for Driver/Rider/Pedestrian Sex
-    3, // Initial number of checkbox columns for Validity of driving license
-    3, // Initial number of checkbox columns for Human pre crash factors
-    3, // Initial number of checkbox columns for Pedestrian pre crash factor
-    3, // Initial number of checkbox columns for Road pre crash factor
-    3, // Initial number of checkbox columns for Vehicle pre crash factor defects
-    3, // Initial number of checkbox columns for Crash factor contributing to severity
-    3, // Initial number of checkbox columns for Other factors
-    3, // Initial number of checkbox columns for Alcohol test
-    3, // Initial number of checkbox columns for Driver/Rider/Pedestrian at fault
-  ];
+  // Define labels for each section
+  final Map<String, List<String>> labels = {
+    'E1': [
+      '1 Car',
+      '2 Dual purpose vehicle',
+      '3 Lorry',
+      '4 Cycle',
+      '5 Motor cycle,Moped',
+      '6 Three wheeler',
+      '7 Articulated vehicle,prime mover',
+      '8 SLTB bus',
+      '9 Private bus',
+      '10 Intercity bus',
+      '11 Land vehicle/Tractor',
+      '12 Animal drawn vehicle or rider on animal',
+      '13 Pedestrian',
+      '19 Others',
+      '00 Not known'
+    ],
+    'E5': [
+      '1 Private vehicle',
+      '2 Private company own vehicle',
+      '3 Government vehicle',
+      '4 Semi Government vehicle',
+      '5 Service vehicle',
+      '6 Police vehicle',
+      '0 Not Known',
+    ],
+    'E7': ['1 Male', '2 Female', '0 Not known'],
+    'E10': [
+      '1 Valid license for the vehicle',
+      '2 Without valid license for the vehicle',
+      '3 Learner permit',
+      '4 Probation license',
+      '5 International license',
+      '0 Not known/NA'
+    ],
+    'E13': [
+      '1 Speeding',
+      '2 Aggressive/negligent driving',
+      '3 Error of judgment',
+      '4 Influenced by alcohol/drugs',
+      '5 Fatigue/fall asleep',
+      '6 Distracted/inattentiveness(handling radio,mobile phone,mental stress etc.)',
+      '7 Poor eye sight',
+      '8 Sudden illness',
+      '9 Blinded by another vehicle/sun',
+      '19 Others',
+      '00 Not known/NA'
+    ],
+    'E14': [
+      '1 Speeding',
+      '2 Aggressive/negligent driving',
+      '3 Error of judgment',
+      '4 Influenced by alcohol/drugs',
+      '5 Fatigue/fall asleep',
+      '6 Distracted/inattentiveness(handling radio,mobile phone,mental stress etc.)',
+      '7 Poor eye sight',
+      '8 Sudden illness',
+      '9 Blinded by another vehicle/sun',
+      '19 Others',
+      '00 Not known/NA'
+    ],
+    'E15': [
+      '1 Unexpected pedestrian movement',
+      '2 Disobey designated crossing',
+      '3 Influenced by alcohol/drugs',
+      '4 Poor visibility(clothing)',
+      '9 Other',
+      '0 Not known/NA'
+    ],
+    'E16': [
+      '1 Defective road surface,slippery road,pot holes,water puddles,large cracks,high or low sewer covers etc.',
+      '2 Defective,absent or badly maintained road markings or signs',
+      '3 Road works without adequate traffic control devices',
+      '4 Weather conditions',
+      '5 Poor street lighting',
+      '9 Other',
+    ],
+    'E17': [
+      '1 Brakes',
+      '2 Tyres,wheels',
+      '3 Steering',
+      '4 Lights,lamps',
+      '5 Poor mechanical condition',
+      '6 Overloaded or wrongly loaded vehicle',
+      '9 Other',
+      '0 Not known/NA'
+    ],
+    'E18': [
+      '1 Hitting tree',
+      '2 Hitting pole/post',
+      '3 Hitting stone or boulder',
+      '4 Hitting road island,curb etc.',
+      '5 Hitting barrier or guard rail',
+      '6 Hitting other fixed object',
+      '7 Rolled over',
+      '0 Not known/NA'
+    ],
+    'E19': [
+      '1 Avoiding maneuver',
+      '2 Hit and run',
+      '3 Road works',
+      '4 Post crash violence',
+      '5 Stolen vehicle',
+      '0 Not known/NA'
+    ],
+    'E20': [
+      '1 No alcohol or below legal limit',
+      '2 Over legal limit',
+      '3 Not tested'
+    ],
+    'E21': ['1 Yes', '2 No', '0 Not known/NA'],
+  };
 
-  List<int> _topicTextFieldsCount = [3, 3, 3, 3];
-  List<int> _integerInputFieldsCount = [3, 3, 3, 3, 3];
+  // Keep track of the initial number of columns for each section
+  List<int> _columnsCount = List.filled(12, 3); //12*3
+  List<int> _topicTextFieldsCount = List.filled(4, 3); // [3, 3, 3, 3];
+  List<int> _integerInputFieldsCount = List.filled(5, 3); //[3, 3, 3, 3, 3];
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeControllers();
+    if (widget.draftData != null) {
+      _loadDraftData();
+    }
+  }
+
+  void _initializeControllers() {
+    // Initialize text controllers
+    _textControllers.forEach((key, list) {
+      for (int i = 0; i < 3; i++) {
+        list.add(TextEditingController());
+      }
+    });
+
+    // Initialize integer controllers
+    _integerControllers.forEach((key, list) {
+      for (int i = 0; i < 3; i++) {
+        list.add(TextEditingController());
+      }
+    });
+  }
+
+  void _loadDraftData() {
+    final dataE = widget.draftData!['E'];
+    if (dataE != null) {
+      setState(() {
+        elementData = Map<String, dynamic>.from(dataE);
+
+        // Load checkbox values
+        _checkboxStates.forEach((section, rows) {
+          for (int i = 0; i < rows.length; i++) {
+            for (int j = 0; j < rows[i].length; j++) {
+              String key =
+                  '$section${String.fromCharCode(65 + j)}'; // Key format: E2A, E2B, etc.
+              String expectedPrefix = labels[section]![i].split(' ')[0];
+              if (dataE[key] != null &&
+                  dataE[key].toString() == expectedPrefix) {
+                rows[i][j] = true; // Match found, set checkbox as checked
+              } else {
+                rows[i][j] = false; // No match, ensure checkbox is unchecked
+              }
+              print('Section: $section, Row: $i, Column: $j, Key: $key');
+            }
+          }
+        });
+
+        // Load text field values
+        _textControllers.forEach((section, controllers) {
+          for (int i = 0; i < controllers.length; i++) {
+            //controllers.length = _columnCount.length
+            String key = '$section${String.fromCharCode(65 + i)}';
+            if (dataE[key] != null) {
+              controllers[i].text = dataE[key].toString();
+            }
+          }
+        });
+
+        // Load integer field values
+        _integerControllers.forEach((section, controllers) {
+          for (int i = 0; i < controllers.length; i++) {
+            String key = '$section${String.fromCharCode(65 + i)}';
+            if (dataE[key] != null) {
+              controllers[i].text = dataE[key].toString();
+            }
+          }
+        });
+
+        // Update column counts if needed
+        int maxColumns = 3;
+        _checkboxStates.forEach((key, value) {
+          for (var row in value) {
+            maxColumns = max(maxColumns, row.length);
+          }
+        });
+
+        _columnsCount = List.filled(12, maxColumns);
+        _topicTextFieldsCount = List.filled(4, maxColumns);
+        _integerInputFieldsCount = List.filled(5, maxColumns);
+      });
+    }
+  }
 
   void _toggleCheckbox(
       String sectionPrefix, int rowIndex, String labelPrefix, int columnIndex) {
@@ -108,8 +318,25 @@ class _TabElementState extends State<TabElement> {
 
   void _addCheckboxColumn(int sectionIndex) {
     setState(() {
-      for (var row in _checkboxStates['E${sectionIndex + 1}']!) {
-        row.add(false);
+      String section = [
+        'E1',
+        'E5',
+        'E7',
+        'E10',
+        'E13',
+        'E14',
+        'E15',
+        'E16',
+        'E17',
+        'E18',
+        'E19',
+        'E20',
+        'E21'
+      ][sectionIndex];
+      if (_checkboxStates.containsKey(section)) {
+        for (var row in _checkboxStates[section]!) {
+          row.add(false);
+        }
       }
       _columnsCount[sectionIndex]++;
     });
@@ -118,17 +345,21 @@ class _TabElementState extends State<TabElement> {
   void _addTopicTextFields(int sectionIndex) {
     setState(() {
       _topicTextFieldsCount[sectionIndex]++;
+      String section = ['E2', 'E6', 'E9', 'E22'][sectionIndex];
+      _textControllers[section]?.add(TextEditingController());
     });
   }
 
   void _addIntegerInputFields(int sectionIndex) {
     setState(() {
       _integerInputFieldsCount[sectionIndex]++;
+      String section = ['E3', 'E4', 'E8', 'E11', 'E12'][sectionIndex];
+      _integerControllers[section]?.add(TextEditingController());
     });
   }
 
   void _addColumnsAndFields() {
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < _columnsCount.length; i++) {
       _addCheckboxColumn(i);
     }
     for (int i = 0; i < _topicTextFieldsCount.length; i++) {
@@ -145,13 +376,31 @@ class _TabElementState extends State<TabElement> {
   }
 
   Future<void> saveElementDraft() async {
+
     String draftID =
-        "${widget.officerID}_currentAccidentID"; // Use the passed officerID
+        "${widget.officerID}_${widget.uniqueIdNotifier.value}"; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
 
     _formKey.currentState!.save();
+
+    // Save text field values
+    _textControllers.forEach((section, controllers) {
+      for (int i = 0; i < controllers.length; i++) {
+        String key = '$section${String.fromCharCode(65 + i)}';
+        elementData[key] = controllers[i].text.trim();
+      }
+    });
+
+    // Save integer field values
+    _integerControllers.forEach((section, controllers) {
+      for (int i = 0; i < controllers.length; i++) {
+        String key = '$section${String.fromCharCode(65 + i)}';
+        elementData[key] = controllers[i].text.trim();
+      }
+    });
+
     try {
       // Try to update the document if it exists
       await draftRef.update({
@@ -255,6 +504,7 @@ class _TabElementState extends State<TabElement> {
                 topic: 'E2 Vehicle Registration number',
                 maxChars: 9,
                 columnsCount: _topicTextFieldsCount[0],
+                controllers: _textControllers['E2']!,
                 onChanged: (key, value) {
                   elementData[key] = value; // Store the value in the form state
                 },
@@ -263,6 +513,7 @@ class _TabElementState extends State<TabElement> {
                 topic: 'E3 Vehicle year of manufacture',
                 maxChars: 4,
                 columnsCount: _integerInputFieldsCount[0],
+                controllers: _integerControllers['E3']!,
                 onChanged: (key, value) {
                   elementData[key] = value;
                   print(elementData[key]);
@@ -272,6 +523,7 @@ class _TabElementState extends State<TabElement> {
                 topic: 'E4 Age of vehicle',
                 maxChars: 2,
                 columnsCount: _integerInputFieldsCount[1],
+                controllers: _integerControllers['E4']!,
                 onChanged: (key, value) {
                   elementData[key] = value;
                 },
@@ -295,7 +547,8 @@ class _TabElementState extends State<TabElement> {
               TopicTextFields(
                 topic: 'E6 Direction of movement',
                 maxChars: 2,
-                columnsCount: 3,
+                columnsCount: _topicTextFieldsCount[1],
+                controllers: _textControllers['E6']!,
                 onChanged: (key, value) {
                   elementData[key] = value;
                 },
@@ -311,7 +564,8 @@ class _TabElementState extends State<TabElement> {
               IntegerInputFields(
                 topic: 'E8 Driver/Rider/Pedestrian age',
                 maxChars: 2,
-                columnsCount: 3,
+                columnsCount: _integerInputFieldsCount[2],
+                controllers: _integerControllers['E8']!,
                 onChanged: (key, value) {
                   elementData[key] = value;
                 },
@@ -319,7 +573,8 @@ class _TabElementState extends State<TabElement> {
               TopicTextFields(
                 topic: 'E9 Driving Licence number',
                 maxChars: 10,
-                columnsCount: 3,
+                columnsCount: _topicTextFieldsCount[2],
+                controllers: _textControllers['E9']!,
                 onChanged: (key, value) {
                   elementData[key] = value;
                 },
@@ -342,7 +597,8 @@ class _TabElementState extends State<TabElement> {
               IntegerInputFields(
                 topic: 'E11 Year of issue of Driving License',
                 maxChars: 4,
-                columnsCount: 3,
+                columnsCount: _integerInputFieldsCount[3],
+                controllers: _integerControllers['E11']!,
                 onChanged: (key, value) {
                   elementData[key] = value;
                 },
@@ -351,7 +607,8 @@ class _TabElementState extends State<TabElement> {
                 topic:
                     'E12 Number of years since first issue of driving license',
                 maxChars: 2,
-                columnsCount: 3,
+                columnsCount: _integerInputFieldsCount[4],
+                controllers: _integerControllers['E12']!,
                 onChanged: (key, value) {
                   elementData[key] = value;
                 },
@@ -500,23 +757,22 @@ class _TabElementState extends State<TabElement> {
               TopicTextFields(
                 topic: 'E22 For research purpose',
                 maxChars: 2,
-                columnsCount: 3,
+                columnsCount: _topicTextFieldsCount[3],
+                controllers: _textControllers['E22']!,
                 onChanged: (key, value) {
                   elementData[key] = value;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  _addColumnsAndFields();
-                },
+                onPressed: _addColumnsAndFields,
                 child: Text('Add Traffic Element'),
               ),
-              SizedBox(height: 50.0),
-              Container(
+              const SizedBox(height: 50.0),
+              SizedBox(
                 width: 150,
                 child: ElevatedButton(
-                  child: Text(
+                  child: const Text(
                     'Save',
                     style: TextStyle(
                       color: Colors.black,
@@ -531,5 +787,21 @@ class _TabElementState extends State<TabElement> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Dispose of all controllers
+    _textControllers.forEach((_, controllers) {
+      for (var controller in controllers) {
+        controller.dispose();
+      }
+    });
+    _integerControllers.forEach((_, controllers) {
+      for (var controller in controllers) {
+        controller.dispose();
+      }
+    });
+    super.dispose();
   }
 }
