@@ -78,9 +78,9 @@ class _TabAccidentState extends State<TabAccident> {
 
     if (policeStationProvider != null) {
       _divisionController.text =
-          '${policeStationProvider.division} - no ${policeStationProvider.divisionNumber}';
+          '${policeStationProvider.division}';
       _stationController.text =
-          '${policeStationProvider.station} - no ${policeStationProvider.stationNumber}';
+          '${policeStationProvider.station}';
     }
 
     if (widget.draftData != null) {
@@ -342,8 +342,8 @@ class _TabAccidentState extends State<TabAccident> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _buildReadOnlyTextField('A1 Division - no', _divisionController),
-              _buildReadOnlyTextField('A2 Station - no', _stationController),
+              _buildReadOnlyTextField('A1 Division', _divisionController),
+              _buildReadOnlyTextField('A2 Station', _stationController),
               _buildTextField('A3 Date', _dateController,
                   hintText: 'YYYY-MM-DD', maxchars: 10),
               _buildTextField('A4 Time of accident', _timeController,
