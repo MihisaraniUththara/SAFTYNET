@@ -4,13 +4,14 @@ import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safetynet_mobile/drivers/pages/accident_history.dart';
 import 'package:safetynet_mobile/drivers/pages/activity_screen.dart';
-import 'package:safetynet_mobile/drivers/pages/inform_insurance.dart';
 import 'package:safetynet_mobile/drivers/pages/inform_police.dart';
 import 'package:safetynet_mobile/drivers/pages/notification_screen.dart';
 import 'package:safetynet_mobile/drivers/pages/start_ride.dart';
 import 'profile_screen.dart';
-import 'register_vehicle.dart'; // Import the register vehicle page
-
+import 'register_vehicle.dart';
+import 'package:safetynet_mobile/drivers/pages/bottom_navigation.dart'; // Import the custom BNB
+import 'package:safetynet_mobile/drivers/pages/NotificationService.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DriverHomePage extends StatefulWidget {
   final String fullName;
@@ -23,34 +24,95 @@ class DriverHomePage extends StatefulWidget {
 
 class _DriverHomePageState extends State<DriverHomePage> {
   int _selectedIndex = 0;
+  bool _newNotification = false;
+
+  @override
+  void initState() {
+    super.initState();
+  
+    String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? ''; // Get user ID from Firebase Auth
+    // Get this dynamically from Firebase or a local source
+    NotificationService(currentUserId: currentUserId)
+      .listenForNewNotifications()
+      .listen((hasNewNotification) {
+        setState(() {
+          _newNotification = hasNewNotification;  // Update the state when a new notification is detected
+        });
+      });
+  }
+
+  Future<void> markNotificationsAsRead(String currentUserId) async {
+    try {
+      // Get all driver accidents where the current user is the driver
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('driver_accidents')
+          .where('driver_id', isEqualTo: currentUserId)
+          .where('read', isEqualTo: false) // Only update unread notifications
+          .get();
+
+      // Loop through all documents and update the 'read' field to true
+      for (var doc in snapshot.docs) {
+        await FirebaseFirestore.instance
+            .collection('driver_accidents')
+            .doc(doc.id)
+            .update({'read': true});
+      }
+    } catch (e) {
+      print("Error updating notifications: $e");
+    }
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // If the Notifications tab is selected, reset the notification indicator
+    if (index == 1) {
+      setState(() {
+        _newNotification = false; // Hide the indicator when navigating to the notifications page
+      });
+
+      // Mark notifications as read when navigating to the notifications page
+      String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+      if (currentUserId.isNotEmpty) {
+        markNotificationsAsRead(currentUserId); // Call the function to mark notifications as read
+      }
+    }
+
+    switch (index) {
+      case 0:
+        // Ensure the home page is pushed to the top of the stack
+        Get.offAll(() => DriverHomePage(fullName: widget.fullName));
+        break;
+      case 1:
+        Get.to(() => NotificationPage());
+        break;
+      case 2:
+        Get.to(() => ProfileScreen());
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFfbbe00),
-        leadingWidth: 150, // Increase leading width to allow the title to be on the left
-        titleSpacing: 0, // Reduce title spacing to align with the left
-         automaticallyImplyLeading: false,
+        leadingWidth: 150,
+        titleSpacing: 0,
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Image.asset(
-                'images/smallLogo.png', // Add your image here
+                'images/smallLogo.png',
                 width: 120,
                 height: 60,
                 fit: BoxFit.contain,
               ),
             ),
-            // const Text(
-            //   'SafetyNET',
-            //   style: TextStyle(
-            //     fontSize: 24, // Set the font size
-            //     fontWeight: FontWeight.bold, // Set the font weight
-            //     color: Colors.black, // Set the text color
-            //   ),
-            // ),
           ],
         ),
         actions: [
@@ -81,32 +143,22 @@ class _DriverHomePageState extends State<DriverHomePage> {
                 crossAxisCount: 4,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 16, // Adjust the spacing between rows
-                crossAxisSpacing: 4, // Adjust the spacing between columns
-                childAspectRatio: 0.7, // Maintain aspect ratio of cards
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 4,
+                childAspectRatio: 0.7,
                 children: [
-                  _buildCard(
-                      Icons.directions_car, 'Start Ride', Colors.green, () {
-                        Get.to(() => StartRidePage());
-                        }),
-                   
-                  _buildCard(Icons.minor_crash, 'Inform Police', Colors.red,
-                      () {
-                        Get.to(() => ReportAccidentPage());
-                      }), 
-                 
-                  // _buildCard(Icons.contact_page, 'Inform Insurance', Colors.orange,
-                  //     () {
-                  //       Get.to(() => ReportInsurancePage());
-                  //     }),
-                  _buildCard(Icons.car_rental, 'Register Vehicle', Colors.blue,
-                      () {
+                  _buildCard(Icons.directions_car, 'Start Ride', Colors.green, () {
+                    Get.to(() => StartRidePage());
+                  }),
+                  _buildCard(Icons.minor_crash, 'Inform Police', Colors.red, () {
+                    Get.to(() => ReportAccidentPage());
+                  }),
+                  _buildCard(Icons.car_rental, 'Register Vehicle', Colors.blue, () {
                     Get.to(() => RegisterVehiclePage());
                   }),
-                  _buildCard(Icons.history, 'Accident History', Colors.purple,
-                      () {
-                        Get.to(() => AccidentHistoryPage());
-                      }),
+                  _buildCard(Icons.history, 'Accident History', Colors.purple, () {
+                    Get.to(() => AccidentHistoryPage());
+                  }),
                 ],
               ),
               SizedBox(height: 16),
@@ -124,74 +176,30 @@ class _DriverHomePageState extends State<DriverHomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_car),
-            label: 'Activities',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFFfbbe00), // Custom color for selected item
-        unselectedItemColor: Colors.grey, // Custom color for unselected items
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-
-          switch (index) {
-            case 0:
-              // Navigate to Home
-              Get.to(() => DriverHomePage(fullName: widget.fullName));
-              break;
-            case 1:
-              // Navigate to Activities
-               Get.to(() => ActivitiesPage());
-              break;
-            case 2:
-              // Navigate to Notifications
-               Get.to(() => NotificationPage());
-              break;
-            case 3:
-              // Navigate to Profile
-              Get.to(() => ProfileScreen());
-              break;
-          }
-        },
-        type: BottomNavigationBarType.fixed, // Ensures labels are always displayed
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+        showNotificationIndicator: _newNotification, 
       ),
     );
   }
 
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
-    Get.off(LoginScreen()); // Redirect to login screen after logout
+    Get.off(LoginScreen());
   }
 
-  Widget _buildCard(
-      IconData icon, String title, Color color, VoidCallback onTap) {
+  Widget _buildCard(IconData icon, String title, Color color, VoidCallback onTap) {
     return Container(
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12), // Reduced corner radius
+          borderRadius: BorderRadius.circular(12),
         ),
-        elevation: 3, // Reduced shadow depth
+        elevation: 3,
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(8.0), // Reduced padding inside card
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -200,11 +208,11 @@ class _DriverHomePageState extends State<DriverHomePage> {
                   size: 36,
                   color: color,
                 ),
-                SizedBox(height: 8), // Reduced space between icon and text
+                SizedBox(height: 8),
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 14, // Reduced text size
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
