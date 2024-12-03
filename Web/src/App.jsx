@@ -27,6 +27,7 @@ import OicReport from './Pages/Oic/Report'
 import DutyLayout from './Pages/Oic/DutyLayout'
 import DayDuty from './Pages/Oic/DayDuty'
 import NightDuty from './Pages/Oic/NightDuty'
+import Shift from './Components/StationWise/Duty'
 
 import HeadLayout from './Pages/Head/Layout'
 import HeadDashboad from './Pages/Head/Dashboad'
@@ -34,8 +35,12 @@ import HeadAccidentProgress from './Pages/Head/AccidentProgress'
 import HeadAccidentDetails from './Pages/Head/AccidentDetails'
 import HeadReportSubmit from './Pages/Head/ReportSubmit'
 import HeadAnalysis from './Pages/Head/Analysis'
+import HeadReport from './Pages/Head/Report'
+import AccidentsReport from './Components/Report/Anual/AccidentsReport';
 
 import AdminLayout from './Pages/Admin/Layout'
+
+import DutyList from './Pages/Oic/Duty'
 
 import { AuthContext } from './Context/AuthContext';
 
@@ -78,8 +83,10 @@ function App() {
           </Route>
           <Route path='AccidentDetails' element={<RequireAuth><TrafficAccidentDetails /></RequireAuth>} />
           <Route path='Report' element={<RequireAuth><TrafficReport/></RequireAuth>}/>
+          
         </Route>
         <Route path='Report/monthly' element={<RequireAuth><ReportMonthly/></RequireAuth>}/>
+        <Route path='DutyList' element={<RequireAuth><DutyList/></RequireAuth>}/>
 
         {/* OIC */}
 
@@ -89,8 +96,9 @@ function App() {
           <Route path='AccidentDetails' element={<RequireAuth><OicAccidentDetails/></RequireAuth>}/>
           <Route path='ReportApproval' element={<RequireAuth><OicReportApproval/></RequireAuth>}/>
           <Route path='Duty' element={<RequireAuth><DutyLayout/></RequireAuth>}>
-            <Route index element={<DayDuty/>} />
+            <Route index element={<Shift/>} />
             <Route path='Night' element={<RequireAuth><NightDuty/></RequireAuth>} />
+            <Route path='Day' element={<RequireAuth><DayDuty/></RequireAuth>} />
           </Route>
           <Route path='Report' element={<RequireAuth><OicReport/></RequireAuth>}/>
         </Route>
@@ -103,7 +111,9 @@ function App() {
           <Route path='AccidentDetails' element={<RequireAuth><HeadAccidentDetails/></RequireAuth>}/>
           <Route path='ReportSubmit' element={<RequireAuth><HeadReportSubmit/></RequireAuth>}/>
           <Route path='Analysis' element={<RequireAuth><HeadAnalysis/></RequireAuth>}/>
+          <Route path='Report' element={<RequireAuth><HeadReport/></RequireAuth>}/>
         </Route>
+        <Route path="/reports/annual" element={<AccidentsReport />} />
 
         {/* Admin */}
 
