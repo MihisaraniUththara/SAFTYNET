@@ -420,7 +420,7 @@ class _TabCasualtyState extends State<TabCasualty> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _addColumnsAndFields,
-                child: Text('Add Traffic Element'),
+                child: Text('Add a Casualty'),
               ),
               const SizedBox(height: 50.0),
               SizedBox(

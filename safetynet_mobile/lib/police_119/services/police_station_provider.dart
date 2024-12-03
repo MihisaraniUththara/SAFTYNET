@@ -28,9 +28,9 @@ class PoliceStationProvider extends ChangeNotifier {
         final data = querySnapshot.docs.first.data() as Map<String, dynamic>;
 
         division = data['division'] ?? 'Unknown Division';
-        divisionNumber = (data['dno'] ?? 'Unknown').toString();
+        divisionNumber = (data['dno'] ?? 'Unknown').toString().padLeft(2, '0');
         station = data['station_name'] ?? 'Unknown Station';
-        stationNumber = (data['sno'] ?? 'Unknown').toString();
+        stationNumber = (data['sno'] ?? 'Unknown').toString().padLeft(2, '0');
 
         notifyListeners(); // Notify widgets of changes
       }
