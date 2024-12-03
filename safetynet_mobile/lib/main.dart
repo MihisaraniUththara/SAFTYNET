@@ -6,15 +6,19 @@ import 'package:safetynet_mobile/drivers/authentication/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'police_119/services/accident_listener_service.dart';
 import 'police_119/services/police_station_provider.dart';
+import 'drivers/services/identifyAccidentProneAreas.dart';
+import 'drivers/services/periodic_update_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await identifyAccidentProneAreas();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AccidentListenerService()),
         ChangeNotifierProvider(create: (_) => PoliceStationProvider()),
+        ChangeNotifierProvider(create: (_) => PeriodicUpdateService()), 
       ],
       child: DevicePreview(
         enabled: true,
