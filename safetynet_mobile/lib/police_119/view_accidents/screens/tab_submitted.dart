@@ -43,9 +43,11 @@ class TabSubmitted extends StatelessWidget {
             // Extract data safely
             final accidentNo = report.data().containsKey('A5') ? report['A5'] : 'N/A';
             final oicApp = report.data().containsKey('oicApp') ? report['oicApp'] : 'N/A';
+            final headApp = report.data().containsKey('headApp') ? report['headApp'] : 'N/A';
             final submittedAt = report.data().containsKey('submittedAt')
                 ? (report['submittedAt'] as Timestamp).toDate()
                 : null;
+            final submit = report.data().containsKey('submit') ? report['submit'] : 'N/A';
             final officerID = report.data().containsKey('officerID') ? report['officerID'] : 'N/A';
 
             final a3 = report.data().containsKey('A3') ? report['A3'] : 'N/A';
@@ -67,10 +69,12 @@ class TabSubmitted extends StatelessWidget {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('OIC App: $oicApp'),
                     Text('Submitted At: ${submittedAt != null ? submittedAt.toString() : 'N/A'}'),
                     Text('Officer ID: $officerID'),
                     Text('Date and Time: $DateTime'),
+                    Text('OIC Approval: $oicApp'),
+                    Text('Head Office Approval: $headApp'),
+                    Text('Submit Status: $submit'),
                     //Text('Action taken by police: $'),
                   ],
                 ),

@@ -4,6 +4,8 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'input_fields.dart';
 import '../services/police_station_provider.dart';
+import '../view_accidents/widgets/unique_id_input_field.dart';
+import '../services/unique_id_generator.dart';
 
 class TabAccident extends StatefulWidget {
   final String officerID; // Accept officerID
@@ -91,7 +93,8 @@ class _TabAccidentState extends State<TabAccident> {
         _loadDraftData();
       } else {
         //Auto-Fill Remaining Fields if Draft Data is Not Found
-        _autoFillFields(policeStationProvider, dateTime['date'], dateTime['time']);
+        _autoFillFields(
+            policeStationProvider, dateTime['date'], dateTime['time']);
       }
     });
 
@@ -132,7 +135,8 @@ class _TabAccidentState extends State<TabAccident> {
     };
   }
 
-  void _autoFillFields(PoliceStationProvider policeStationProvider, String? fetchedDate, String? fetchedTime) {
+  void _autoFillFields(PoliceStationProvider policeStationProvider,
+      String? fetchedDate, String? fetchedTime) {
     // Auto-fill police station details
     _divisionController.text = policeStationProvider.division;
     _dnoController.text = policeStationProvider.divisionNumber;
@@ -213,10 +217,10 @@ class _TabAccidentState extends State<TabAccident> {
       // Try to update the document if it exists
       await draftRef.update({
         'A': {
-          //'A1': _divisionController.text.trim(),
-          //'dno':_dnoController.text.trim(),
-          //'A2': _stationController.text.trim(),
-          //'sno': _snoController.text.trim(),
+          'A1': _divisionController.text.trim(),
+          
+          'A2': _stationController.text.trim(),
+          
           'A3': _dateController.text.trim(),
           'A4': _timeController.text.trim(),
           'A5': _uniqueIdController.text.trim(),
@@ -255,9 +259,9 @@ class _TabAccidentState extends State<TabAccident> {
           'A34': _researchPurposeController.text.trim(),
         }, // Save A data
         'year': _yearController.text.trim(),
-        //'ARno': _arNumberController.text.trim(),
-        //'dno':_dnoController.text.trim(),
-        //'sno': _snoController.text.trim(),
+        'ARno': _arNumberController.text.trim(),
+        'dno':_dnoController.text.trim(),
+        'sno': _snoController.text.trim(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
       ScaffoldMessenger.of(context).showSnackBar(
@@ -435,10 +439,12 @@ class _TabAccidentState extends State<TabAccident> {
                   hintText: 'YYYY-MM-DD', maxchars: 10),
               _buildTextField('A4 Time of accident', _timeController,
                   hintText: 'HH:MM', maxchars: 5),
-              _buildTextField('A5 Unique ID Number', _uniqueIdController,
-                  validatorMessage: "Unique ID Number is required",
-                  hintText: 'Division-Station-AR no-Year',
-                  maxchars: 50),
+             UniqueIdInputField(
+          draftData: '01-02-0001-2024', // Example draft data
+          generateUniqueId: () => UniqueIdGenerator.generate(context),
+          controller: _uniqueIdController,
+          label: 'Unique ID Number',
+        ),
               SingleChoiceCheckboxInput(
                 topic: 'A6 Class of Accident',
                 labels: const [
@@ -782,19 +788,47 @@ class _TabAccidentState extends State<TabAccident> {
                   'A34 For research purpose', _researchPurposeController,
                   maxchars: 2),
               SizedBox(height: 50.0),
-              SizedBox(
-                width: 150,
-                child: ElevatedButton(
-                  child: Text(
-                    'Save',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16.0,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      onPressed: saveAccidentDraft,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color.fromARGB(255, 208, 208, 208),
+                        /* shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),*/
+                      ),
                     ),
                   ),
-                  onPressed: saveAccidentDraft,
-                ),
-              )
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                      child: Text(
+                        'Exit',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -896,7 +930,7 @@ class _TabAccidentState extends State<TabAccident> {
     return TextFormField(
       initialValue: initialValue,
       readOnly: true,
-      maxLength: 10,
+      maxLength: 15,
       decoration: InputDecoration(
         border: InputBorder.none,
         filled: true,

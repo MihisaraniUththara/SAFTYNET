@@ -49,10 +49,16 @@ class TabOnProgress extends StatelessWidget {
             final String dateTime =
                 '${data['A']?['A3']?.toString() ?? ''} ${data['A']?['A4']?.toString() ?? ''}'
                     .trim();
-            final String createdAt = 
-                '${data['createdAt']?.toString() ?? ''}'.trim();
+            final Timestamp createdAtTimestamp =
+                data['createdAt'] as Timestamp? ?? Timestamp.now();
+            final Timestamp updatedAtTimestamp =
+                data['updatedAt'] as Timestamp? ?? Timestamp.now();
+            final String createdAt =
+                '${DateTime.fromMillisecondsSinceEpoch(createdAtTimestamp.millisecondsSinceEpoch)}'
+                    .trim();
             final String updatedAt =
-                '${data['updatedAt']?.toString() ?? ''}'.trim();
+                '${DateTime.fromMillisecondsSinceEpoch(updatedAtTimestamp.millisecondsSinceEpoch)}'
+                    .trim();
 
             return Card(
               shape: RoundedRectangleBorder(
@@ -69,11 +75,10 @@ class TabOnProgress extends StatelessWidget {
                         'Road Name: ${roadName.isEmpty ? 'unknown' : roadName}'),
                     Text(
                         'Date and Time: ${dateTime.isEmpty ? 'unknown' : dateTime}'),
-                     Text(
+                    Text(
                         'Created At: ${createdAt.isEmpty ? 'unknown' : createdAt}'),
                     Text(
                         'Updated At: ${updatedAt.isEmpty ? 'unknown' : updatedAt}'),
-                            
                   ],
                 ),
                 trailing: ElevatedButton(

@@ -376,7 +376,6 @@ class _TabElementState extends State<TabElement> {
   }
 
   Future<void> saveElementDraft() async {
-
     String draftID =
         "${widget.officerID}_${widget.uniqueIdNotifier.value}"; // Use the passed officerID
 
@@ -769,18 +768,46 @@ class _TabElementState extends State<TabElement> {
                 child: Text('Add a Traffic Element'),
               ),
               const SizedBox(height: 50.0),
-              SizedBox(
-                width: 150,
-                child: ElevatedButton(
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16.0,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      onPressed: saveElementDraft,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color.fromARGB(255, 208, 208, 208),
+                        /* shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),*/
+                      ),
                     ),
                   ),
-                  onPressed: saveElementDraft,
-                ),
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                      child: Text(
+                        'Exit',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
+                      },
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

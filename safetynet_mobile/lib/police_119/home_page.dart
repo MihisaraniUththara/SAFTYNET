@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:safetynet_mobile/police_119/view_accidents/screens/report_notification_screen.dart';
 import '../drivers/authentication/login_screen.dart';
 import 'view_accidents/widgets/view_accidents_card.dart';
 import 'view_accidents/widgets/add_accident_report_card.dart';
 import 'services/accident_listener_service.dart';
 import 'package:provider/provider.dart';
 import 'services/police_station_provider.dart';
+import 'services/report_notification_service.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,7 +16,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
   String? userEmail = FirebaseAuth.instance.currentUser?.email;
 
   @override
@@ -46,6 +47,12 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
+            onPressed: () {
+              Get.to(() => ReportNotificationScreen(policeStation: policeStationProvider.station));
+            },
+            icon: Icon(Icons.notifications, color: Colors.black),
+          ),
+          IconButton(
             icon: const Icon(Icons.logout, color: Colors.black),
             onPressed: () async {
               // Access AccidentListenerService via Provider
@@ -59,6 +66,7 @@ class _HomePageState extends State<HomePage> {
               Get.off(LoginScreen());
             },
           ),
+          
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60.0),
