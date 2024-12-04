@@ -15,7 +15,8 @@ import {
 import { Person, CreditCard, Label, Home, Email, Lock, DateRange, Phone, Refresh } from '@mui/icons-material';
 import MuiAlert from '@mui/material/Alert';
 import { styled } from '@mui/material/styles';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -28,9 +29,10 @@ import { useNavigate } from 'react-router-dom';
 // import Spinner from '../../components/Spinner';
 import emailjs from 'emailjs-com';
 import SideBarAdmin from '../../Components/SideBarAdmin';
+import Header from '../../Components/Admin/Header';
 
 // Define the roles for the select field
-const roles = ['Traffic', 'OIC', 'OONH'];
+const roles = ['Traffic', 'TrafficH', 'OIC', 'OONH', 'OON', 'Other'];
 
 const policeStations = [
   "Achchuweli", "Agalawathta", "Agarapathana", "Agbopura", "Ahangama",
@@ -182,12 +184,11 @@ const OfficerReg = () => {
 
   const [formData, setFormData] = useState({
     name: '',
-    dob:'',
     nic: '',
-    police_id: '',
-    station: '',
-    phone_no: '',
+    badgeNumber: '',
     role: '',
+    station: '',
+    phoneNumber: '',
     email: '',
     password: '',
   });
@@ -206,10 +207,9 @@ const OfficerReg = () => {
     const templateParams = {
       to_email: email,
       name: formData.name,
-      dob: formData.dob,
       nic: formData.nic,
-      police_id: formData.police_id,
-      phone_no: formData.phone_no,
+      badgeNumber: formData.badgeNumber,
+      phoneNumber: formData.phoneNumber,
       role: formData.role,
       station: formData.station,
       email: formData.email,
@@ -220,11 +220,11 @@ const OfficerReg = () => {
       .then(
         (response) => {
           console.log('Email sent successfully!', response);
-          toast.success('Confirmation email sent!');
+          toast.success('Confirmation email sent successfully!', { position: 'top-right' });
         },
         (error) => {
           console.error('Error sending email:', error);
-          toast.error('Failed to send confirmation email');
+          toast.error('Failed to send confirmation email. Please try again later.', { position: 'top-right' });
         }
       );
   };
@@ -330,13 +330,11 @@ const OfficerReg = () => {
 
     if (Object.keys(errors).length) {
       setFormErrors(errors);
-      setSnackbarMessage('Please fill out all fields!');
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
+      toast.error('Please fill out all fields!', { position: 'top-right' });
     } else {
       const user = auth.currentUser;
       if (!user) {
-        toast.error('You must be logged in to register an officer.');
+        toast.error('You must be logged in as an admin to register an officer.', { position: 'top-right' });
         return;
       }
 
@@ -353,7 +351,7 @@ const OfficerReg = () => {
         const adminPassword = prompt('Please enter admin password to re-login:');
 
         if (!adminPassword) {
-          toast.error('Admin password is required to proceed');
+          toast.error('Admin password is required to proceed.', { position: 'top-right' });
           return;
         }
 
@@ -368,10 +366,9 @@ const OfficerReg = () => {
           ...formData,
           email: formData.email,
           name: formData.name,
-          dob: formData.dob,
           nic: formData.nic,
-          police_id: formData.police_id,
-          phone_no: formData.phone_no,
+          badgeNumber: formData.badgeNumber,
+          phoneNumber: formData.phoneNumber,
           role: formData.role,
           station: formData.station,
         };
@@ -383,7 +380,7 @@ const OfficerReg = () => {
           timestamp: serverTimestamp(),
         });
 
-        toast.success('Registration successful!');
+        toast.success('Officer registered successfully!', { position: 'top-right' });
 
         // Send the confirmation email after successful registration
         sendConfirmationEmail(formData.email, formData);
@@ -391,12 +388,12 @@ const OfficerReg = () => {
         await signOut(auth);
 
         await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
-        toast.success('Admin logged back in');
+        toast.success('Admin successfully logged back in!', { position: 'top-right' });
         setLoading(false);
         navigate('/admin');
       } catch (error) {
         console.error('Error registering an officer: ', error);
-        toast.error('Failed to register an officer: ' + error.message);
+        toast.error(`Failed to register an officer: ${error.message}`, { position: 'top-right' });
       } finally {
         setLoading(false);
       }
@@ -412,9 +409,11 @@ const OfficerReg = () => {
   // }
 
   return (
-    <div className="flex h-screen w-screen bg-neutral-100">
-      <SideBarAdmin />
-      <div className="flex-1 flex flex-col overflow-y-auto mt-16">
+    <div className="flex h-screen bg-neutral-100 w-screen overflow-hidden">
+    <SideBarAdmin />
+    <div className="flex-1 flex flex-col">
+      <Header />
+      <div className="flex-1 flex flex-col overflow-y-auto">
         <header className="text-center mt-4">
           <h1 className="text-3xl font-bold mb-3 text-black">Officer Registration</h1>
         </header>
@@ -450,27 +449,6 @@ const OfficerReg = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    label="Date of Birth"
-                    variant="outlined"
-                    fullWidth
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    required
-                    error={!!formErrors.dob}
-                    helperText={formErrors.dob}
-                    type="date" // Enforces YYYY-MM-DD format
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <DateRange />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
 
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -495,15 +473,15 @@ const OfficerReg = () => {
 
                 <Grid item xs={12} md={6}>
                   <TextField
-                    label="Police ID"
+                    label="Badge Number"
                     variant="outlined"
                     fullWidth
-                    name="police_id"
-                    value={formData.police_id}
+                    name="badgeNumber"
+                    value={formData.badgeNumber}
                     onChange={handleChange}
                     required
-                    error={!!formErrors.police_id}
-                    helperText={formErrors.police_id}
+                    error={!!formErrors.badgeNumber}
+                    helperText={formErrors.badgeNumber}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -518,13 +496,13 @@ const OfficerReg = () => {
                     label="Phone Number"
                     variant="outlined"
                     fullWidth
-                    name="phone_no"
+                    name="phoneNumber"
                     type='number'
-                    value={formData.phone_no}
+                    value={formData.phoneNumber}
                     onChange={handleChange}
                     required
-                    error={!!formErrors.phone_no}
-                    helperText={formErrors.phone_no}
+                    error={!!formErrors.phoneNumber}
+                    helperText={formErrors.phoneNumber}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -661,6 +639,19 @@ const OfficerReg = () => {
           </Container>
         </main>
       </div>
+      </div>
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 };

@@ -45,17 +45,22 @@ class OfficerValidationDialog extends StatelessWidget {
     }
 
     try {
-      /*// Validate Officer ID by checking 'badgeNumber' field
+      final int officerIdAsNumber = int.tryParse(officerId) ?? -1;
+      if (officerIdAsNumber == -1) {
+        _showError(context, 'Invalid Officer ID format');
+        return;
+      }
+
       QuerySnapshot officerQuerySnapshot = await FirebaseFirestore.instance
           .collection('police')
-          .where('badgeNumber', isEqualTo: officerId)
+          .where('badgeNumber', isEqualTo: officerIdAsNumber)
           .limit(1)
           .get();
 
       if (officerQuerySnapshot.docs.isEmpty) {
         _showError(context, 'Invalid Officer ID');
         return;
-      }*/
+      }
 
       // Get draft data
       String draftId = "${officerId}_$accidentNo";

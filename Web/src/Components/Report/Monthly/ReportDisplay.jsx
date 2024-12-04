@@ -69,15 +69,15 @@ const ReportDisplay = () => {
     const data = querySnapshot.docs.map((doc) => doc.data());
 
     const counts = {
-      fatalAccidents: data.filter((d) => d.A?.A6 === 1).length,
-      seriousAccidents: data.filter((d) => d.A?.A6 === 2).length,
-      minorAccidents: data.filter((d) => d.A?.A6 === 3).length,
-      damagesOnlyAccidents: data.filter((d) => d.A?.A6 === 4).length,
-      courtCases: data.filter((d) => d.A?.A30 === 1).length,
-      settledCases: data.filter((d) => d.A?.A30 === 3).length,
-      sltbBus: data.filter((d) => d.E?.E1A === 8 || d.E?.E2B === 8 || d.E?.E2C === 8).length,
-      privateBus: data.filter((d) => d.E?.E1A === 9 || d.E?.E2B === 9 || d.E?.E2C === 9).length,
-      govVehicles: data.filter((d) => d.E?.E5A === 3 || d.E?.E5B === 3 || d.E?.E5C === 3).length,
+      fatalAccidents: data.filter((d) => d.A?.A6 === '1').length,
+      seriousAccidents: data.filter((d) => d.A?.A6 === '2').length,
+      minorAccidents: data.filter((d) => d.A?.A6 === '3').length,
+      damagesOnlyAccidents: data.filter((d) => d.A?.A6 === '4').length,
+      courtCases: data.filter((d) => d.A?.A30 === '1').length,
+      settledCases: data.filter((d) => d.A?.A30 === '3').length,
+      sltbBus: data.filter((d) => d.E?.E1A === '8' || d.E?.E2B === '8' || d.E?.E2C === '8').length,
+      privateBus: data.filter((d) => d.E?.E1A === '9' || d.E?.E2B === '9' || d.E?.E2C === '9').length,
+      govVehicles: data.filter((d) => d.E?.E5A === '3' || d.E?.E5B === '3' || d.E?.E5C === '3').length,
     };
 
     return counts;
@@ -89,36 +89,46 @@ const ReportDisplay = () => {
       { label: "No of Serious Accidents", current: currentYearData.seriousAccidents, last: lastYearData.seriousAccidents },
       { label: "No of Minor Accidents", current: currentYearData.minorAccidents, last: lastYearData.minorAccidents },
       { label: "No of Damages Only Accidents", current: currentYearData.damagesOnlyAccidents, last: lastYearData.damagesOnlyAccidents },
+      { label: null }, // Empty row
       { label: "No of Court Cases", current: currentYearData.courtCases, last: lastYearData.courtCases },
       { label: "No of Settled Cases", current: currentYearData.settledCases, last: lastYearData.settledCases },
+      { label: null }, // Empty row
       { label: "No of SLTB Bus", current: currentYearData.sltbBus, last: lastYearData.sltbBus },
       { label: "No of Private Bus", current: currentYearData.privateBus, last: lastYearData.privateBus },
       { label: "No of Government Vehicles", current: currentYearData.govVehicles, last: lastYearData.govVehicles },
     ];
   };
 
+  const getMonthName = (month) => {
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June", 
+      "July", "August", "September", "October", "November", "December"
+    ];
+    return monthNames[parseInt(month) - 1];
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Monthly Report</h1>
+    <div className="p-6 bg-white text-center w-screen h-screen flex items-center justify-center flex-col">
+      <h1 className="text-2xl font-bold mb-4 text-black">Monthly Report <br/>({getMonthName(month)})</h1>
       {error ? (
         <p className="text-red-500">{error}</p>
       ) : loading ? (
         <p>Loading report...</p>
       ) : (
-        <table className="table-auto w-full border-collapse border border-gray-300">
+        <table className="table-auto border-collapse border border-gray-300 items-center text-center">
           <thead className="bg-gray-100">
             <tr>
-              <th className="border border-gray-300 px-4 py-2">Accident Detail</th>
-              <th className="border border-gray-300 px-4 py-2">Current Year</th>
-              <th className="border border-gray-300 px-4 py-2">Last Year</th>
+              <th className="border border-gray-300 px-4 py-2 text-black font-bold">Accident Detail</th>
+              <th className="border border-gray-300 px-4 py-2 text-black font-bold">Current Year</th>
+              <th className="border border-gray-300 px-4 py-2 text-black font-bold">Last Year</th>
             </tr>
           </thead>
           <tbody>
             {reportData.map((row, index) => (
               <tr key={index}>
-                <td className="border border-gray-300 px-4 py-2">{row.label}</td>
-                <td className="border border-gray-300 px-4 py-2">{row.current}</td>
-                <td className="border border-gray-300 px-4 py-2">{row.last}</td>
+                <td className="border border-gray-300 px-4 py-2 text-black">{row.label}</td>
+                <td className="border border-gray-300 px-4 py-2 text-black">{row.current}</td>
+                <td className="border border-gray-300 px-4 py-2 text-black">{row.last}</td>
               </tr>
             ))}
           </tbody>

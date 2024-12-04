@@ -565,7 +565,7 @@ useEffect(() => {
 
   return (
     <div className="bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full">
-      <strong><h1><center>Recent Accidents</center></h1></strong>
+      <strong><h1 className="text-2xl font-bold text-center text-black"><center>Recent Accidents</center></h1></strong>
 
       <div className="flex flex-wrap items-center gap-2 p-3 mt-2 bg-gray-100 rounded-md">
 
@@ -651,7 +651,9 @@ useEffect(() => {
     <tr key={accident.id} className='text-center'>
       <td className="p-3">{accident.A?.A3 || 'N/A'}</td>
       <td className="p-3">{accident.A?.A5 || 'N/A'}</td>
-      <td className="p-3">{accident.A?.A2 || 'N/A'}</td>
+      <td className="p-3">{accident.A?.A2
+    ? accident.A.A2.charAt(0).toUpperCase() + accident.A.A2.slice(1)
+    : 'N/A'}</td>
       <td className="p-3">{getStatus(accident.submit, accident.oicApp, accident.headApp)}</td>
       <td className="text-center p-3">
         <button className="bg-yellow-button hover:bg-yellow text-black font-semibold py-1 px-1 rounded text-sm"

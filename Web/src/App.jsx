@@ -17,6 +17,10 @@ import TrafficAccidentProgressReject from './Pages/Traffic/AccidentProgressRejec
 import TrafficAccidentDetails from './Pages/Traffic/AccidentDetails'
 import TrafficReport from './Pages/Traffic/Report'
 import ReportMonthly from './Components/Report/Monthly/ReportDisplay'
+import ReportMonthlyStationWise from './Components/Report/Monthly/StationWise/ReportDisplay'
+import ReportAnnualStationWise from './Components/Report/Anual/StationWise/AccidentsReport'
+import TrafficAnalysis from './Pages/Traffic/Analysis'
+import TrafficAnalysischarts from './Components/StationWise/AnalyzedData'
 
 import OicLayout from './Pages/Oic/Layout'
 import OicDashboad from './Pages/Oic/Dashboad'
@@ -27,6 +31,8 @@ import OicReport from './Pages/Oic/Report'
 import DutyLayout from './Pages/Oic/DutyLayout'
 import DayDuty from './Pages/Oic/DayDuty'
 import NightDuty from './Pages/Oic/NightDuty'
+import Shift from './Components/StationWise/Duty'
+import OicAnalysis from './Pages/Oic/Analysis'
 
 import HeadLayout from './Pages/Head/Layout'
 import HeadDashboad from './Pages/Head/Dashboad'
@@ -34,8 +40,13 @@ import HeadAccidentProgress from './Pages/Head/AccidentProgress'
 import HeadAccidentDetails from './Pages/Head/AccidentDetails'
 import HeadReportSubmit from './Pages/Head/ReportSubmit'
 import HeadAnalysis from './Pages/Head/Analysis'
+import HeadReport from './Pages/Head/Report'
+import AccidentsReport from './Components/Report/Anual/AccidentsReport';
+import HeadAnalysischarts from './Components/AnalyzedData'
 
 import AdminLayout from './Pages/Admin/Layout'
+
+import DutyList from './Pages/Oic/Duty'
 
 import { AuthContext } from './Context/AuthContext';
 
@@ -78,8 +89,13 @@ function App() {
           </Route>
           <Route path='AccidentDetails' element={<RequireAuth><TrafficAccidentDetails /></RequireAuth>} />
           <Route path='Report' element={<RequireAuth><TrafficReport/></RequireAuth>}/>
+          <Route path='Analysis' element={<RequireAuth><TrafficAnalysis /></RequireAuth>} />
         </Route>
         <Route path='Report/monthly' element={<RequireAuth><ReportMonthly/></RequireAuth>}/>
+        <Route path='Report/Station/monthly' element={<RequireAuth><ReportMonthlyStationWise/></RequireAuth>}/>
+        <Route path='Reports/Station/annual' element={<RequireAuth><ReportAnnualStationWise/></RequireAuth>}/>
+        <Route path='DutyList' element={<RequireAuth><DutyList/></RequireAuth>}/>
+        <Route path='Analysis/Station/annual' element={<RequireAuth><TrafficAnalysischarts/></RequireAuth>}/>
 
         {/* OIC */}
 
@@ -89,10 +105,12 @@ function App() {
           <Route path='AccidentDetails' element={<RequireAuth><OicAccidentDetails/></RequireAuth>}/>
           <Route path='ReportApproval' element={<RequireAuth><OicReportApproval/></RequireAuth>}/>
           <Route path='Duty' element={<RequireAuth><DutyLayout/></RequireAuth>}>
-            <Route index element={<DayDuty/>} />
+            <Route index element={<Shift/>} />
             <Route path='Night' element={<RequireAuth><NightDuty/></RequireAuth>} />
+            <Route path='Day' element={<RequireAuth><DayDuty/></RequireAuth>} />
           </Route>
           <Route path='Report' element={<RequireAuth><OicReport/></RequireAuth>}/>
+          <Route path='Analysis' element={<RequireAuth><OicAnalysis /></RequireAuth>} />
         </Route>
 
         {/* Head Office */}
@@ -103,11 +121,14 @@ function App() {
           <Route path='AccidentDetails' element={<RequireAuth><HeadAccidentDetails/></RequireAuth>}/>
           <Route path='ReportSubmit' element={<RequireAuth><HeadReportSubmit/></RequireAuth>}/>
           <Route path='Analysis' element={<RequireAuth><HeadAnalysis/></RequireAuth>}/>
+          <Route path='Report' element={<RequireAuth><HeadReport/></RequireAuth>}/>
         </Route>
+        <Route path="/reports/annual" element={<AccidentsReport />} />
+        <Route path='Analysis/annual' element={<RequireAuth><HeadAnalysischarts/></RequireAuth>}/>
 
         {/* Admin */}
 
-        <Route path='Admin1' element={<Dashboard />}>
+        <Route path='Admin'>
           <Route index element={<RequireAuth><Dashboard /></RequireAuth>} />
           <Route path='officerReg' element={<RequireAuth><OfficerReg/></RequireAuth>}/>
           <Route path='officers' element={<RequireAuth><Officers/></RequireAuth>}/>

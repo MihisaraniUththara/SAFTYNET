@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/calculate_ar_no.dart';
 import '../services/police_station_provider.dart';
 import 'tab_accident.dart';
 import 'tab_element.dart';
@@ -25,6 +26,40 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
   // ValueNotifier for shared unique ID state
   final ValueNotifier<String?> uniqueIdNotifier = ValueNotifier(null);
 
+  // State to hold AR-no and other fields
+  String? arNo;
+  String? stationNumber;
+  String? year;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeFields();
+  }
+
+  /// Fetch AR-no and initialize fields
+  Future<void> initializeFields() async {
+    // Check if draftData is provided
+    if (widget.draftData != null) {
+      setState(() {
+        arNo = widget.draftData!['ARno']?.toString() ?? '...';
+        stationNumber =
+            widget.draftData!['sno']?.toString() ?? 'Unknown';
+        year = widget.draftData!['year']?.toString() ?? '...';
+      });
+    } else {
+      // Fetch AR number if draftData is not provided
+      final arNumber = await calculateARNo();
+      setState(() {
+        arNo = arNumber;
+        stationNumber =
+            Provider.of<PoliceStationProvider>(context, listen: false)
+                .stationNumber;
+        year = DateTime.now().year.toString();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<PoliceStationProvider>();
@@ -48,10 +83,18 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Text("Station ${provider.stationNumber}",
-                        style: TextStyle(fontSize: 20.0)),
-                    Text("AR-no 118", style: TextStyle(fontSize: 20.0)),
-                    Text('${DateTime.now().year}', style: TextStyle(fontSize: 20.0)),
+                    Text(
+                      "Station ${stationNumber ?? provider.stationNumber}",
+                      style: const TextStyle(fontSize: 20.0),
+                    ),
+                    Text(
+                      "AR-no ${arNo ?? '...'}",
+                      style: const TextStyle(fontSize: 20.0),
+                    ),
+                    Text(
+                      year ?? DateTime.now().year.toString(),
+                      style: const TextStyle(fontSize: 20.0),
+                    ),
                     Text("Police 297 B",
                         style: TextStyle(
                             fontSize: 20.0,

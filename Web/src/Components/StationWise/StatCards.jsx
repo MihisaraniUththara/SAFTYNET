@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../Context/AuthContext';
 import { db } from '../../firebase';
-import { collection, query, where, Timestamp, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, Timestamp, onSnapshot, getDocs } from 'firebase/firestore';
 
 const StatCards = () => {
   const { currentUser } = useContext(AuthContext);
@@ -25,7 +25,7 @@ const StatCards = () => {
 
         if (!snapshot.empty) {
           const stationData = snapshot.docs[0]?.data()?.station || 'No Station';
-          setStation(stationData);
+          setStation(stationData.toLowerCase());
         } else {
           setStation('No Station Found');
         }
@@ -39,7 +39,7 @@ const StatCards = () => {
   }, [currentUser?.email]);
 
   useEffect(() => {
-    if (station === 'Loading...' || station === 'No Station Found') return;
+    if (station === 'Loading...' || station === 'No Station Found' || !station) return;
 
     const today = new Date();
     const startOfDay = Timestamp.fromDate(new Date(today.setHours(0, 0, 0, 0)));
@@ -48,27 +48,24 @@ const StatCards = () => {
     // Real-time listener
     const q = query(
       collection(db, 'accident_report'),
-      where('station', '==', station),
+      where('A.A2', '==', station.toLowerCase()),
       where('createdAt', '>=', startOfDay),
       where('createdAt', '<=', endOfDay)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      let total = 0;
-      let fatal = 0;
-      let serious = 0;
-      let minor = 0;
-      let damages = 0;
-
+      console.log('Snapshot received:', snapshot.docs.map(doc => doc.data())); // Log the data
+      let total = 0, fatal = 0, serious = 0, minor = 0, damages = 0;
+    
       snapshot.forEach((doc) => {
         total += 1;
         const data = doc.data();
-        if (data['A.A6'] === 1) fatal += 1;
-        if (data['A.A6'] === 2) serious += 1;
-        if (data['A.A6'] === 3) minor += 1;
-        if (data['A.A6'] === 4) damages += 1;
+        if (data.A?.A6 == '1') fatal += 1;
+        if (data.A?.A6 == '2') serious += 1;
+        if (data.A?.A6 == '3') minor += 1;
+        if (data.A?.A6 == '4') damages += 1;
       });
-
+    
       setTotalAccidents(total);
       setFatalAccidents(fatal);
       setSeriousAccidents(serious);
@@ -105,4 +102,4 @@ const StatCards = () => {
   );
 };
 
-export default StatCards;
+export default StatCards

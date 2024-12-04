@@ -72,7 +72,12 @@ const ReportSubmit = () => {
   const handleReject = async (id, toEmail, station) => {
     try {
       await sendEmail(toEmail, id, station);
-      await updateDoc(doc(db, 'accident_report', id), { submit: 0, oicApp: 0 });
+      const reportRef = doc(db, 'accident_report', id); 
+      await updateDoc(reportRef, {
+        submit: 0,
+        oicApp: 0,
+        rejecth: true, // Add or update the rejecth field
+      });
       setReports(reports.filter((report) => report.id !== id));
     } catch (error) {
       Swal.fire('Error', 'Failed to update report after email.', 'error');
@@ -100,7 +105,7 @@ const ReportSubmit = () => {
   return (
     <div className="bg-white px-4 pb-4 py-4 rounded-sm border border-gray-200 text-black w-full">
       <strong>
-        <h1>
+      <h1 className="text-2xl font-bold text-center text-black">
           <center>Approved Accident Reports</center>
         </h1>
       </strong>
@@ -121,7 +126,10 @@ const ReportSubmit = () => {
               <tr key={report.id} className="border-t text-center">
                 <td className="p-3">{report.A?.A3 || 'N/A'}</td>
                 <td className="p-3">{report.A?.A5 || 'N/A'}</td>
-                <td className="p-3">{report.A?.A2 || 'N/A'}</td>
+                <td className="p-3">
+                {report.A?.A2
+    ? report.A?.A2.charAt(0).toUpperCase() + report.A?.A2.slice(1)
+    : 'N/A'}</td>
                 <td className="p-3">{getSeverityText(report.A?.A6) || 'Hell'}</td>
                 <td className="p-3">
                   <button

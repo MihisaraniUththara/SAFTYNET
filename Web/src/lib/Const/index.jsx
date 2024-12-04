@@ -35,7 +35,7 @@ export const DASHBOARD_SIDEBAR_LINKS_TRAFFIC = [
 	{
 		key: 'T-analysis',
 		label: 'Analysis',
-		path: '/',
+		path: '/Traffic/Analysis',
 		icon: <FaChartLine />
 	}
 	// {
@@ -87,7 +87,7 @@ export const DASHBOARD_SIDEBAR_LINKS_OIC = [
 	{
 		key: 'O-analysis',
 		label: 'Analysis',
-		path: '/',
+		path: '/Oic/Analysis',
 		icon: <FaChartLine />
 	},
 	
@@ -123,7 +123,7 @@ export const DASHBOARD_SIDEBAR_LINKS_HEAD = [
 	{
 		key: 'H-report',
 		label: 'Report',
-		path: '#',
+		path: '/Head/Report',
 		icon: <MdEditNote />
 	},
 	{
@@ -191,14 +191,19 @@ export const SUBMENU_LINKS_TRAFFIC = [
 
 export const SUBMENU_LINKS_DUTY = [
 	{
+		key: 'Duty',
+		label: 'TODAY SHIFT',
+		path: '/Oic/Duty',
+	},
+	{
 		key: 'Day',
 		label: 'DAY SHIFT',
-		path: '/Oic/Duty',
+		path: '/Oic/Duty/Day',
 	},
 	{
 		key: 'Night',
 		label: 'NIGHT SHIFT',
 		path: '/Oic/Duty/Night',
-	}
+	},
 	
 ]
