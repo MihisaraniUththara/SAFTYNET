@@ -24,6 +24,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import { collection, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import SideBarAdmin from '../../Components/SideBarAdmin';
+import Header from '../../Components/Admin/Header';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Drivers = () => {
   const [drivers, setDrivers] = useState([]);
@@ -32,6 +36,17 @@ const Drivers = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [driverToDelete, setDriverToDelete] = useState(null);
+
+  const [columnSearch, setColumnSearch] = useState({
+    fullName: '',
+    email: '',
+    nationalId: '',
+    driverLicense: '',
+    phoneNumber: '',
+    emergencyContactName: '',
+    emergencyContactNumber: '',
+  });
+  
 
   // Fetch driver data from Firestore
   const fetchDriverData = async () => {
@@ -45,8 +60,10 @@ const Drivers = () => {
         });
       });
       setDrivers(driverData);
+      // toast.success('Drivers loaded successfully!');
     } catch (error) {
       console.error('Error fetching drivers:', error);
+      toast.error('Failed to load drivers.');
     }
   };
 
@@ -59,6 +76,23 @@ const Drivers = () => {
     setSearch(e.target.value);
   };
 
+  const handleColumnSearchChange = (e, column) => {
+    setColumnSearch({ ...columnSearch, [column]: e.target.value });
+  };
+
+  const filteredDrivers = drivers.filter((driver) => {
+    const globalMatch = Object.values(driver).some((value) =>
+      value?.toString().toLowerCase().includes(search.toLowerCase())
+    );
+  
+    const columnMatch = Object.keys(columnSearch).every((key) =>
+      driver[key]?.toString().toLowerCase().includes(columnSearch[key].toLowerCase())
+    );
+  
+    return globalMatch && columnMatch;
+  });
+  
+  
   // Function to highlight text in a string
   const highlightText = (text, search) => {
     if (!text || typeof text !== 'string') return text || ''; // Handle undefined or non-string values
@@ -67,16 +101,9 @@ const Drivers = () => {
     const regex = new RegExp(`(${search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
     const parts = text.split(regex);
     return parts.map((part, index) =>
-      regex.test(part) ? <span key={index} className="bg-yellow-200">{part}</span> : part
+      regex.test(part) ? <span key={index} className="bg-yellow">{part}</span> : part
     );
   };
-
-  // Filter drivers based on search input
-  const filteredDrivers = drivers.filter((driver) =>
-    Object.values(driver).some(value =>
-      value.toString().toLowerCase().includes(search.toLowerCase())
-    )
-  );
 
   // Open Edit Modal
   const handleEditOpen = (driver) => {
@@ -92,20 +119,27 @@ const Drivers = () => {
   // Update driver data in Firestore
   const updateDriver = async () => {
     if (selectedDriver) {
-      const driverDocRef = doc(db, 'drivers', selectedDriver.id);
-      await updateDoc(driverDocRef, {
-        fullName: selectedDriver.fullName,
-        nationalId: selectedDriver.nationalId,
-        phoneNumber: selectedDriver.phoneNumber,
-        email: selectedDriver.email,
-        driverLicense: selectedDriver.driverLicense,
-        emergencyContactName: selectedDriver.emergencyContactName,
-        emergencyContactNumber: selectedDriver.emergencyContactNumber,
-      });
-      fetchDriverData(); // Refresh the driver list
-      handleEditClose();
+      try {
+        const driverDocRef = doc(db, 'drivers', selectedDriver.id);
+        await updateDoc(driverDocRef, {
+          fullName: selectedDriver.fullName,
+          nationalId: selectedDriver.nationalId,
+          phoneNumber: selectedDriver.phoneNumber,
+          email: selectedDriver.email,
+          driverLicense: selectedDriver.driverLicense,
+          emergencyContactName: selectedDriver.emergencyContactName,
+          emergencyContactNumber: selectedDriver.emergencyContactNumber,
+        });
+        fetchDriverData(); // Refresh the driver list
+        handleEditClose();
+        toast.success('Driver updated successfully!');
+      } catch (error) {
+        console.error('Error updating driver:', error);
+        toast.error('Failed to update driver.');
+      }
     }
   };
+  
 
   // Open Delete Confirmation Modal
   const handleDeleteOpen = (driver) => {
@@ -121,17 +155,27 @@ const Drivers = () => {
   // Delete driver from Firestore
   const deleteDriver = async () => {
     if (driverToDelete) {
-      const driverDocRef = doc(db, 'drivers', driverToDelete.id);
-      await deleteDoc(driverDocRef);
-      fetchDriverData(); // Refresh the driver list
-      handleDeleteClose();
+      try {
+        const driverDocRef = doc(db, 'drivers', driverToDelete.id);
+        await deleteDoc(driverDocRef);
+        fetchDriverData(); // Refresh the driver list
+        handleDeleteClose();
+        toast.success('Driver deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting driver:', error);
+        toast.error('Failed to delete driver.');
+      }
     }
   };
+  
 
   return (
-    <div className="flex h-screen w-screen bg-neutral-100">
-      <SideBarAdmin />
-      <div className="flex-1 flex flex-col overflow-hidden mt-16">
+    <div className="flex h-screen bg-neutral-100 w-screen overflow-hidden">
+    <SideBarAdmin />
+    <div className="flex-1 flex flex-col">
+      <Header />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
         <header className="text-center">
           <h1 className="text-3xl text-black text-center p-2 font-bold">Registered Drivers</h1>
         </header>
@@ -170,32 +214,107 @@ const Drivers = () => {
           </div>
           <TableContainer component={Paper} sx={{ padding: 4, background: '#fdfdfd' }}>
             <Table>
-              <TableHead>
+            <TableHead>
                 <TableRow className="bg-gray-200 text-gray-700 border-b-2 border-gray-300">
-                  <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Name</TableSortLabel>
+                  <TableCell>
+                    <TableSortLabel className="border-r border-b-0 border-gray-300">Name</TableSortLabel>
                   </TableCell>
-                  <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Email</TableSortLabel>
-                  </TableCell>      
-                  <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>NIC</TableSortLabel>
+                  <TableCell>
+                    <TableSortLabel className="border-r border-b-0 border-gray-300">Email</TableSortLabel>
                   </TableCell>
-                  <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Driving License No</TableSortLabel> 
+                  <TableCell>
+                    <TableSortLabel className="border-r border-b-0 border-gray-300">NIC</TableSortLabel>
                   </TableCell>
-                  <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Phone No</TableSortLabel>
+                  <TableCell>
+                    <TableSortLabel className="border-r border-b-0 border-gray-300">Driving License No</TableSortLabel>
                   </TableCell>
-                  <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Emergency Contact Name</TableSortLabel>
+                  <TableCell>
+                    <TableSortLabel className="border-r border-b-0 border-gray-300">Phone No</TableSortLabel>
                   </TableCell>
-                  <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Emergency Contact No</TableSortLabel>
+                  <TableCell>
+                    <TableSortLabel className="border-r border-b-0 border-gray-300">Emergency Contact Name</TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel className="border-r border-b-0 border-gray-300">Emergency Contact No</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">Actions</TableCell>
                 </TableRow>
+                <TableRow className="bg-gray-100 border-r border-gray-300">
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search Name"
+                      value={columnSearch.fullName}
+                      onChange={(e) => handleColumnSearchChange(e, 'fullName')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell >
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search Email"
+                      value={columnSearch.email}
+                      onChange={(e) => handleColumnSearchChange(e, 'email')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search NIC"
+                      value={columnSearch.nationalId}
+                      onChange={(e) => handleColumnSearchChange(e, 'nationalId')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search License No"
+                      value={columnSearch.driverLicense}
+                      onChange={(e) => handleColumnSearchChange(e, 'driverLicense')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search Phone"
+                      value={columnSearch.phoneNumber}
+                      onChange={(e) => handleColumnSearchChange(e, 'phoneNumber')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search Contact Name"
+                      value={columnSearch.emergencyContactName}
+                      onChange={(e) => handleColumnSearchChange(e, 'emergencyContactName')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search Contact No"
+                      value={columnSearch.emergencyContactNumber}
+                      onChange={(e) => handleColumnSearchChange(e, 'emergencyContactNumber')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
               </TableHead>
+
+
               <TableBody>
                 {filteredDrivers.length === 0 ? (
                   <TableRow>
@@ -328,6 +447,22 @@ const Drivers = () => {
           )}
         </main>
       </div>
+      
+      </div>
+
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+      
     </div>
   );
 };

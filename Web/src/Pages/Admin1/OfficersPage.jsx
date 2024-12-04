@@ -10,6 +10,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import SideBarAdmin from '../../Components/SideBarAdmin';
+import Header from '../../Components/Admin/Header';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
 const Officers = () => {
@@ -23,6 +28,17 @@ const Officers = () => {
   // State for delete confirmation
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [officerToDelete, setOfficerToDelete] = useState(null);
+
+  const [columnSearch, setColumnSearch] = useState({
+    name: '',
+    dob: '',
+    nic: '',
+    badgeNumber: '',
+    role: '',
+    station: '',
+    phoneNumber: '',
+    email: ''
+  });
 
   // Fetch officer data from Firestore
   const fetchOfficerData = async () => {
@@ -45,12 +61,28 @@ const Officers = () => {
     fetchOfficerData();
   }, []);
 
+  const handleColumnSearchChange = (e, column) => {
+    setColumnSearch({ ...columnSearch, [column]: e.target.value });
+  };
+
   // Filter officers based on search input
-  const filteredOfficers = officers.filter((officer) =>
-    Object.values(officer).some((value) =>
-      typeof value === 'string' && value.toLowerCase().includes(search.toLowerCase())
-    )
-  );
+  const filteredOfficers = officers.filter((officer) => {
+    // Global search: Matches any field against the global `search` input
+    const globalMatch = Object.values(officer).some((value) =>
+      value?.toString().toLowerCase().includes(search.trim().toLowerCase())
+    );
+  
+    // Column search: Matches each column search input against corresponding fields
+    const columnMatch = Object.keys(columnSearch).every((key) => {
+      const columnValue = columnSearch[key].trim().toLowerCase();
+      if (!columnValue) return true; // If no column search value, consider it a match
+      return officer[key]?.toString().toLowerCase().includes(columnValue);
+    });
+  
+    // Return true only if both global and column searches match
+    return globalMatch && columnMatch;
+  });
+  
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -64,7 +96,7 @@ const Officers = () => {
     const regex = new RegExp(`(${search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
     const parts = text.split(regex);
     return parts.map((part, index) =>
-      regex.test(part) ? <span key={index} className="bg-yellow-200">{part}</span> : part
+      regex.test(part) ? <span key={index} className="bg-yellow">{part}</span> : part
     );
   };
 
@@ -87,16 +119,18 @@ const Officers = () => {
           name: selectedOfficer.name,
           dob: selectedOfficer.dob,
           nic: selectedOfficer.nic,
-          police_id: selectedOfficer.police_id,
+          badgeNumber: selectedOfficer.badgeNumber,
           role: selectedOfficer.role,
           station: selectedOfficer.station,
-          phone_no: selectedOfficer.phone_no,
+          phoneNumber: selectedOfficer.phoneNumber,
           email: selectedOfficer.email,
         });
         fetchOfficerData(); // Re-fetch data after update
         handleEditClose();
+        toast.success('Officer updated successfully'); // Success toast
       } catch (error) {
         console.error("Error updating officer:", error);
+        toast.error('Failed to update officer'); // Error toast
       }
     }
   };
@@ -119,16 +153,20 @@ const Officers = () => {
         await deleteDoc(doc(db, 'police', officerToDelete));
         fetchOfficerData();  // Re-fetch data after delete
         handleDeleteClose();
+        toast.success('Officer deleted successfully'); // Success toast
       } catch (error) {
         console.error("Error deleting officer:", error);
+        toast.error('Failed to delete officer'); // Error toast
       }
     }
   };
 
   return (
-    <div className="flex h-screen w-screen bg-neutral-100">
-      <SideBarAdmin />
-      <div className="flex-1 flex flex-col overflow-hidden mt-16">
+    <div className="flex h-screen bg-neutral-100 w-screen overflow-hidden">
+    <SideBarAdmin />
+    <div className="flex-1 flex flex-col">
+      <Header />
+      <div className="flex-1 flex flex-col overflow-hidden">
         <header className="text-center">
           <h1 className="text-3xl text-black text-center p-2 font-bold">Registered Officers</h1>
         </header>
@@ -173,9 +211,6 @@ const Officers = () => {
                     <TableSortLabel>Name</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Date of Birth</TableSortLabel>
-                  </TableCell>
-                  <TableCell className="border-r border-b-0 border-gray-300">
                     <TableSortLabel>NIC</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
@@ -195,6 +230,80 @@ const Officers = () => {
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">Actions</TableCell>
                 </TableRow>
+
+                <TableRow className="bg-gray-100 border-r border-gray-300">
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search name"
+                      value={columnSearch.name}
+                      onChange={(e) => handleColumnSearchChange(e, 'name')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search NIC"
+                      value={columnSearch.nationalId}
+                      onChange={(e) => handleColumnSearchChange(e, 'nic')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search police ID"
+                      value={columnSearch.badgeNumber}
+                      onChange={(e) => handleColumnSearchChange(e, 'badgeNumber')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search role"
+                      value={columnSearch.role}
+                      onChange={(e) => handleColumnSearchChange(e, 'role')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search station"
+                      value={columnSearch.station}
+                      onChange={(e) => handleColumnSearchChange(e, 'station')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search phone no"
+                      value={columnSearch.phoneNumber}
+                      onChange={(e) => handleColumnSearchChange(e, 'phoneNumber')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      placeholder="Search email"
+                      value={columnSearch.email}
+                      onChange={(e) => handleColumnSearchChange(e, 'email')}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
               </TableHead>
               <TableBody>
                 {filteredOfficers.length === 0 ? (
@@ -210,13 +319,10 @@ const Officers = () => {
                         {highlightText(officer.name || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
-                        {highlightText(officer.dob || 'N/A', search)}
-                      </TableCell>
-                      <TableCell className="border-r border-gray-300">
                         {highlightText(officer.nic || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
-                        {highlightText(officer.police_id || 'N/A', search)}
+                        {highlightText(officer.badgeNumber || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
                         {highlightText(officer.role || 'N/A', search)}
@@ -225,7 +331,7 @@ const Officers = () => {
                         {highlightText(officer.station || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
-                        {highlightText(officer.phone_no || 'N/A', search)}
+                        {highlightText(officer.phoneNumber || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
                         {highlightText(officer.email || 'N/A', search)}
@@ -250,6 +356,8 @@ const Officers = () => {
           </TableContainer>
         </main>
       </div>
+      </div>
+      
 
       {/* Edit Dialog */}
       <Dialog open={editOpen} onClose={handleEditClose}>
@@ -272,15 +380,15 @@ const Officers = () => {
           <TextField
             margin="dense"
             label="Phone Number"
-            value={selectedOfficer?.phone_no || ''}
-            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, phone_no: e.target.value })}
+            value={selectedOfficer?.phoneNumber || ''}
+            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, phoneNumber: e.target.value })}
             fullWidth
           />
           <TextField
             margin="dense"
             label="Police ID"
-            value={selectedOfficer?.police_id || ''}
-            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, police_id: e.target.value })}
+            value={selectedOfficer?.badgeNumber || ''}
+            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, badgeNumber: e.target.value })}
             fullWidth
           />
         </DialogContent>
@@ -311,6 +419,19 @@ const Officers = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 };
