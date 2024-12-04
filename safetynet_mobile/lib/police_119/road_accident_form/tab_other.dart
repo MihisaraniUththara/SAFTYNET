@@ -169,21 +169,21 @@ class TabOtherState extends State<TabOther> {
                             children: [
                               Icon(Icons.add_a_photo, color: Colors.grey),
                               if (isCollisionSketch)
-                                  Text(
-                                    'Add Sketch',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    ),
+                                Text(
+                                  'Add Sketch',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
                                   ),
-                              if(!isCollisionSketch)
-                                    Text(
-                                    'Add images',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    ),
+                                ),
+                              if (!isCollisionSketch)
+                                Text(
+                                  'Add images',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
                                   ),
+                                ),
                             ],
                           ),
                         ),
@@ -424,37 +424,71 @@ class TabOtherState extends State<TabOther> {
               SizedBox(height: 20),
               _buildAdditionalImagesField(),
               SizedBox(height: 50.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    width: 150,
-                    child: ElevatedButton(
-                      child: Text(
-                        'Save',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
+                  // Row for Save and Exit buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 150,
+                        child: ElevatedButton(
+                          child: const Text(
+                            'Save',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          onPressed: saveOtherDraft,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromARGB(255, 208, 208, 208),
+                           /* shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),*/
+                          ),
                         ),
                       ),
-                      onPressed: saveOtherDraft,
-                    ),
+                      Container(
+                        width: 150,
+                        child: ElevatedButton(
+                          child: const Text(
+                            'Exit',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context)
+                                .popUntil((route) => route.isFirst);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                    child: Text(
-                      'Submit',
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
-                    ),
-                    onPressed: submitAccidentReport,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xfffbbe00),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                  const SizedBox(height: 16), // Add some spacing between rows
+                  // Submit button below Save and Exit row
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      child: const Text(
+                        'Submit',
+                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      ),
+                      onPressed: submitAccidentReport,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xfffbbe00),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
                       ),
                     ),
                   ),
                 ],
-              ),
+              )
             ],
           ),
         ),

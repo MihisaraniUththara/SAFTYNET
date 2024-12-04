@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'input_fields.dart';
 
 class TabCasualty extends StatefulWidget {
-  final String officerID;   // Accept officerID
-  final Map<String, dynamic>? draftData;  //Accept draft data
-  final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier 
+  final String officerID; // Accept officerID
+  final Map<String, dynamic>? draftData; //Accept draft data
+  final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier
 
   // Pass officerID via the constructor
   const TabCasualty({
@@ -17,7 +17,7 @@ class TabCasualty extends StatefulWidget {
     this.draftData,
     required this.uniqueIdNotifier,
   });
-  
+
   @override
   State<TabCasualty> createState() => _TabCasualtyState();
 }
@@ -87,7 +87,6 @@ class _TabCasualtyState extends State<TabCasualty> {
     _initializeControllers();
     if (widget.draftData != null) {
       _loadDraftData();
-      
     }
   }
 
@@ -117,7 +116,8 @@ class _TabCasualtyState extends State<TabCasualty> {
         _checkboxStates.forEach((section, rows) {
           for (int i = 0; i < rows.length; i++) {
             for (int j = 0; j < rows[i].length; j++) {
-              String key = '$section${String.fromCharCode(65 + j)}'; // Key format: C2A, C2B, etc.
+              String key =
+                  '$section${String.fromCharCode(65 + j)}'; // Key format: C2A, C2B, etc.
               String expectedPrefix = labels[section]![i].split(' ')[0];
               if (dataC[key] != null &&
                   dataC[key].toString() == expectedPrefix) {
@@ -125,7 +125,7 @@ class _TabCasualtyState extends State<TabCasualty> {
               } else {
                 rows[i][j] = false; // No match, ensure checkbox is unchecked
               }
-              
+
               print('Section: $section, Row: $i, Column: $j, Key: $key');
             }
           }
@@ -133,7 +133,8 @@ class _TabCasualtyState extends State<TabCasualty> {
 
         // Load text field values
         _textControllers.forEach((section, controllers) {
-          for (int i = 0; i < controllers.length; i++) {          //controllers.length = _columnCount.length
+          for (int i = 0; i < controllers.length; i++) {
+            //controllers.length = _columnCount.length
             String key = '$section${String.fromCharCode(65 + i)}';
             if (dataC[key] != null) {
               controllers[i].text = dataC[key].toString();
@@ -423,18 +424,46 @@ class _TabCasualtyState extends State<TabCasualty> {
                 child: Text('Add a Casualty'),
               ),
               const SizedBox(height: 50.0),
-              SizedBox(
-                width: 150,
-                child: ElevatedButton(
-                  child: Text(
-                    'Save',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16.0,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      onPressed: saveCasualtyDraft,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color.fromARGB(255, 208, 208, 208),
+                        /* shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),*/
+                      ),
                     ),
                   ),
-                  onPressed: saveCasualtyDraft,
-                ),
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                      child: Text(
+                        'Exit',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
+                      },
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
