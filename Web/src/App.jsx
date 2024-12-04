@@ -42,6 +42,7 @@ import HeadReportSubmit from './Pages/Head/ReportSubmit'
 import HeadAnalysis from './Pages/Head/Analysis'
 import HeadReport from './Pages/Head/Report'
 import AccidentsReport from './Components/Report/Anual/AccidentsReport';
+import HeadAnalysischarts from './Components/AnalyzedData'
 
 import AdminLayout from './Pages/Admin/Layout'
 
@@ -123,6 +124,7 @@ function App() {
           <Route path='Report' element={<RequireAuth><HeadReport/></RequireAuth>}/>
         </Route>
         <Route path="/reports/annual" element={<AccidentsReport />} />
+        <Route path='Analysis/annual' element={<RequireAuth><HeadAnalysischarts/></RequireAuth>}/>
 
         {/* Admin */}
 

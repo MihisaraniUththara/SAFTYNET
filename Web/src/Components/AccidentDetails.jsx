@@ -58,7 +58,7 @@ const AccidentDetails = () => {
             time: data.A?.A4 || 'N/A', // A4 is Time
             accidentId: data.A?.A5 || 'N/A', // A5 is Accident ID
             station: data.A?.A2 || 'N/A', // A2 is Station
-            action: data.A?.A30 || null, // A30 is Action
+            action: data.A?.A30 || 'Not Known', // A30 is Action
             severity: data.A?.A6 || null,// A6 is Severity
             AccidentId: data.A?.A5 || 'N/A',
             Urban_Rural: data.A?.A7 || '0',
@@ -606,8 +606,11 @@ const AccidentDetails = () => {
                 <td className='text-center p-3'>{accident.date}</td>
                 <td className='text-center p-3'>{accident.time}</td>
                 <td className='text-center p-3'>{accident.accidentId}</td>
-                <td className='text-center p-3'>{accident.station}</td>
-                <td className='text-center p-3'>{getActionText(accident.action)}</td>
+                <td className='text-center p-3'>
+                {accident.station
+    ? accident.station.charAt(0).toUpperCase() + accident.station.slice(1)
+    : 'N/A'}</td>
+                <td className='text-center p-3'>{getActionText(accident.action) || 'No Action'}</td>
                 <td className='text-center p-3'>{getSeverityText(accident.severity)}</td>
                 <td className='text-center p-3'>
                   <button className='bg-yellow-button hover:bg-yellow text-black font-semibold py-1 px-1 rounded text-sm'

@@ -126,7 +126,10 @@ const ReportSubmit = () => {
               <tr key={report.id} className="border-t text-center">
                 <td className="p-3">{report.A?.A3 || 'N/A'}</td>
                 <td className="p-3">{report.A?.A5 || 'N/A'}</td>
-                <td className="p-3">{report.A?.A2 || 'N/A'}</td>
+                <td className="p-3">
+                {report.A?.A2
+    ? report.A?.A2.charAt(0).toUpperCase() + report.A?.A2.slice(1)
+    : 'N/A'}</td>
                 <td className="p-3">{getSeverityText(report.A?.A6) || 'Hell'}</td>
                 <td className="p-3">
                   <button
