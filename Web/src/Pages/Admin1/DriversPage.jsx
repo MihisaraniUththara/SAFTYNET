@@ -176,10 +176,9 @@ const Drivers = () => {
       <Header />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="text-center">
-          <h1 className="text-3xl text-black text-center p-2 font-bold">Registered Drivers</h1>
-        </header>
-        <main className="flex-1 overflow-auto p-4">
+      <h1 className="text-3xl text-black text-center p-2 font-bold">Registered Drivers</h1>
+
+        <main className="flex-1 overflow-auto p-4 flex-col">
           <div className="flex justify-end mb-2">
             <TextField
               variant="outlined"
