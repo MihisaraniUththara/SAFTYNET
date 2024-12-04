@@ -89,23 +89,33 @@ const ReportDisplay = () => {
       { label: "No of Serious Accidents", current: currentYearData.seriousAccidents, last: lastYearData.seriousAccidents },
       { label: "No of Minor Accidents", current: currentYearData.minorAccidents, last: lastYearData.minorAccidents },
       { label: "No of Damages Only Accidents", current: currentYearData.damagesOnlyAccidents, last: lastYearData.damagesOnlyAccidents },
+      { label: null }, // Empty row
       { label: "No of Court Cases", current: currentYearData.courtCases, last: lastYearData.courtCases },
       { label: "No of Settled Cases", current: currentYearData.settledCases, last: lastYearData.settledCases },
+      { label: null }, // Empty row
       { label: "No of SLTB Bus", current: currentYearData.sltbBus, last: lastYearData.sltbBus },
       { label: "No of Private Bus", current: currentYearData.privateBus, last: lastYearData.privateBus },
       { label: "No of Government Vehicles", current: currentYearData.govVehicles, last: lastYearData.govVehicles },
     ];
   };
 
+  const getMonthName = (month) => {
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June", 
+      "July", "August", "September", "October", "November", "December"
+    ];
+    return monthNames[parseInt(month) - 1];
+  };
+
   return (
-    <div className="p-6 bg-white w-full text-center">
-      <h1 className="text-2xl font-bold mb-4 text-black">Monthly Report ({month})</h1>
+    <div className="p-6 bg-white text-center w-screen h-screen flex items-center justify-center flex-col">
+      <h1 className="text-2xl font-bold mb-4 text-black">Monthly Report <br/>({getMonthName(month)})</h1>
       {error ? (
         <p className="text-red-500">{error}</p>
       ) : loading ? (
         <p>Loading report...</p>
       ) : (
-        <table className="table-auto w-full border-collapse border border-gray-300">
+        <table className="table-auto border-collapse border border-gray-300 items-center text-center">
           <thead className="bg-gray-100">
             <tr>
               <th className="border border-gray-300 px-4 py-2 text-black font-bold">Accident Detail</th>

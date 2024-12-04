@@ -651,7 +651,9 @@ useEffect(() => {
     <tr key={accident.id} className='text-center'>
       <td className="p-3">{accident.A?.A3 || 'N/A'}</td>
       <td className="p-3">{accident.A?.A5 || 'N/A'}</td>
-      <td className="p-3">{accident.A?.A2 || 'N/A'}</td>
+      <td className="p-3">{accident.A?.A2
+    ? accident.A.A2.charAt(0).toUpperCase() + accident.A.A2.slice(1)
+    : 'N/A'}</td>
       <td className="p-3">{getStatus(accident.submit, accident.oicApp, accident.headApp)}</td>
       <td className="text-center p-3">
         <button className="bg-yellow-button hover:bg-yellow text-black font-semibold py-1 px-1 rounded text-sm"
