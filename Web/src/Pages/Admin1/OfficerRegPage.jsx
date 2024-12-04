@@ -414,14 +414,12 @@ const OfficerReg = () => {
     <div className="flex-1 flex flex-col">
       <Header />
       <div className="flex-1 flex flex-col overflow-y-auto">
-        <header className="text-center mt-4">
-          <h1 className="text-3xl font-bold mb-3 text-black">Officer Registration</h1>
-        </header>
-        <main className="flex-1 overflow-auto p-4">
+      <h1 className="text-3xl text-black text-center p-2 font-bold">Officer Registration</h1>
+        <main className="flex-1 overflow-auto p-4 flex-col">
           <Container
             maxWidth="md"
             sx={{
-              mt: 4,
+              padding: 2,
               background: 'white',
               borderRadius: 4,
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
@@ -616,7 +614,7 @@ const OfficerReg = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} sx={{ mb: 2 }}>
+                <Grid item xs={12} sx={{  }}>
                   <Button type="submit" variant="contained" color="primary" fullWidth>
                     Register
                   </Button>
