@@ -184,12 +184,11 @@ const OfficerReg = () => {
 
   const [formData, setFormData] = useState({
     name: '',
-    dob:'',
     nic: '',
-    police_id: '',
-    station: '',
-    phone_no: '',
+    badgeNumber: '',
     role: '',
+    station: '',
+    phoneNumber: '',
     email: '',
     password: '',
   });
@@ -208,10 +207,9 @@ const OfficerReg = () => {
     const templateParams = {
       to_email: email,
       name: formData.name,
-      dob: formData.dob,
       nic: formData.nic,
-      police_id: formData.police_id,
-      phone_no: formData.phone_no,
+      badgeNumber: formData.badgeNumber,
+      phoneNumber: formData.phoneNumber,
       role: formData.role,
       station: formData.station,
       email: formData.email,
@@ -368,10 +366,9 @@ const OfficerReg = () => {
           ...formData,
           email: formData.email,
           name: formData.name,
-          dob: formData.dob,
           nic: formData.nic,
-          police_id: formData.police_id,
-          phone_no: formData.phone_no,
+          badgeNumber: formData.badgeNumber,
+          phoneNumber: formData.phoneNumber,
           role: formData.role,
           station: formData.station,
         };
@@ -452,27 +449,6 @@ const OfficerReg = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    label="Date of Birth"
-                    variant="outlined"
-                    fullWidth
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    required
-                    error={!!formErrors.dob}
-                    helperText={formErrors.dob}
-                    type="date" // Enforces YYYY-MM-DD format
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <DateRange />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
 
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -497,15 +473,15 @@ const OfficerReg = () => {
 
                 <Grid item xs={12} md={6}>
                   <TextField
-                    label="Police ID"
+                    label="Badge Number"
                     variant="outlined"
                     fullWidth
-                    name="police_id"
-                    value={formData.police_id}
+                    name="badgeNumber"
+                    value={formData.badgeNumber}
                     onChange={handleChange}
                     required
-                    error={!!formErrors.police_id}
-                    helperText={formErrors.police_id}
+                    error={!!formErrors.badgeNumber}
+                    helperText={formErrors.badgeNumber}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -520,13 +496,13 @@ const OfficerReg = () => {
                     label="Phone Number"
                     variant="outlined"
                     fullWidth
-                    name="phone_no"
+                    name="phoneNumber"
                     type='number'
-                    value={formData.phone_no}
+                    value={formData.phoneNumber}
                     onChange={handleChange}
                     required
-                    error={!!formErrors.phone_no}
-                    helperText={formErrors.phone_no}
+                    error={!!formErrors.phoneNumber}
+                    helperText={formErrors.phoneNumber}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
