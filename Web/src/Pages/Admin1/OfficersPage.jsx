@@ -212,7 +212,7 @@ const Officers = () => {
                     <TableSortLabel>NIC</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Police ID</TableSortLabel>
+                    <TableSortLabel>Badge No</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
                     <TableSortLabel>Role</TableSortLabel>
