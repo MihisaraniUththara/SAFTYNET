@@ -415,7 +415,7 @@ const OfficerReg = () => {
       <Header />
       <div className="flex-1 flex flex-col overflow-y-auto">
       <h1 className="text-3xl text-black text-center p-2 font-bold">Officer Registration</h1>
-        <main className="flex-1 overflow-auto p-4 flex-col">
+        <div className="flex-1 overflow-auto p-4 mt-10 flex-col">
           <Container
             maxWidth="md"
             sx={{
@@ -635,7 +635,7 @@ const OfficerReg = () => {
               </Alert>
             </Snackbar>
           </Container>
-        </main>
+        </div>
       </div>
       </div>
       <ToastContainer
