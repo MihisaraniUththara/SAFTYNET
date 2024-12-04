@@ -128,7 +128,7 @@ function App() {
 
         {/* Admin */}
 
-        <Route path='Admin1' element={<Dashboard />}>
+        <Route path='Admin'>
           <Route index element={<RequireAuth><Dashboard /></RequireAuth>} />
           <Route path='officerReg' element={<RequireAuth><OfficerReg/></RequireAuth>}/>
           <Route path='officers' element={<RequireAuth><Officers/></RequireAuth>}/>
