@@ -33,10 +33,10 @@ const Officers = () => {
     name: '',
     dob: '',
     nic: '',
-    police_id: '',
+    badgeNumber: '',
     role: '',
     station: '',
-    phone_no: '',
+    phoneNumber: '',
     email: ''
   });
 
@@ -119,10 +119,10 @@ const Officers = () => {
           name: selectedOfficer.name,
           dob: selectedOfficer.dob,
           nic: selectedOfficer.nic,
-          police_id: selectedOfficer.police_id,
+          badgeNumber: selectedOfficer.badgeNumber,
           role: selectedOfficer.role,
           station: selectedOfficer.station,
-          phone_no: selectedOfficer.phone_no,
+          phoneNumber: selectedOfficer.phoneNumber,
           email: selectedOfficer.email,
         });
         fetchOfficerData(); // Re-fetch data after update
@@ -211,9 +211,6 @@ const Officers = () => {
                     <TableSortLabel>Name</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Date of Birth</TableSortLabel>
-                  </TableCell>
-                  <TableCell className="border-r border-b-0 border-gray-300">
                     <TableSortLabel>NIC</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
@@ -245,16 +242,6 @@ const Officers = () => {
                       fullWidth
                     />
                   </TableCell>
-                  <TableCell >
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      placeholder="Search DOB"
-                      value={columnSearch.dob}
-                      onChange={(e) => handleColumnSearchChange(e, 'dob')}
-                      fullWidth
-                    />
-                  </TableCell>
                   <TableCell>
                     <TextField
                       variant="outlined"
@@ -270,8 +257,8 @@ const Officers = () => {
                       variant="outlined"
                       size="small"
                       placeholder="Search police ID"
-                      value={columnSearch.police_id}
-                      onChange={(e) => handleColumnSearchChange(e, 'police_id')}
+                      value={columnSearch.badgeNumber}
+                      onChange={(e) => handleColumnSearchChange(e, 'badgeNumber')}
                       fullWidth
                     />
                   </TableCell>
@@ -300,8 +287,8 @@ const Officers = () => {
                       variant="outlined"
                       size="small"
                       placeholder="Search phone no"
-                      value={columnSearch.phone_no}
-                      onChange={(e) => handleColumnSearchChange(e, 'phone_no')}
+                      value={columnSearch.phoneNumber}
+                      onChange={(e) => handleColumnSearchChange(e, 'phoneNumber')}
                       fullWidth
                     />
                   </TableCell>
@@ -332,13 +319,10 @@ const Officers = () => {
                         {highlightText(officer.name || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
-                        {highlightText(officer.dob || 'N/A', search)}
-                      </TableCell>
-                      <TableCell className="border-r border-gray-300">
                         {highlightText(officer.nic || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
-                        {highlightText(officer.police_id || 'N/A', search)}
+                        {highlightText(officer.badgeNumber || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
                         {highlightText(officer.role || 'N/A', search)}
@@ -347,7 +331,7 @@ const Officers = () => {
                         {highlightText(officer.station || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
-                        {highlightText(officer.phone_no || 'N/A', search)}
+                        {highlightText(officer.phoneNumber || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
                         {highlightText(officer.email || 'N/A', search)}
@@ -396,15 +380,15 @@ const Officers = () => {
           <TextField
             margin="dense"
             label="Phone Number"
-            value={selectedOfficer?.phone_no || ''}
-            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, phone_no: e.target.value })}
+            value={selectedOfficer?.phoneNumber || ''}
+            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, phoneNumber: e.target.value })}
             fullWidth
           />
           <TextField
             margin="dense"
             label="Police ID"
-            value={selectedOfficer?.police_id || ''}
-            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, police_id: e.target.value })}
+            value={selectedOfficer?.badgeNumber || ''}
+            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, badgeNumber: e.target.value })}
             fullWidth
           />
         </DialogContent>
