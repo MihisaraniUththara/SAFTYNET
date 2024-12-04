@@ -31,7 +31,6 @@ const Officers = () => {
 
   const [columnSearch, setColumnSearch] = useState({
     name: '',
-    dob: '',
     nic: '',
     badgeNumber: '',
     role: '',
@@ -117,7 +116,6 @@ const Officers = () => {
       try {
         await updateDoc(doc(db, 'police', selectedOfficer.id), {
           name: selectedOfficer.name,
-          dob: selectedOfficer.dob,
           nic: selectedOfficer.nic,
           badgeNumber: selectedOfficer.badgeNumber,
           role: selectedOfficer.role,
@@ -214,7 +212,7 @@ const Officers = () => {
                     <TableSortLabel>NIC</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Police ID</TableSortLabel>
+                    <TableSortLabel>Badge No</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
                     <TableSortLabel>Role</TableSortLabel>
