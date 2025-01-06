@@ -353,43 +353,54 @@ class TabOtherState extends State<TabOther> {
   }
 
   Future<void> submitAccidentReport() async {
-    /*if (!_formKey.currentState!.validate()) {
-      return;
-    }*/
+  // Validate the form
+  if (!_formKey.currentState!.validate()) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please correct the errors in the form')),
+    );
+    return;
+  }
 
-    String draftID = "${widget.officerID}_${widget.uniqueIdNotifier.value}";
-    DocumentReference draftRef =
-        FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
+  String draftID = "${widget.officerID}_${widget.uniqueIdNotifier.value}";
+  DocumentReference draftRef =
+      FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
 
-    try {
-      DocumentSnapshot draftSnapshot = await draftRef.get();
-      if (draftSnapshot.exists) {
-        Map<String, dynamic> draftData =
-            draftSnapshot.data() as Map<String, dynamic>;
+  try {
+    DocumentSnapshot draftSnapshot = await draftRef.get();
+    if (draftSnapshot.exists) {
+      Map<String, dynamic> draftData =
+          draftSnapshot.data() as Map<String, dynamic>;
 
-        await FirebaseFirestore.instance.collection('accident_report').add({
-          'A': draftData['A'],
-          'E': draftData['E'],
-          'C': draftData['C'],
-          'O': draftData['O'],
-          'officerID': widget.officerID,
-          'createdAt': draftData['createdAt'],
-          'submittedAt': FieldValue.serverTimestamp(),
-        });
+      // Add the draft data to the accident_report collection
+      await FirebaseFirestore.instance.collection('accident_report').add({
+        'A': draftData['A'],
+        'E': draftData['E'],
+        'C': draftData['C'],
+        'O': draftData['O'],
+        'officerID': widget.officerID,
+        'createdAt': draftData['createdAt'],
+        'submittedAt': FieldValue.serverTimestamp(),
+      });
 
-        await draftRef.delete();
+      // Delete the draft after successful submission
+      await draftRef.delete();
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Report submitted successfully')),
-        );
-      }
-    } catch (e) {
-      print('Failed to submit report: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to submit report: $e')),
+        const SnackBar(content: Text('Report submitted successfully')),
+      );
+    } else {
+      // Handle the case where the draft does not exist
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Draft data not found')),
       );
     }
+  } catch (e) {
+    print('Failed to submit report: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to submit report: $e')),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
