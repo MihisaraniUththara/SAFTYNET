@@ -4,7 +4,6 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'input_fields.dart';
 import '../services/police_station_provider.dart';
-import '../view_accidents/widgets/unique_id_input_field.dart';
 import '../services/unique_id_generator.dart';
 
 class TabAccident extends StatefulWidget {
@@ -142,6 +141,9 @@ class _TabAccidentState extends State<TabAccident> {
     _dnoController.text = policeStationProvider.divisionNumber;
     _stationController.text = policeStationProvider.station;
     _snoController.text = policeStationProvider.stationNumber;
+    UniqueIdGenerator.generate(context).then((uniqueId) {
+      _uniqueIdController.text = uniqueId;
+    });
 
     // Auto-fill date and time (fetched from Firestore earlier)
     _dateController.text = fetchedDate ?? ''; // Fallback empty if not fetched
@@ -218,9 +220,7 @@ class _TabAccidentState extends State<TabAccident> {
       await draftRef.update({
         'A': {
           'A1': _divisionController.text.trim(),
-          
           'A2': _stationController.text.trim(),
-          
           'A3': _dateController.text.trim(),
           'A4': _timeController.text.trim(),
           'A5': _uniqueIdController.text.trim(),
@@ -260,7 +260,7 @@ class _TabAccidentState extends State<TabAccident> {
         }, // Save A data
         'year': _yearController.text.trim(),
         'ARno': _arNumberController.text.trim(),
-        'dno':_dnoController.text.trim(),
+        'dno': _dnoController.text.trim(),
         'sno': _snoController.text.trim(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -439,12 +439,14 @@ class _TabAccidentState extends State<TabAccident> {
                   hintText: 'YYYY-MM-DD', maxchars: 10),
               _buildTextField('A4 Time of accident', _timeController,
                   hintText: 'HH:MM', maxchars: 5),
-             UniqueIdInputField(
+              _buildTextField('A5 Unique ID Number', _uniqueIdController,
+                  maxchars: 15),
+              /*UniqueIdInputField(
           draftData: '01-02-0001-2024', // Example draft data
           generateUniqueId: () => UniqueIdGenerator.generate(context),
           controller: _uniqueIdController,
           label: 'Unique ID Number',
-        ),
+        ),*/
               SingleChoiceCheckboxInput(
                 topic: 'A6 Class of Accident',
                 labels: const [

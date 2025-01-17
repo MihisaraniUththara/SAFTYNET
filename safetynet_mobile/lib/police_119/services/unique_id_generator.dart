@@ -17,6 +17,7 @@ class UniqueIdGenerator {
     final year = DateTime.now().year.toString(); // Example: '2024'
 
     // Combine into the Unique ID format
-    return '$division-$station-$arNo-$year';
+    String uniqueId = '$division-$station-$arNo-$year';
+    return uniqueId;
   }
 }
