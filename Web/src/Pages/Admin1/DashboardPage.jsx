@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SidebarHeader from './SideBar';
-import { FiUsers, FiAlertTriangle, FiUserCheck, FiSlash } from 'react-icons/fi';
+import { FiUsers, FiAlertTriangle, FiUserCheck, FiSlash, FiHome } from 'react-icons/fi';
 import AccidentStatChart from './Table_AccidentStat';
 import VehicleTypesChart from './Table_VehicleTypes';
 import SeverityChart from './Table_Severity';
@@ -15,6 +15,8 @@ const Dashboard = () => {
   const [drivers, setDrivers] = useState([]);
   const [officers, setOfficers] = useState([]);
   const [accidents, setAccidents] = useState([]);
+  const [stations, setStations] = useState([]);
+
 
 
   // Fetch driver data from Firestore
@@ -59,7 +61,7 @@ const Dashboard = () => {
     fetchOfficerData();
   }, []);
 
-  // Fetch officer data from Firestore
+  // Fetch accident data from Firestore
   const fetchAccidentData = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'accident_report'));
@@ -78,6 +80,27 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchAccidentData();
+  }, []);
+
+  // Fetch station data from Firestore
+  const fetchStationData = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'police_stations'));
+      const stationData = [];
+      querySnapshot.forEach((doc) => {
+        stationData.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+      setStations(stationData);
+    } catch (error) {
+      console.error('Error fetching stations:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStationData();
   }, []);
 
   return (
@@ -116,11 +139,11 @@ const Dashboard = () => {
     </div>
     <div className="bg-white shadow-lg rounded-lg p-5 flex items-center hover:shadow-xl transition-shadow h-25">
         <div className="flex-shrink-0">
-        <FiSlash size={36} className="text-yellow" />
+        <FiHome size={36} className="text-yellow" />
         </div>
         <div className="flex flex-col ml-auto text-right">
-        <span className="text-gray-600 text-sm font-semibold">Suspends</span>
-        <span className="text-3xl font-bold text-black">3</span>
+        <span className="text-gray-600 text-sm font-semibold">Stations</span>
+        <span className="text-3xl font-bold text-black">{stations.length}</span>
         </div>
     </div>
         </div>   

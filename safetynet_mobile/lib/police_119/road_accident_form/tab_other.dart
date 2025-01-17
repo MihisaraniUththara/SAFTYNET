@@ -169,21 +169,21 @@ class TabOtherState extends State<TabOther> {
                             children: [
                               Icon(Icons.add_a_photo, color: Colors.grey),
                               if (isCollisionSketch)
-                                  Text(
-                                    'Add Sketch',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    ),
+                                Text(
+                                  'Add Sketch',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
                                   ),
-                              if(!isCollisionSketch)
-                                    Text(
-                                    'Add images',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    ),
+                                ),
+                              if (!isCollisionSketch)
+                                Text(
+                                  'Add images',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
                                   ),
+                                ),
                             ],
                           ),
                         ),
@@ -353,43 +353,54 @@ class TabOtherState extends State<TabOther> {
   }
 
   Future<void> submitAccidentReport() async {
-    /*if (!_formKey.currentState!.validate()) {
-      return;
-    }*/
+  // Validate the form
+  if (!_formKey.currentState!.validate()) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please correct the errors in the form')),
+    );
+    return;
+  }
 
-    String draftID = "${widget.officerID}_${widget.uniqueIdNotifier.value}";
-    DocumentReference draftRef =
-        FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
+  String draftID = "${widget.officerID}_${widget.uniqueIdNotifier.value}";
+  DocumentReference draftRef =
+      FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
 
-    try {
-      DocumentSnapshot draftSnapshot = await draftRef.get();
-      if (draftSnapshot.exists) {
-        Map<String, dynamic> draftData =
-            draftSnapshot.data() as Map<String, dynamic>;
+  try {
+    DocumentSnapshot draftSnapshot = await draftRef.get();
+    if (draftSnapshot.exists) {
+      Map<String, dynamic> draftData =
+          draftSnapshot.data() as Map<String, dynamic>;
 
-        await FirebaseFirestore.instance.collection('accident_report').add({
-          'A': draftData['A'],
-          'E': draftData['E'],
-          'C': draftData['C'],
-          'O': draftData['O'],
-          'officerID': widget.officerID,
-          'createdAt': draftData['createdAt'],
-          'submittedAt': FieldValue.serverTimestamp(),
-        });
+      // Add the draft data to the accident_report collection
+      await FirebaseFirestore.instance.collection('accident_report').add({
+        'A': draftData['A'],
+        'E': draftData['E'],
+        'C': draftData['C'],
+        'O': draftData['O'],
+        'officerID': widget.officerID,
+        'createdAt': draftData['createdAt'],
+        'submittedAt': FieldValue.serverTimestamp(),
+      });
 
-        await draftRef.delete();
+      // Delete the draft after successful submission
+      await draftRef.delete();
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Report submitted successfully')),
-        );
-      }
-    } catch (e) {
-      print('Failed to submit report: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to submit report: $e')),
+        const SnackBar(content: Text('Report submitted successfully')),
+      );
+    } else {
+      // Handle the case where the draft does not exist
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Draft data not found')),
       );
     }
+  } catch (e) {
+    print('Failed to submit report: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to submit report: $e')),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -424,37 +435,71 @@ class TabOtherState extends State<TabOther> {
               SizedBox(height: 20),
               _buildAdditionalImagesField(),
               SizedBox(height: 50.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    width: 150,
-                    child: ElevatedButton(
-                      child: Text(
-                        'Save',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
+                  // Row for Save and Exit buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 150,
+                        child: ElevatedButton(
+                          child: const Text(
+                            'Save',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          onPressed: saveOtherDraft,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromARGB(255, 208, 208, 208),
+                           /* shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),*/
+                          ),
                         ),
                       ),
-                      onPressed: saveOtherDraft,
-                    ),
+                      Container(
+                        width: 150,
+                        child: ElevatedButton(
+                          child: const Text(
+                            'Exit',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context)
+                                .popUntil((route) => route.isFirst);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                    child: Text(
-                      'Submit',
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
-                    ),
-                    onPressed: submitAccidentReport,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xfffbbe00),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                  const SizedBox(height: 16), // Add some spacing between rows
+                  // Submit button below Save and Exit row
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      child: const Text(
+                        'Submit',
+                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      ),
+                      onPressed: submitAccidentReport,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xfffbbe00),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
                       ),
                     ),
                   ),
                 ],
-              ),
+              )
             ],
           ),
         ),

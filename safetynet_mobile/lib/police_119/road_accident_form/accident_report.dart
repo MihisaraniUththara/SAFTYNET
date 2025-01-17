@@ -39,26 +39,23 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
 
   /// Fetch AR-no and initialize fields
   Future<void> initializeFields() async {
-    // Check if draftData is provided
-    if (widget.draftData != null) {
-      setState(() {
-        arNo = widget.draftData!['ARno']?.toString() ?? '...';
-        stationNumber =
-            widget.draftData!['sno']?.toString() ?? 'Unknown';
-        year = widget.draftData!['year']?.toString() ?? '...';
-      });
-    } else {
-      // Fetch AR number if draftData is not provided
-      final arNumber = await calculateARNo();
-      setState(() {
-        arNo = arNumber;
-        stationNumber =
-            Provider.of<PoliceStationProvider>(context, listen: false)
-                .stationNumber;
-        year = DateTime.now().year.toString();
-      });
-    }
+  if (widget.draftData != null) {
+    setState(() {
+      arNo = widget.draftData?['ARno']?.toString() ?? '...';
+      stationNumber = widget.draftData?['sno']?.toString() ?? 'Unknown';
+      year = widget.draftData?['year']?.toString() ?? DateTime.now().year.toString();
+    });
+  } else {
+    final arNumber = await calculateARNo();
+    final provider = Provider.of<PoliceStationProvider>(context, listen: false);
+
+    setState(() {
+      arNo = arNumber;
+      stationNumber = provider.stationNumber ;
+      year = DateTime.now().year.toString();
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +93,7 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                       style: const TextStyle(fontSize: 20.0),
                     ),
                     Text("Police 297 B",
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20.0,
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold)),

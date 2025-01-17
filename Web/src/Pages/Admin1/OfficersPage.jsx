@@ -31,12 +31,11 @@ const Officers = () => {
 
   const [columnSearch, setColumnSearch] = useState({
     name: '',
-    dob: '',
     nic: '',
-    police_id: '',
+    badgeNumber: '',
     role: '',
     station: '',
-    phone_no: '',
+    phoneNumber: '',
     email: ''
   });
 
@@ -117,12 +116,11 @@ const Officers = () => {
       try {
         await updateDoc(doc(db, 'police', selectedOfficer.id), {
           name: selectedOfficer.name,
-          dob: selectedOfficer.dob,
           nic: selectedOfficer.nic,
-          police_id: selectedOfficer.police_id,
+          badgeNumber: selectedOfficer.badgeNumber,
           role: selectedOfficer.role,
           station: selectedOfficer.station,
-          phone_no: selectedOfficer.phone_no,
+          phoneNumber: selectedOfficer.phoneNumber,
           email: selectedOfficer.email,
         });
         fetchOfficerData(); // Re-fetch data after update
@@ -167,10 +165,9 @@ const Officers = () => {
     <div className="flex-1 flex flex-col">
       <Header />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="text-center">
           <h1 className="text-3xl text-black text-center p-2 font-bold">Registered Officers</h1>
-        </header>
-        <main className="flex-1 overflow-auto p-4">
+
+        <main className="flex-1 overflow-auto p-4 flex-col">
           <div className="flex justify-end mb-2">
             <TextField
               variant="outlined"
@@ -211,13 +208,10 @@ const Officers = () => {
                     <TableSortLabel>Name</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Date of Birth</TableSortLabel>
-                  </TableCell>
-                  <TableCell className="border-r border-b-0 border-gray-300">
                     <TableSortLabel>NIC</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
-                    <TableSortLabel>Police ID</TableSortLabel>
+                    <TableSortLabel>Badge No</TableSortLabel>
                   </TableCell>
                   <TableCell className="border-r border-b-0 border-gray-300">
                     <TableSortLabel>Role</TableSortLabel>
@@ -245,16 +239,6 @@ const Officers = () => {
                       fullWidth
                     />
                   </TableCell>
-                  <TableCell >
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      placeholder="Search DOB"
-                      value={columnSearch.dob}
-                      onChange={(e) => handleColumnSearchChange(e, 'dob')}
-                      fullWidth
-                    />
-                  </TableCell>
                   <TableCell>
                     <TextField
                       variant="outlined"
@@ -270,8 +254,8 @@ const Officers = () => {
                       variant="outlined"
                       size="small"
                       placeholder="Search police ID"
-                      value={columnSearch.police_id}
-                      onChange={(e) => handleColumnSearchChange(e, 'police_id')}
+                      value={columnSearch.badgeNumber}
+                      onChange={(e) => handleColumnSearchChange(e, 'badgeNumber')}
                       fullWidth
                     />
                   </TableCell>
@@ -300,8 +284,8 @@ const Officers = () => {
                       variant="outlined"
                       size="small"
                       placeholder="Search phone no"
-                      value={columnSearch.phone_no}
-                      onChange={(e) => handleColumnSearchChange(e, 'phone_no')}
+                      value={columnSearch.phoneNumber}
+                      onChange={(e) => handleColumnSearchChange(e, 'phoneNumber')}
                       fullWidth
                     />
                   </TableCell>
@@ -332,13 +316,10 @@ const Officers = () => {
                         {highlightText(officer.name || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
-                        {highlightText(officer.dob || 'N/A', search)}
-                      </TableCell>
-                      <TableCell className="border-r border-gray-300">
                         {highlightText(officer.nic || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
-                        {highlightText(officer.police_id || 'N/A', search)}
+                        {highlightText(officer.badgeNumber || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
                         {highlightText(officer.role || 'N/A', search)}
@@ -347,7 +328,7 @@ const Officers = () => {
                         {highlightText(officer.station || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
-                        {highlightText(officer.phone_no || 'N/A', search)}
+                        {highlightText(officer.phoneNumber || 'N/A', search)}
                       </TableCell>
                       <TableCell className="border-r border-gray-300">
                         {highlightText(officer.email || 'N/A', search)}
@@ -396,15 +377,15 @@ const Officers = () => {
           <TextField
             margin="dense"
             label="Phone Number"
-            value={selectedOfficer?.phone_no || ''}
-            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, phone_no: e.target.value })}
+            value={selectedOfficer?.phoneNumber || ''}
+            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, phoneNumber: e.target.value })}
             fullWidth
           />
           <TextField
             margin="dense"
             label="Police ID"
-            value={selectedOfficer?.police_id || ''}
-            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, police_id: e.target.value })}
+            value={selectedOfficer?.badgeNumber || ''}
+            onChange={(e) => setSelectedOfficer({ ...selectedOfficer, badgeNumber: e.target.value })}
             fullWidth
           />
         </DialogContent>

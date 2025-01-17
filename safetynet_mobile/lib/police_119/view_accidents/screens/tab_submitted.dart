@@ -7,7 +7,10 @@ class TabSubmitted extends StatelessWidget {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('accident_report')
-          .where('submittedAt', isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: 14)))
+          .where('submittedAt',
+              isGreaterThanOrEqualTo:
+                  DateTime.now().subtract(Duration(days: 14)))
+          
           .orderBy('submittedAt', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
@@ -41,17 +44,33 @@ class TabSubmitted extends StatelessWidget {
             final report = reports[index];
 
             // Extract data safely
-            final accidentNo = report.data().containsKey('A5') ? report['A5'] : 'N/A';
-            final oicApp = report.data().containsKey('oicApp') ? report['oicApp'] : 'N/A';
+            final accidentNo =
+                report.data().containsKey('A') && report['A'].containsKey('A5')
+                    ? report['A']['A5']
+                    : 'N/A';
+            final oicApp =
+                report.data().containsKey('oicApp') ? report['oicApp'] : 'N/A';
+            final headApp = report.data().containsKey('headApp')
+                ? report['headApp']
+                : 'N/A';
             final submittedAt = report.data().containsKey('submittedAt')
                 ? (report['submittedAt'] as Timestamp).toDate()
                 : null;
-            final officerID = report.data().containsKey('officerID') ? report['officerID'] : 'N/A';
+            final submit =
+                report.data().containsKey('submit') ? report['submit'] : 'N/A';
+            final officerID = report.data().containsKey('officerID')
+                ? report['officerID']
+                : 'N/A';
 
-            final a3 = report.data().containsKey('A3') ? report['A3'] : 'N/A';
-            final a4 = report.data().containsKey('A4') ? report['A4'] : 'N/A';
+            final a3 =
+                report.data().containsKey('A') && report['A'].containsKey('A3')
+                    ? report['A']['A3']
+                    : 'N/A';
+            final a4 =
+                report.data().containsKey('A') && report['A'].containsKey('A3')
+                    ? report['A']['A3']
+                    : 'N/A';
             //final ActionTakenByPolice = report.data().containsKey('A30') ? report['A30'] : 'N/A';
-
 
             // Combine A3 and A4 as the date-time
             final DateTime = '$a3 $a4';
@@ -67,10 +86,13 @@ class TabSubmitted extends StatelessWidget {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('OIC App: $oicApp'),
-                    Text('Submitted At: ${submittedAt != null ? submittedAt.toString() : 'N/A'}'),
+                    Text(
+                        'Submitted At: ${submittedAt != null ? submittedAt.toString() : 'N/A'}'),
                     Text('Officer ID: $officerID'),
                     Text('Date and Time: $DateTime'),
+                    Text('OIC Approval: $oicApp'),
+                    Text('Head Office Approval: $headApp'),
+                    Text('Submit Status: $submit'),
                     //Text('Action taken by police: $'),
                   ],
                 ),
