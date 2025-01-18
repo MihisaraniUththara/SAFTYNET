@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:safetynet_mobile/police_119/view_accidents/widgets/report_officer_validation_dialog.dart';
+import 'package:safetynet_mobile/police_119/widgets/report_officer_validation_dialog.dart';
 
 
 class AddAccidentReportCard extends StatelessWidget {

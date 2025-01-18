@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:safetynet_mobile/drivers/authentication/signup_screen.dart';
 import 'package:safetynet_mobile/drivers/pages/home.dart';
-import 'package:safetynet_mobile/police_119/home_page.dart';
+import 'package:safetynet_mobile/police_119/screens/home_page.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

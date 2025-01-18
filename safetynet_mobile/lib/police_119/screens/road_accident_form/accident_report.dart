@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/calculate_ar_no.dart';
-import '../services/police_station_provider.dart';
+import '../../models/calculate_ar_no.dart';
+import '../../services/police_station_provider.dart';
 import 'tab_accident.dart';
 import 'tab_element.dart';
 import 'tab_casualty.dart';
