@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:safetynet_mobile/police_119/view_accidents/screens/report_notification_screen.dart';
-import '../drivers/authentication/login_screen.dart';
-import 'view_accidents/widgets/view_accidents_card.dart';
-import 'view_accidents/widgets/add_accident_report_card.dart';
-import 'services/accident_listener_service.dart';
+import 'package:safetynet_mobile/police_119/screens/report_notification_screen.dart';
+import '../../drivers/authentication/login_screen.dart';
+import '../widgets/view_accidents_card.dart';
+import '../widgets/add_accident_report_card.dart';
+import '../services/accident_listener_service.dart';
 import 'package:provider/provider.dart';
-import 'services/police_station_provider.dart';
-import 'services/report_notification_service.dart';
+import '../services/police_station_provider.dart';
+import '../services/report_notification_service.dart';
 
 class HomePage extends StatefulWidget {
   @override

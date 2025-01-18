@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'screens/tab_submitted.dart';
-import 'screens/tab_new.dart';
-import 'screens/tab_onprogress.dart';
+import 'tab_submitted.dart';
+import 'tab_new.dart';
+import 'tab_onprogress.dart';
 
 class AccidentDetailsPage extends StatelessWidget {
 

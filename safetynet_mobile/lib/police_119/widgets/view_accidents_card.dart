@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../accident_details_page.dart';
-import '../../services/accident_listener_service.dart';
+import '../screens/view_accidents/accident_details_page.dart';
+import '../services/accident_listener_service.dart';
 
 class ViewAccidentsCard extends StatefulWidget {
   final String userEmail;

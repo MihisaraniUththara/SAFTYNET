@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../home_page.dart';
-import '../models/accident_location.dart';
+import '../../models/accident_location.dart';
 
 class StartRidePage extends StatefulWidget {
   final AccidentLocation accidentLocation;
