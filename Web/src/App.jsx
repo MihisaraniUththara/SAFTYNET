@@ -44,17 +44,21 @@ import HeadReport from './Pages/Head/Report'
 import AccidentsReport from './Components/Report/Anual/AccidentsReport';
 import HeadAnalysischarts from './Components/AnalyzedData'
 
+
 import AdminLayout from './Pages/Admin/Layout'
+import AdminDashboard from './Pages/Admin/DashboardPage';
+import OfficerReg from './Pages/Admin/OfficerReg';
+
 
 import DutyList from './Pages/Oic/Duty'
 
 import { AuthContext } from './Context/AuthContext';
 
-import Dashboard from './Pages/Admin1/DashboardPage';
-import OfficerReg from './Pages/Admin1/OfficerRegPage';
-import Officers from './Pages/Admin1/OfficersPage';
-import Drivers from './Pages/Admin1/DriversPage';
-import Stations from './Pages/Admin1/StationsPage';
+// import Dashboard from './Pages/Admin1/DashboardPage';
+// import OfficerReg from './Pages/Admin1/OfficerRegPage';
+// import Officers from './Pages/Admin1/OfficersPage';
+// import Drivers from './Pages/Admin1/DriversPage';
+// import Stations from './Pages/Admin1/StationsPage';
 
 
 
@@ -126,15 +130,24 @@ function App() {
         <Route path="/reports/annual" element={<AccidentsReport />} />
         <Route path='Analysis/annual' element={<RequireAuth><HeadAnalysischarts/></RequireAuth>}/>
 
+
+
+        {/*Admin new mihisarani edited*/}
+        <Route path='Admin' element={<AdminLayout />}>
+          <Route index element={<RequireAuth><AdminDashboard /></RequireAuth>} />
+          <Route path='officerReg' element={<RequireAuth><OfficerReg/></RequireAuth>}/>
+        </Route>
+
         {/* Admin */}
 
-        <Route path='Admin'>
-          <Route index element={<RequireAuth><Dashboard /></RequireAuth>} />
+          
+          
+          {/* <Route index element={<RequireAuth><Dashboard /></RequireAuth>} />
           <Route path='officerReg' element={<RequireAuth><OfficerReg/></RequireAuth>}/>
           <Route path='officers' element={<RequireAuth><Officers/></RequireAuth>}/>
           <Route path='drivers' element={<RequireAuth><Drivers/></RequireAuth>}/>
-          <Route path='stations' element={<RequireAuth><Stations/></RequireAuth>}/>
-        </Route>
+          <Route path='stations' element={<RequireAuth><Stations/></RequireAuth>}/> */}
+        
       </Route>
     </Routes>
   </BrowserRouter>,
