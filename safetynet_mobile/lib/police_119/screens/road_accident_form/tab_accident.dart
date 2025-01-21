@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'input_fields.dart';
-import '../services/police_station_provider.dart';
-import '../services/unique_id_generator.dart';
+import '../../widgets/input_fields.dart';
+import '../../services/police_station_provider.dart';
+import '../../services/unique_id_generator.dart';
 
 class TabAccident extends StatefulWidget {
   final String officerID; // Accept officerID

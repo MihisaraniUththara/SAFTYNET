@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../road_accident_form/accident_report.dart';
+import '../screens/road_accident_form/accident_report.dart';
 
 class OfficerValidationDialog extends StatelessWidget {
+  final String accidentNo;
+
+  const OfficerValidationDialog({
+    Key? key,
+    required this.accidentNo,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +29,8 @@ class OfficerValidationDialog extends StatelessWidget {
           child: const Text('Cancel'),
         ),
         TextButton(
-          onPressed: () => _validateAndNavigate(
-              context, officerIdController.text),
+          onPressed: () =>
+              _validateAndNavigate(context, officerIdController.text),
           child: const Text('Submit'),
         ),
       ],
@@ -45,7 +51,6 @@ class OfficerValidationDialog extends StatelessWidget {
         return;
       }
 
-      // Validate Officer ID
       QuerySnapshot officerQuerySnapshot = await FirebaseFirestore.instance
           .collection('police')
           .where('badgeNumber', isEqualTo: officerIdAsNumber)
@@ -57,27 +62,38 @@ class OfficerValidationDialog extends StatelessWidget {
         return;
       }
 
-      // Check duty status
-      DocumentSnapshot officerSnapshot = officerQuerySnapshot.docs.first;
-      final officerData = officerSnapshot.data() as Map<String, dynamic>;
-      if (officerData['day'] == true || officerData['night'] == true) {
+      // Get draft data
+      String draftId = "${officerId}_$accidentNo";
+      DocumentSnapshot draftSnapshot = await FirebaseFirestore.instance
+          .collection('accident_draft')
+          .doc(draftId)
+          .get();
 
-        final officerIdAsString = officerData['badgeNumber'].toString();
-
-        // Navigate to the Accident Report Form
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AccidentReportForm(
-              officerID: officerIdAsString , // Pass Officer ID
-            ),
-          ),
-        );
-      } else {
-        _showError(context, 'Officer is off duty today');
+      if (!draftSnapshot.exists) {
+        _showError(context, 'Accident draft not found');
+        return;
       }
+
+      // Check if officer ID matches
+      final draftData = draftSnapshot.data() as Map<String, dynamic>;
+      final savedOfficerId = draftData['officerID'];
+
+      if (savedOfficerId != officerId) {
+        _showError(context, 'Officer ID does not match the saved Officer ID');
+        return;
+      }
+
+      // Navigate to accident form
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => AccidentReportForm(
+            officerID: officerId,
+            draftData: draftData,
+          ),
+        ),
+      );
     } catch (e) {
-      _showError(context, 'An error occurred: ${e.toString()}');
+      _showError(context, 'An error occurred. Please try again.');
     }
   }
 

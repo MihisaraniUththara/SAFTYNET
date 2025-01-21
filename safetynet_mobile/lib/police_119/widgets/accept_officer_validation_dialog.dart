@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import '../../models/accident_location.dart';
-import '../../services/unique_id_generator.dart';
-import '../map_toaccident.dart';
-import '../../services/police_station_provider.dart';
+import '../models/accident_location.dart';
+import '../services/unique_id_generator.dart';
+import '../screens/view_accidents/map_toaccident.dart';
+import '../services/police_station_provider.dart';
 
 class OfficerValidationDialog extends StatelessWidget {
   final String accidentId;

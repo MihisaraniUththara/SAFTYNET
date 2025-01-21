@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'input_fields.dart';
+import '../../widgets/input_fields.dart';
 
 class TabElement extends StatefulWidget {
   final String officerID; // Accept officerID

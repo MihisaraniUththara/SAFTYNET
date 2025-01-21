@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../services/report_notification_service.dart';
+import '../services/report_notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ReportNotificationScreen extends StatefulWidget {
