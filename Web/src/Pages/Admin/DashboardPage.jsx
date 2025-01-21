@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import SidebarHeader from './SideBar';
+import SidebarHeader from '../Admin1/SideBar';
 import { FiUsers, FiAlertTriangle, FiUserCheck, FiSlash, FiHome } from 'react-icons/fi';
-import AccidentStatChart from './Table_AccidentStat';
-import VehicleTypesChart from './Table_VehicleTypes';
-import SeverityChart from './Table_Severity';
-import SideBarAdmin from '../../Components/SideBarAdmin';
-import Header from '../../Components/Admin/Header';
+import AccidentStatChart from '../Admin1/Table_AccidentStat';
+import VehicleTypesChart from '../Admin1/Table_VehicleTypes';
+import SeverityChart from '../Admin1/Table_Severity';
+
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
 
@@ -104,10 +103,8 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="flex h-screen bg-neutral-100 w-screen overflow-hidden">
-      <SideBarAdmin />
-      <div className="flex-1 flex flex-col">
-        <Header />
+    <div>
+      <div>
         <div className="flex-1 flex flex-col p-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7 p-4">
     <div className="bg-white shadow-lg rounded-lg p-5 flex items-center hover:shadow-xl transition-shadow h-25">
