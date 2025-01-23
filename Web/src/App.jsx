@@ -48,6 +48,8 @@ import HeadAnalysischarts from './Components/AnalyzedData'
 import AdminLayout from './Pages/Admin/Layout'
 import AdminDashboard from './Pages/Admin/DashboardPage';
 import OfficerReg from './Pages/Admin/OfficerReg';
+import OfficersLayout from './Pages/Admin/OfficersLayout';
+import Officers from './Pages/Admin/Officers';
 
 
 import DutyList from './Pages/Oic/Duty'
@@ -136,6 +138,9 @@ function App() {
         <Route path='Admin' element={<AdminLayout />}>
           <Route index element={<RequireAuth><AdminDashboard /></RequireAuth>} />
           <Route path='officerReg' element={<RequireAuth><OfficerReg/></RequireAuth>}/>
+          <Route path='officers' element={<RequireAuth><OfficersLayout/></RequireAuth>}>
+            <Route index element={<Officers/>} />
+          </Route>
         </Route>
 
         {/* Admin */}

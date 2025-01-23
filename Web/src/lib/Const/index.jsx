@@ -207,3 +207,16 @@ export const SUBMENU_LINKS_DUTY = [
 	},
 	
 ]
+
+export const SUBMENU_LINKS_ADMIN = [
+	{
+		key: 'OFFICERS',
+		label: 'OFFICERS',
+		path: '/admin/officers',
+	},
+	{
+		key: 'OIC',
+		label: 'OIC',
+		path: '/Admin/officers/oic',
+	},
+]
