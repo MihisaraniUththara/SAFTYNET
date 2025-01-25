@@ -50,6 +50,7 @@ import AdminDashboard from './Pages/Admin/DashboardPage';
 import OfficerReg from './Pages/Admin/OfficerReg';
 import OfficersLayout from './Pages/Admin/OfficersLayout';
 import Officers from './Pages/Admin/Officers';
+import Oic from './Pages/Admin/oic';
 
 
 import DutyList from './Pages/Oic/Duty'
@@ -139,7 +140,8 @@ function App() {
           <Route index element={<RequireAuth><AdminDashboard /></RequireAuth>} />
           <Route path='officerReg' element={<RequireAuth><OfficerReg/></RequireAuth>}/>
           <Route path='officers' element={<RequireAuth><OfficersLayout/></RequireAuth>}>
-            <Route index element={<Officers/>} />
+            <Route index element={<RequireAuth><Officers/></RequireAuth>} />
+            <Route path='oic' element={<RequireAuth><Oic/></RequireAuth>} />
           </Route>
         </Route>
 
