@@ -32,7 +32,7 @@ const Officers = () => {
 
           // Push the updated data
           // Push the updated data only if `suspend` is false or the field doesn't exist
-if (!data.suspend || data.suspend === false) {
+if (!data.suspend || data.suspend === false ) {
     officerData.push({ id: doc.id, collection: col, ...data });
   }
         });
