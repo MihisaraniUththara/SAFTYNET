@@ -40,9 +40,15 @@ class _StartRidePageState extends State<StartRidePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFfbbe00),
-        title: const Text('Accident Location', 
-          style: TextStyle(color: Colors.black)
+        title: const Text(
+          'Accident Location',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        centerTitle: true,
       ),
       body: Stack(
         children: [
@@ -75,9 +81,7 @@ class _StartRidePageState extends State<StartRidePage> {
               child: Text(
                 'Location: ${widget.accidentLocation.address ?? "Unknown"}',
                 style: const TextStyle(
-                  color: Colors.red, 
-                  fontWeight: FontWeight.bold
-                ),
+                    color: Colors.red, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -95,11 +99,9 @@ class _StartRidePageState extends State<StartRidePage> {
                     icon: const Icon(Icons.navigation),
                     label: const Text("Open in Google Maps"),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor:  const Color(0xFFfbbe00),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 20, 
-                        vertical: 10
-                      ),
+                          horizontal: 20, vertical: 10),
                     ),
                   ),
                   const SizedBox(height: 10),

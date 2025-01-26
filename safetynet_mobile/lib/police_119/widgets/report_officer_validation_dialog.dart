@@ -3,6 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../screens/road_accident_form/accident_report.dart';
 
 class OfficerValidationDialog extends StatelessWidget {
+  final String uniqueIdNo;
+
+  const OfficerValidationDialog({
+    Key? key,
+    required this.uniqueIdNo,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,32 +29,34 @@ class OfficerValidationDialog extends StatelessWidget {
           child: const Text('Cancel'),
         ),
         TextButton(
-          onPressed: () => _validateAndNavigate(
-              context, officerIdController.text),
-          child: const Text('Submit'),
+          onPressed: () =>
+              _validateAndNavigate(context, officerIdController.text,uniqueIdNo),
+          child: const Text('Enter'),
         ),
       ],
     );
   }
 
   Future<void> _validateAndNavigate(
-      BuildContext context, String officerId) async {
+      BuildContext context, String officerId, String uniqueIdNo) async {
     if (officerId.isEmpty) {
       _showError(context, 'Officer ID is required');
       return;
     }
 
     try {
-      final int officerIdAsNumber = int.tryParse(officerId) ?? -1;
-      if (officerIdAsNumber == -1) {
+      final int officerIdAsNumber = int.tryParse(officerId) ?? 0;
+      if (officerIdAsNumber == 0) {
         _showError(context, 'Invalid Officer ID format');
         return;
       }
 
+
       // Validate Officer ID
       QuerySnapshot officerQuerySnapshot = await FirebaseFirestore.instance
-          .collection('police')
-          .where('badgeNumber', isEqualTo: officerIdAsNumber)
+          .collection('driver_accidents')
+          .where('officer_id', isEqualTo: officerIdAsNumber)
+          .where('unique_id_number', isEqualTo: uniqueIdNo)
           .limit(1)
           .get();
 
@@ -57,25 +65,20 @@ class OfficerValidationDialog extends StatelessWidget {
         return;
       }
 
-      // Check duty status
       DocumentSnapshot officerSnapshot = officerQuerySnapshot.docs.first;
       final officerData = officerSnapshot.data() as Map<String, dynamic>;
-      if (officerData['day'] == true || officerData['night'] == true) {
+      final officerIdAsString = officerData['badgeNumber'].toString();
 
-        final officerIdAsString = officerData['badgeNumber'].toString();
-
-        // Navigate to the Accident Report Form
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AccidentReportForm(
-              officerID: officerIdAsString , // Pass Officer ID
-            ),
+      // Navigate to the Accident Report Form
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AccidentReportForm(
+            officerID: officerIdAsString, // Pass Officer ID
+            uniqueIDNo: uniqueIdNo,
           ),
-        );
-      } else {
-        _showError(context, 'Officer is off duty today');
-      }
+        ),
+      );
     } catch (e) {
       _showError(context, 'An error occurred: ${e.toString()}');
     }

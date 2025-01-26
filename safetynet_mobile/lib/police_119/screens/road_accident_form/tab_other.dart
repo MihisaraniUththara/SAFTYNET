@@ -292,7 +292,7 @@ class TabOtherState extends State<TabOther> {
       return;
     }
 
-    String draftID = "${widget.officerID}_${widget.uniqueIdNotifier.value}";
+    String draftID = widget.uniqueIdNotifier.value.toString();
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
 
@@ -361,7 +361,7 @@ class TabOtherState extends State<TabOther> {
     return;
   }
 
-  String draftID = "${widget.officerID}_${widget.uniqueIdNotifier.value}";
+  String draftID = widget.uniqueIdNotifier.value.toString();
   DocumentReference draftRef =
       FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
 

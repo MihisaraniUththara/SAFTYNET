@@ -1,15 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../services/police_station_provider.dart';
 import '../../widgets/edit_officer_validation_dialog.dart';
 
 class TabOnProgress extends StatelessWidget {
   const TabOnProgress({Key? key}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
+
+    final policeStationProvider = context.read<PoliceStationProvider>();
+    final station = policeStationProvider.station;
+
     return StreamBuilder<QuerySnapshot>(
       stream:
-          FirebaseFirestore.instance.collection('accident_draft').snapshots(),
+          FirebaseFirestore.instance
+          .collection('accident_draft')
+          .where('A.A2', isEqualTo: station)
+          .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -28,7 +38,7 @@ class TabOnProgress extends StatelessWidget {
           return const Center(
             child: Text(
               'No on-progress accident reports available.',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+              style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 158, 158, 158)),
             ),
           );
         }
@@ -41,7 +51,7 @@ class TabOnProgress extends StatelessWidget {
                 document.data() as Map<String, dynamic>;
             print(data);
 
-            final String accidentNo = data['A']?['A5']?.toString() ?? 'N/A';
+            final String uniqueIdNo = data['A']?['A5']?.toString() ?? 'N/A';
             print(data['A']?['A5']);
             final String roadName =
                 '${data['A']?['A10']?.toString() ?? ''} ${data['A']?['A11']?.toString() ?? 'unknown'}'
@@ -67,7 +77,7 @@ class TabOnProgress extends StatelessWidget {
               elevation: 5,
               child: ListTile(
                 leading: const Icon(Icons.location_on),
-                title: Text('Accident No: $accidentNo'),
+                title: Text('Unique ID No: $uniqueIdNo'),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -87,8 +97,8 @@ class TabOnProgress extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return OfficerValidationDialog(
-                          accidentNo:
-                              accidentNo, // Pass the accident number here
+                          uniqueIdNo:
+                              uniqueIdNo, // Pass the accident number here
                         );
                       },
                     );
