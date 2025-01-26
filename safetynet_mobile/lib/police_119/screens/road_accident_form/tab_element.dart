@@ -331,7 +331,7 @@ class _TabElementState extends State<TabElement> {
         'E18',
         'E19',
         'E20',
-        'E21'
+        'E21',
       ][sectionIndex];
       if (_checkboxStates.containsKey(section)) {
         for (var row in _checkboxStates[section]!) {
@@ -377,7 +377,7 @@ class _TabElementState extends State<TabElement> {
 
   Future<void> saveElementDraft() async {
     String draftID =
-        "${widget.officerID}_${widget.uniqueIdNotifier.value}"; // Use the passed officerID
+        "$widget.uniqueIdNotifier.value"; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);

@@ -10,12 +10,13 @@ import 'tab_other.dart';
 class AccidentReportForm extends StatefulWidget {
   final String officerID; // Define officerID
   final Map<String, dynamic>? draftData; // Option to pass draft data
+  final String uniqueIDNo;
 
   // Pass officerID via the constructor
   AccidentReportForm({
     required this.officerID,
+    required this.uniqueIDNo, // Provide a default value
     this.draftData,
-    /*Nullable draft data*/
   });
 
   @override
@@ -39,28 +40,20 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
 
   /// Fetch AR-no and initialize fields
   Future<void> initializeFields() async {
-  if (widget.draftData != null) {
-    setState(() {
-      arNo = widget.draftData?['ARno']?.toString() ?? '...';
-      stationNumber = widget.draftData?['sno']?.toString() ?? 'Unknown';
-      year = widget.draftData?['year']?.toString() ?? DateTime.now().year.toString();
-    });
-  } else {
-    final arNumber = await calculateARNo();
-    final provider = Provider.of<PoliceStationProvider>(context, listen: false);
+    final uniqueIdParts = widget.uniqueIDNo.split('-');
+    final arNumber = uniqueIdParts.length > 3 ? uniqueIdParts[2] : null;
+    final yr = uniqueIdParts.length > 3 ? uniqueIdParts[3] : null;
+    final policeStationProvider = context.read<PoliceStationProvider>();
 
     setState(() {
       arNo = arNumber;
-      stationNumber = provider.stationNumber ;
-      year = DateTime.now().year.toString();
+      stationNumber = policeStationProvider.stationNumber;
+      year = yr;
     });
   }
-}
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<PoliceStationProvider>();
-
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -73,6 +66,7 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          centerTitle: true,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(70.0),
             child: Column(
@@ -81,15 +75,15 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Text(
-                      "Station ${stationNumber ?? provider.stationNumber}",
+                      "Station $stationNumber",
                       style: const TextStyle(fontSize: 20.0),
                     ),
                     Text(
-                      "AR-no ${arNo ?? '...'}",
+                      "AR-no $arNo",
                       style: const TextStyle(fontSize: 20.0),
                     ),
                     Text(
-                      year ?? DateTime.now().year.toString(),
+                      "$year",
                       style: const TextStyle(fontSize: 20.0),
                     ),
                     Text("Police 297 B",
@@ -121,6 +115,7 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                   officerID: widget.officerID,
                   draftData: widget.draftData,
                   uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                  uniqueIdNo: widget.uniqueIDNo,
                 ),
                 TabElement(
                   officerID: widget.officerID,

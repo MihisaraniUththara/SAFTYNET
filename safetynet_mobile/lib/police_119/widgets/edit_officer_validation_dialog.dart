@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import '../screens/road_accident_form/accident_report.dart';
+import '../services/police_station_provider.dart';
 
 class OfficerValidationDialog extends StatelessWidget {
-  final String accidentNo;
+  final String uniqueIdNo;
 
   const OfficerValidationDialog({
     Key? key,
-    required this.accidentNo,
+    required this.uniqueIdNo,
   }) : super(key: key);
 
   @override
@@ -31,7 +33,7 @@ class OfficerValidationDialog extends StatelessWidget {
         TextButton(
           onPressed: () =>
               _validateAndNavigate(context, officerIdController.text),
-          child: const Text('Submit'),
+          child: const Text('Enter'),
         ),
       ],
     );
@@ -45,17 +47,21 @@ class OfficerValidationDialog extends StatelessWidget {
     }
 
     try {
-      final int officerIdAsNumber = int.tryParse(officerId) ?? -1;
-      if (officerIdAsNumber == -1) {
+      final int officerIdAsNumber = int.tryParse(officerId) ?? 0;
+      if (officerIdAsNumber == 0 ){
         _showError(context, 'Invalid Officer ID format');
         return;
       }
 
+      final policeStationProvider = context.read<PoliceStationProvider>();
+      final station = policeStationProvider.station;
+      
       QuerySnapshot officerQuerySnapshot = await FirebaseFirestore.instance
-          .collection('police')
+          .collection('traffic')
+          .where('station', isEqualTo: station)
           .where('badgeNumber', isEqualTo: officerIdAsNumber)
-          .limit(1)
           .get();
+
 
       if (officerQuerySnapshot.docs.isEmpty) {
         _showError(context, 'Invalid Officer ID');
@@ -63,7 +69,7 @@ class OfficerValidationDialog extends StatelessWidget {
       }
 
       // Get draft data
-      String draftId = "${officerId}_$accidentNo";
+      String draftId = uniqueIdNo;
       DocumentSnapshot draftSnapshot = await FirebaseFirestore.instance
           .collection('accident_draft')
           .doc(draftId)
@@ -89,6 +95,7 @@ class OfficerValidationDialog extends StatelessWidget {
           builder: (context) => AccidentReportForm(
             officerID: officerId,
             draftData: draftData,
+            uniqueIDNo: uniqueIdNo,
           ),
         ),
       );

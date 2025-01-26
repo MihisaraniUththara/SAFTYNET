@@ -1,17 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../services/police_station_provider.dart';
 
 class TabSubmitted extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final policeStationProvider = context.read<PoliceStationProvider>();
+    final station = policeStationProvider.station;
+
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('accident_report')
+          .where('A.A2', isEqualTo: station)
           .where('submittedAt',
               isGreaterThanOrEqualTo:
                   DateTime.now().subtract(Duration(days: 14)))
-          
-          .orderBy('submittedAt', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

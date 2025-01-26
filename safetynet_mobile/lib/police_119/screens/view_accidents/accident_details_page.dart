@@ -14,9 +14,10 @@ class AccidentDetailsPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text(
             'Accident Details',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black,fontSize: 25.0, fontWeight: FontWeight.bold),
           ),
           backgroundColor: const Color(0xfffbbe00),
+          centerTitle: true,
           bottom: TabBar(
             tabs: [
               Tab(text: "New"),

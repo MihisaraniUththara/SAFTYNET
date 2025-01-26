@@ -40,8 +40,8 @@ class TabNew extends StatelessWidget {
         return StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('driver_accidents')
-              .where('accepted', isEqualTo: false)
               .where('police_station_email', isEqualTo: userEmail)
+              .where('accepted', isEqualTo: false)
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -61,7 +61,7 @@ class TabNew extends StatelessWidget {
               return const Center(
                 child: Text(
                   'No new accidents reported.',
-                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                  style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 105, 64, 220)),
                 ),
               );
             }

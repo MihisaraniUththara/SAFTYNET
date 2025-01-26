@@ -4,12 +4,12 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/input_fields.dart';
 import '../../services/police_station_provider.dart';
-import '../../services/unique_id_generator.dart';
 
 class TabAccident extends StatefulWidget {
   final String officerID; // Accept officerID
   final Map<String, dynamic>? draftData; // Accept draft data
   final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier
+  final String uniqueIdNo;
 
   // Pass officerID via the constructor
   const TabAccident({
@@ -17,6 +17,7 @@ class TabAccident extends StatefulWidget {
     required this.officerID,
     this.draftData,
     required this.uniqueIdNotifier,
+    required this.uniqueIdNo,
   });
 
   @override
@@ -79,9 +80,6 @@ class _TabAccidentState extends State<TabAccident> {
 
     final policeStationProvider = context.read<PoliceStationProvider>();
 
-    // Fetch Police Station Details
-    policeStationProvider.fetchPoliceStationDetails();
-
     // Fetch Date-Time from Firestore
     _fetchDateTimeFromDriverAccidents().then((dateTime) {
       _dateController.text = dateTime['date'] ?? '';
@@ -106,17 +104,17 @@ class _TabAccidentState extends State<TabAccident> {
   Future<Map<String, String>> _fetchDateTimeFromDriverAccidents() async {
     String? _fetchedDate;
     String? _fetchedTime;
+    //String? _fetchedDriverlicence;
 
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('driver_accidents')
-          .doc(
-              'some_unique_id') // Replace with your logic to identify the document
+          .where('unique_id_number', isEqualTo: widget.uniqueIdNo) 
           .get();
 
-      if (snapshot.exists) {
-        final data = snapshot.data();
-        if (data != null && data['date_time'] != null) {
+      if (snapshot.docs.isNotEmpty) {
+        final data = snapshot.docs.first.data();
+        if (data['date_time'] != null) {
           DateTime dateTime = (data['date_time'] as Timestamp).toDate();
           _fetchedDate =
               '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
@@ -141,9 +139,7 @@ class _TabAccidentState extends State<TabAccident> {
     _dnoController.text = policeStationProvider.divisionNumber;
     _stationController.text = policeStationProvider.station;
     _snoController.text = policeStationProvider.stationNumber;
-    UniqueIdGenerator.generate(context).then((uniqueId) {
-      _uniqueIdController.text = uniqueId;
-    });
+    _uniqueIdController.text = widget.uniqueIdNo;
 
     // Auto-fill date and time (fetched from Firestore earlier)
     _dateController.text = fetchedDate ?? ''; // Fallback empty if not fetched
@@ -208,7 +204,7 @@ class _TabAccidentState extends State<TabAccident> {
     });*/
 
     String draftID =
-        "${widget.officerID}_${_uniqueIdController.text}"; // Use the passed officerID
+        "$widget.uniqueIdNotifier.value"; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
@@ -441,12 +437,6 @@ class _TabAccidentState extends State<TabAccident> {
                   hintText: 'HH:MM', maxchars: 5),
               _buildTextField('A5 Unique ID Number', _uniqueIdController,
                   maxchars: 15),
-              /*UniqueIdInputField(
-          draftData: '01-02-0001-2024', // Example draft data
-          generateUniqueId: () => UniqueIdGenerator.generate(context),
-          controller: _uniqueIdController,
-          label: 'Unique ID Number',
-        ),*/
               SingleChoiceCheckboxInput(
                 topic: 'A6 Class of Accident',
                 labels: const [
