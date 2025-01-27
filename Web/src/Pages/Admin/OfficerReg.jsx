@@ -154,6 +154,7 @@ const OfficerReg = () => {
               badgeNumber: formData.badgeNumber,
               station: formData.station,
               role: formData.role,
+              name: formData.name,
             };
       
             // Save to police collection

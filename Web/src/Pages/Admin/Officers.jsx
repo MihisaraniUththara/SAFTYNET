@@ -32,7 +32,7 @@ const Officers = () => {
 
           // Push the updated data
           // Push the updated data only if `suspend` is false or the field doesn't exist
-if (!data.suspend || data.suspend === false ) {
+if ((!data.suspend || data.suspend === false ) && (!data.retire || data.retire == false)) {
     officerData.push({ id: doc.id, collection: col, ...data });
   }
         });
@@ -78,7 +78,7 @@ if (!data.suspend || data.suspend === false ) {
 
       // Update `suspend` field in the relevant collection
       const officerRef = doc(db, officerCollection, id);
-      await updateDoc(officerRef, { suspend: true });
+      await updateDoc(officerRef, { suspend: true, suspendedAt: new Date().toISOString() });
 
       // Add document to `suspend` collection
       const suspendRef = collection(db, 'suspend');
@@ -92,6 +92,13 @@ if (!data.suspend || data.suspend === false ) {
         suspendedAt: new Date().toISOString(), // Current date and time
       });
       
+      // Update `suspend` and `suspendedAt` in `police` collection
+    const policeRef = doc(db, 'police', id); // Assuming the officer ID is the same
+    await updateDoc(policeRef, {
+      suspend: true,
+      suspendedAt: new Date().toISOString(),
+    });
+    
 
       alert('Officer suspended successfully');
     } catch (error) {
