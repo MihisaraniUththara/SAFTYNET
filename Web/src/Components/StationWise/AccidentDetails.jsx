@@ -29,7 +29,7 @@ const AccidentDetails = () => {
                 onSnapshot(stationQuery, (querySnapshot) => {
                   if (!querySnapshot.empty) {
                     const policeStation = querySnapshot.docs[0].data()?.station || 'Unknown';
-                    setStation(policeStation.toLowerCase()); // Normalize station name
+                    setStation(policeStation); // Normalize station name
                   } else {
                     setStation(null);
                     console.log('null station') // No station found
