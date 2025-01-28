@@ -61,8 +61,8 @@ import { AuthContext } from './Context/AuthContext';
 // import Dashboard from './Pages/Admin1/DashboardPage';
 // import OfficerReg from './Pages/Admin1/OfficerRegPage';
 // import Officers from './Pages/Admin1/OfficersPage';
-// import Drivers from './Pages/Admin1/DriversPage';
-// import Stations from './Pages/Admin1/StationsPage';
+import Drivers from './Pages/Admin/DriversPage';
+import Stations from './Pages/Admin/StationsPage';
 
 
 
@@ -145,6 +145,8 @@ function App() {
             <Route path='oic' element={<RequireAuth><Oic/></RequireAuth>} />
             <Route path='suspend' element={<RequireAuth><Suspend/></RequireAuth>} />
           </Route>
+          <Route path='drivers' element={<RequireAuth><Drivers/></RequireAuth>}/>
+          <Route path='stations' element={<RequireAuth><Stations/></RequireAuth>}/>
         </Route>
 
         {/* Admin */}
