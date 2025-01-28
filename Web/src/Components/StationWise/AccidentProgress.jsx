@@ -29,7 +29,7 @@ const AccidentProgress = () => {
           onSnapshot(stationQuery, (querySnapshot) => {
             if (!querySnapshot.empty) {
               const policeStation = querySnapshot.docs[0].data()?.station || 'Unknown';
-              setStation(policeStation.toLowerCase());
+              setStation(policeStation);
             } else {
               setStation(null);
             }
@@ -71,7 +71,7 @@ const AccidentProgress = () => {
     const accidentQuery = query(
       collection(db, 'accident_report'),
       orderBy('createdAt', 'desc'),
-      where('A.A2', '==', station.toLowerCase()),
+      where('A.A2', '==', station),
       where('createdAt', '>=', thirtyDaysAgo)
     );
 

@@ -25,7 +25,7 @@ const StatCards = () => {
 
         if (!snapshot.empty) {
           const stationData = snapshot.docs[0]?.data()?.station || 'No Station';
-          setStation(stationData.toLowerCase());
+          setStation(stationData);
         } else {
           setStation('No Station Found');
         }
@@ -48,7 +48,7 @@ const StatCards = () => {
     // Real-time listener
     const q = query(
       collection(db, 'accident_report'),
-      where('A.A2', '==', station.toLowerCase()),
+      where('A.A2', '==', station),
       where('createdAt', '>=', startOfDay),
       where('createdAt', '<=', endOfDay)
     );

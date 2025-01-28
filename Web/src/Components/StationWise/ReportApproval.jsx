@@ -30,7 +30,7 @@ const ReportApproval = () => {
           const querySnapshot = await getDocs(stationQuery);
           if (!querySnapshot.empty) {
             const policeStation = querySnapshot.docs[0].data()?.station || 'Unknown';
-            setStation(policeStation.toLowerCase()); // Normalize station name
+            setStation(policeStation); // Normalize station name
           } else {
             setStation(null); // No station found
           }

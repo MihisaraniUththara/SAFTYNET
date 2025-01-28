@@ -228,7 +228,7 @@ export default function VehicleChart() {
 
         if (!snapshot.empty) {
           const stationData = snapshot.docs[0]?.data()?.station || 'No Station';
-          setStation(stationData.toLowerCase());
+          setStation(stationData);
         } else {
           setStation('No Station Found');
         }
