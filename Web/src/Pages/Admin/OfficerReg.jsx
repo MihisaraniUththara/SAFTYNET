@@ -155,6 +155,10 @@ const OfficerReg = () => {
               station: formData.station,
               role: formData.role,
               name: formData.name,
+              suspend: false,
+      retire: false,
+      day: false,
+      night: false,
             };
       
             // Save to police collection
