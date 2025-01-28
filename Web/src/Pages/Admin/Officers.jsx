@@ -142,14 +142,14 @@ if ((!data.suspend || data.suspend === false ) && (!data.retire || data.retire =
                 <td className="p-3">{officer.phoneNumber || officer.phone}</td>
                 <td className="p-3 flex gap-2">
                   <button
-                    className="bg-yellow-button text-white px-3 py-1 rounded-md"
+                    className="bg-yellow-button text-black font-semibold px-3 py-1 rounded-md"
                     onClick={() => alert(`Viewing details for ${officer.name}`)}
                   >
                     Details
                   </button>
                   
                   <button
-                    className="bg-red-500 text-white px-3 py-1 rounded-md"
+                    className="bg-red-500 text-black font-semibold px-3 py-1 rounded-md"
                     onClick={() => handleSuspend(officer)}
                   >
                     Suspend

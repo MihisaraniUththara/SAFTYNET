@@ -51,6 +51,7 @@ import OfficerReg from './Pages/Admin/OfficerReg';
 import OfficersLayout from './Pages/Admin/OfficersLayout';
 import Officers from './Pages/Admin/Officers';
 import Oic from './Pages/Admin/oic';
+import Suspend from './Pages/Admin/Suspend';
 
 
 import DutyList from './Pages/Oic/Duty'
@@ -142,6 +143,7 @@ function App() {
           <Route path='officers' element={<RequireAuth><OfficersLayout/></RequireAuth>}>
             <Route index element={<RequireAuth><Officers/></RequireAuth>} />
             <Route path='oic' element={<RequireAuth><Oic/></RequireAuth>} />
+            <Route path='suspend' element={<RequireAuth><Suspend/></RequireAuth>} />
           </Route>
         </Route>
 

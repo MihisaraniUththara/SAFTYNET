@@ -217,6 +217,11 @@ export const SUBMENU_LINKS_ADMIN = [
 	{
 		key: 'OIC',
 		label: 'OIC',
-		path: '/Admin/officers/oic',
+		path: '/admin/officers/oic',
+	},
+	{
+		key: 'SUSPEND',
+		label: 'SUSPENDS',
+		path: '/admin/officers/suspend',
 	},
 ]

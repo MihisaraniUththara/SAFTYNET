@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import logo from './../assets/Images/logo1.png';
 import {signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from '../firebase';
-import { getDoc, doc } from "firebase/firestore";
+import { getDoc, doc, getDocs, collection, where, query } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './../Context/AuthContext';
 
@@ -15,56 +15,112 @@ const Login = () => {
 
     const {dispatch} = useContext(AuthContext)
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setError(false); // Reset error state before attempting login
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            const userDoc = await getDoc(doc(db, "police", user.uid));
-            if (userDoc.exists()) {
-              const userData = userDoc.data();
-              console.log("User role:", userData.role);
-              dispatch({type:"LOGIN", payload:user})
-              // Redirect user based on role
-              switch (userData.role) {
-                case "Admin":
-                  navigate("/Admin");
-                  break;
-                case "OON":
-                  navigate("/Traffic");
-                  break;
-                case "OONH":
-                  navigate("/Traffic");
-                  break;
-                case "Traffic":
-                  navigate("/Traffic");
-                  break;
-                case "TrafficH":
-                  navigate("/Head");
-                  break;
-                case "OIC":
-                  navigate("/oic");
-                  break;
-                case "Other":
-                  setError(true);
-                  console.log("Other role")
-                  break;
-                default:
-                    setError(true);
-                    console.log("Unknown role");
-                    break;
-              }
-            } else {
-              console.log("No such document!");
-              setError(true); //new change
-            }
-            setError(false);
-          } catch (err) {
-            setError(true);
-          }
+    // const handleLogin = async (e) => {
+    //     e.preventDefault();
+    //     setError(false); // Reset error state before attempting login
+    //     try {
+    //         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    //         const user = userCredential.user;
+    //         const userDoc = await getDoc(doc(db, "police", user.uid));
+    //         if (userDoc.exists()) {
+    //           const userData = userDoc.data();
+    //           console.log("User role:", userData.role);
+    //           dispatch({type:"LOGIN", payload:user})
+    //           // Redirect user based on role
+    //           switch (userData.role) {
+    //             case "Admin":
+    //               navigate("/Admin");
+    //               break;
+    //             case "OON":
+    //               navigate("/Traffic");
+    //               break;
+    //             case "OONH":
+    //               navigate("/Traffic");
+    //               break;
+    //             case "Traffic":
+    //               navigate("/Traffic");
+    //               break;
+    //             case "TrafficH":
+    //               navigate("/Head");
+    //               break;
+    //             case "OIC":
+    //               navigate("/oic");
+    //               break;
+    //             case "Other":
+    //               setError(true);
+    //               console.log("Other role")
+    //               break;
+    //             default:
+    //                 setError(true);
+    //                 console.log("Unknown role");
+    //                 break;
+    //           }
+    //         } else {
+    //           console.log("No such document!");
+    //           setError(true); //new change
+    //         }
+    //         setError(false);
+    //       } catch (err) {
+    //         setError(true);
+    //       }
         
+    // };
+
+
+    const handleLogin = async (e) => {
+      e.preventDefault();
+      setError(false);
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+    
+        // Query the `police` collection for a document where officerID and NIC match
+        const q = query(collection(db, "police"), where("email", "==", email));
+        const querySnapshot = await getDocs(q);
+    
+        if (!querySnapshot.empty) {
+          querySnapshot.forEach((doc) => {
+            const userData = doc.data();
+            console.log("User role:", userData.role);
+            dispatch({ type: "LOGIN", payload: user });
+    
+            // Navigate based on role
+            switch (userData.role) {
+              case "Admin":
+                navigate("/Admin");
+                break;
+              case "OON":
+              case "OONH":
+              case "Traffic":
+                navigate("/Traffic");
+                break;
+              case "TrafficH":
+                navigate("/Head");
+                break;
+              case "OIC":
+                navigate("/oic");
+                break;
+              case "Other":
+                setError(true);
+                console.log("Other role");
+                break;
+              default:
+                setError(true);
+                console.log("Unknown role");
+                break;
+            }
+          });
+        } else {
+          console.log("No document found!");
+          setError(true);
+        }
+      } catch (err) {
+        console.error(err);
+        setError(true);
+      }
     };
+
+    
   return (
     <div  className='bg-neutral-100 h-screen w-screen justify-center'>
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">

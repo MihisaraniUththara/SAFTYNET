@@ -301,13 +301,13 @@ const oic = () => {
                 <td className="p-3">{oic.phone || oic.phoneNumber}</td>
                 <td className="p-3 flex gap-2 justify-center">
                   <button
-                    className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                    className="bg-yellow-button hover:bg-yellow text-black font-bold px-3 py-1 rounded-md"
                     onClick={() => alert(`Viewing details for ${oic.name}`)}
                   >
                     Details
                   </button>
                   <button
-                    className="bg-green-500 text-white px-3 py-1 rounded-md"
+                    className="bg-green-500 text-black font-bold px-3 py-1 rounded-md"
                     onClick={() => handleUpdateClick(oic)}
                   >
                     Update
