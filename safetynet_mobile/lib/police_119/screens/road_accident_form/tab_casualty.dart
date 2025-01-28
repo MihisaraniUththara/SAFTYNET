@@ -231,7 +231,7 @@ class _TabCasualtyState extends State<TabCasualty> {
 
   Future<void> saveCasualtyDraft() async {
     String draftID =
-        "${widget.officerID}_${widget.uniqueIdNotifier.value}"; // Use the passed officerID
+        "$widget.uniqueIdNotifier.value"; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);

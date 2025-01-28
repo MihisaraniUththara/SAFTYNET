@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:safetynet_mobile/police_119/widgets/report_officer_validation_dialog.dart';
-
+import '../screens/road_accident_form/accepted_accidents.dart';
 
 class AddAccidentReportCard extends StatelessWidget {
   @override
@@ -10,7 +9,7 @@ class AddAccidentReportCard extends StatelessWidget {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return OfficerValidationDialog(); // Replace 123 with the actual accident number
+            return AcceptedAccidents(); 
           },
         );
       },

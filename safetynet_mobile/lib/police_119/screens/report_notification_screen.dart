@@ -40,9 +40,10 @@ class ReportNotificationScreenState extends State<ReportNotificationScreen> {
       appBar: AppBar(
         title: const Text(
           'Notifications',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black,fontSize: 25.0, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFfbbe00),
+        centerTitle: true,
         elevation: 0,
       ),
       body: StreamBuilder<List<Map<String, String>>>(
