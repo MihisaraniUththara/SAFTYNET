@@ -24,6 +24,8 @@ class OfficerValidationDialog extends StatelessWidget {
           hintText: "Enter Officer ID",
           border: OutlineInputBorder(),
         ),
+        onSubmitted: (value) =>
+          _validateAndNavigate(context, officerIdController.text),
       ),
       actions: [
         TextButton(
@@ -47,28 +49,35 @@ class OfficerValidationDialog extends StatelessWidget {
     }
 
     try {
-      final int officerIdAsNumber = int.tryParse(officerId) ?? 0;
-      if (officerIdAsNumber == 0 ){
+      //final int officerIdAsNumber = int.tryParse(officerId) ?? 0;
+      /*if (officerIdAsNumber == 0) {
         _showError(context, 'Invalid Officer ID format');
         return;
-      }
+      }*/
 
       final policeStationProvider = context.read<PoliceStationProvider>();
       final station = policeStationProvider.station;
-      
+
+      // Log the station and officer ID being searched
+      print('Validating Officer ID: $officerId for station: $station');
+
+      // Fetch the officer from Firestore
       QuerySnapshot officerQuerySnapshot = await FirebaseFirestore.instance
           .collection('traffic')
           .where('station', isEqualTo: station)
-          .where('badgeNumber', isEqualTo: officerIdAsNumber)
+          .where('badgeNumber', isEqualTo: officerId)
           .get();
 
-
       if (officerQuerySnapshot.docs.isEmpty) {
+        print('No matching officer found in Firestore.');
         _showError(context, 'Invalid Officer ID');
         return;
       }
 
-      // Get draft data
+      // Log the retrieved officer data
+      print('Officer found: ${officerQuerySnapshot.docs.first.data()}');
+
+      // Fetch draft data
       String draftId = uniqueIdNo;
       DocumentSnapshot draftSnapshot = await FirebaseFirestore.instance
           .collection('accident_draft')
@@ -76,15 +85,20 @@ class OfficerValidationDialog extends StatelessWidget {
           .get();
 
       if (!draftSnapshot.exists) {
+        print('Draft not found for Unique ID: $uniqueIdNo');
         _showError(context, 'Accident draft not found');
         return;
       }
 
-      // Check if officer ID matches
       final draftData = draftSnapshot.data() as Map<String, dynamic>;
       final savedOfficerId = draftData['officerID'];
 
+      // Log the officer ID in the draft
+      print('Saved Officer ID in draft: $savedOfficerId');
+
+      // Compare the provided officer ID with the saved officer ID
       if (savedOfficerId != officerId) {
+        print('Provided Officer ID does not match saved Officer ID.');
         _showError(context, 'Officer ID does not match the saved Officer ID');
         return;
       }
@@ -100,6 +114,7 @@ class OfficerValidationDialog extends StatelessWidget {
         ),
       );
     } catch (e) {
+      print('Error during validation: $e');
       _showError(context, 'An error occurred. Please try again.');
     }
   }

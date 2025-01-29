@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:intl/intl.dart';
 import '../../services/police_station_provider.dart';
 
 class TabSubmitted extends StatelessWidget {
@@ -36,7 +36,8 @@ class TabSubmitted extends StatelessWidget {
           return const Center(
             child: Text(
               'No submitted accident reports in the last 14 days.',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+              style: TextStyle(
+                  fontSize: 18, color: Color.fromARGB(255, 49, 48, 50)),
             ),
           );
         }
@@ -44,61 +45,108 @@ class TabSubmitted extends StatelessWidget {
         final reports = snapshot.data!.docs;
 
         return ListView.builder(
+          padding: const EdgeInsets.all(16.0),
           itemCount: reports.length,
           itemBuilder: (context, index) {
             final report = reports[index];
+            final data = report.data() as Map<String, dynamic>;
 
-            // Extract data safely
-            final accidentNo =
-                report.data().containsKey('A') && report['A'].containsKey('A5')
-                    ? report['A']['A5']
-                    : 'N/A';
-            final oicApp =
-                report.data().containsKey('oicApp') ? report['oicApp'] : 'N/A';
-            final headApp = report.data().containsKey('headApp')
-                ? report['headApp']
-                : 'N/A';
-            final submittedAt = report.data().containsKey('submittedAt')
-                ? (report['submittedAt'] as Timestamp).toDate()
-                : null;
-            final submit =
-                report.data().containsKey('submit') ? report['submit'] : 'N/A';
-            final officerID = report.data().containsKey('officerID')
-                ? report['officerID']
-                : 'N/A';
+            final accidentNo = data['A']?['A5'] ?? 'N/A';
+            final oicApp = data['oicApp'] ?? 'N/A';
+            final headApp = data['headApp'] ?? 'N/A';
+            final submittedAt = data['submittedAt'] as Timestamp?;
+            final submit = data['submit'] ?? 'N/A';
+            final officerID = data['officerID'] ?? 'N/A';
+            final a3 = data['A']?['A3'] ?? 'N/A';
+            final a4 = data['A']?['A4'] ?? 'N/A';
 
-            final a3 =
-                report.data().containsKey('A') && report['A'].containsKey('A3')
-                    ? report['A']['A3']
-                    : 'N/A';
-            final a4 =
-                report.data().containsKey('A') && report['A'].containsKey('A3')
-                    ? report['A']['A3']
-                    : 'N/A';
-            //final ActionTakenByPolice = report.data().containsKey('A30') ? report['A30'] : 'N/A';
+            String formattedDateTime = 'Unknown time';
+            if (submittedAt != null) {
+              formattedDateTime = DateFormat('HH:mm | dd/MM/yyyy').format(submittedAt.toDate());
+            }
 
-            // Combine A3 and A4 as the date-time
-            final DateTime = '$a3 $a4';
-
-            return Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
+            return Container(
+              margin: const EdgeInsets.symmetric(vertical: 8.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
-              elevation: 5,
-              child: ListTile(
-                leading: const Icon(Icons.report),
-                title: Text('Accident No: $accidentNo'),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
                   children: [
-                    Text(
-                        'Submitted At: ${submittedAt != null ? submittedAt.toString() : 'N/A'}'),
-                    Text('Officer ID: $officerID'),
-                    Text('Date and Time: $DateTime'),
-                    Text('OIC Approval: $oicApp'),
-                    Text('Head Office Approval: $headApp'),
-                    Text('Submit Status: $submit'),
-                    //Text('Action taken by police: $'),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 22,
+                          backgroundColor: Colors.orange.shade100,
+                          child: const Icon(Icons.assignment,
+                              size: 24, color: Colors.orange),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Accident No: $accidentNo',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                formattedDateTime,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 87, 86, 86),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Officer ID: $officerID',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                'OIC Approval: $oicApp',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                'Head Office Approval: $headApp',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                'Submit Status: $submit',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

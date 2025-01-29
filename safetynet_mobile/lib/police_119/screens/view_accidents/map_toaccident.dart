@@ -79,7 +79,7 @@ class _StartRidePageState extends State<StartRidePage> {
               padding: const EdgeInsets.all(8.0),
               color: Colors.white,
               child: Text(
-                'Location: ${widget.accidentLocation.address ?? "Unknown"}',
+                'Location: ${widget.accidentLocation.address ?? "UCSC Building Complex,Colombo"}',
                 style: const TextStyle(
                     color: Colors.red, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
@@ -97,7 +97,10 @@ class _StartRidePageState extends State<StartRidePage> {
                   ElevatedButton.icon(
                     onPressed: _openGoogleMaps,
                     icon: const Icon(Icons.navigation),
-                    label: const Text("Open in Google Maps"),
+                    label: const Text(
+                      "Open in Google Maps",
+                      style: TextStyle(color: Colors.black),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor:  const Color(0xFFfbbe00),
                       padding: const EdgeInsets.symmetric(
