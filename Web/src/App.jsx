@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Home from './Pages/Home/Home'
 import Login from './Pages/Login'
+import SuspendPage from './Pages/Suspend'
 
 import TrafficLayout from './Pages/Traffic/Layout'
 import TrafficDashboad from './Pages/Traffic/Dashboad'
@@ -85,6 +86,7 @@ function App() {
       <Route path='/'>
         <Route index element={<Home/>} />
         <Route path='Login' element={<Login />} />
+        <Route path='SuspendPage' element={<SuspendPage/>} />
 
         {/* Traffic police */}
 

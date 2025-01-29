@@ -81,6 +81,13 @@ const Login = () => {
         if (!querySnapshot.empty) {
           querySnapshot.forEach((doc) => {
             const userData = doc.data();
+
+            if (userData.suspend === true) {
+              navigate("/suspendpage");
+              return;
+            }
+
+            
             console.log("User role:", userData.role);
             dispatch({ type: "LOGIN", payload: user });
     
