@@ -54,11 +54,11 @@ class OfficerValidationDialog extends StatelessWidget {
     }
 
     try {
-      final int officerIdAsNumber = int.tryParse(officerId) ?? 0;
-      if (officerIdAsNumber == 0) {
+      //final int officerIdAsNumber = int.tryParse(officerId) ?? 0;
+     /* if (officerIdAsNumber == 0) {
         _showError(context, 'Invalid Officer ID format');
         return;
-      }
+      }*/
 
       final policeStationProvider = context.read<PoliceStationProvider>();
       final station = policeStationProvider.station;
@@ -66,7 +66,7 @@ class OfficerValidationDialog extends StatelessWidget {
       QuerySnapshot officerQuerySnapshot = await FirebaseFirestore.instance
           .collection('traffic')
           .where('station', isEqualTo: station)
-          .where('badgeNumber', isEqualTo: officerIdAsNumber)
+          .where('badgeNumber', isEqualTo: officerId)
           .get();
 
       if (officerQuerySnapshot.docs.isEmpty) {
@@ -88,7 +88,7 @@ class OfficerValidationDialog extends StatelessWidget {
           if (docSnapshot.exists) {
             await accidentDoc.update({
               'accepted': true,
-              'officer_id': officerIdAsNumber,
+              'officer_id': officerId,
               'accepted_time': FieldValue.serverTimestamp(),
               'unique_id_number': uniqueIdNumber,
               'reported': false,

@@ -58,7 +58,12 @@ class ReportNotificationScreenState extends State<ReportNotificationScreen> {
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No notifications available'));
+            return const Center(
+              child: Text(
+              'No notifications available',
+              style: TextStyle(color: Color.fromARGB(255, 49, 48, 50)),
+              ),
+            );
           }
 
           final notifications = snapshot.data!;

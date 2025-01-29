@@ -22,6 +22,8 @@ class OfficerValidationDialog extends StatelessWidget {
           hintText: "Enter Officer ID",
           border: OutlineInputBorder(),
         ),
+        onSubmitted: (value) =>
+        _validateAndNavigate(context, officerIdController.text, uniqueIdNo),
       ),
       actions: [
         TextButton(
@@ -30,7 +32,7 @@ class OfficerValidationDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () =>
-              _validateAndNavigate(context, officerIdController.text,uniqueIdNo),
+              _validateAndNavigate(context, officerIdController.text, uniqueIdNo),
           child: const Text('Enter'),
         ),
       ],
@@ -45,17 +47,16 @@ class OfficerValidationDialog extends StatelessWidget {
     }
 
     try {
-      final int officerIdAsNumber = int.tryParse(officerId) ?? 0;
-      if (officerIdAsNumber == 0) {
+      //final int officerIdAsNumber = int.tryParse(officerId) ?? 0;
+      /*if (officerIdAsNumber == 0) {
         _showError(context, 'Invalid Officer ID format');
         return;
-      }
-
+      }*/
 
       // Validate Officer ID
       QuerySnapshot officerQuerySnapshot = await FirebaseFirestore.instance
           .collection('driver_accidents')
-          .where('officer_id', isEqualTo: officerIdAsNumber)
+          .where('officer_id', isEqualTo: officerId)
           .where('unique_id_number', isEqualTo: uniqueIdNo)
           .limit(1)
           .get();
@@ -67,14 +68,21 @@ class OfficerValidationDialog extends StatelessWidget {
 
       DocumentSnapshot officerSnapshot = officerQuerySnapshot.docs.first;
       final officerData = officerSnapshot.data() as Map<String, dynamic>;
-      final officerIdAsString = officerData['badgeNumber'].toString();
+
+
+      await FirebaseFirestore.instance
+          .collection('driver_accidents')
+          .doc(officerSnapshot.id)
+          .update({'reported': true});
+
+      //final officerIdAsString = officerData['badgeNumber'].toString();
 
       // Navigate to the Accident Report Form
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => AccidentReportForm(
-            officerID: officerIdAsString, // Pass Officer ID
+            officerID: officerId, // Pass Officer ID
             uniqueIDNo: uniqueIdNo,
           ),
         ),
