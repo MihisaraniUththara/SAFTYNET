@@ -8,12 +8,14 @@ class TabOther extends StatefulWidget {
   final String officerID;
   final Map<String, dynamic>? draftData;
   final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier
+  final String uniqueIdNo;
 
   const TabOther({
     super.key,
     required this.officerID,
     this.draftData,
     required this.uniqueIdNotifier,
+    required this.uniqueIdNo,
   });
 
   @override
@@ -23,6 +25,7 @@ class TabOther extends StatefulWidget {
 class TabOtherState extends State<TabOther> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _descriptionOfAccidentController = TextEditingController();
+  bool _saveAttempted = false;
 
   // Store both File and URL to handle both new and draft images
   File? _collisionSketchImage;
@@ -288,11 +291,11 @@ class TabOtherState extends State<TabOther> {
   }
 
   Future<void> saveOtherDraft() async {
-    if (!_formKey.currentState!.validate()) {
+    /*if (!_formKey.currentState!.validate()) {
       return;
-    }
+    }*/
 
-    String draftID = widget.uniqueIdNotifier.value.toString();
+    String draftID = widget.uniqueIdNo;
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
 
@@ -353,54 +356,55 @@ class TabOtherState extends State<TabOther> {
   }
 
   Future<void> submitAccidentReport() async {
-  // Validate the form
-  if (!_formKey.currentState!.validate()) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Please correct the errors in the form')),
-    );
-    return;
-  }
-
-  String draftID = widget.uniqueIdNotifier.value.toString();
-  DocumentReference draftRef =
-      FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
-
-  try {
-    DocumentSnapshot draftSnapshot = await draftRef.get();
-    if (draftSnapshot.exists) {
-      Map<String, dynamic> draftData =
-          draftSnapshot.data() as Map<String, dynamic>;
-
-      // Add the draft data to the accident_report collection
-      await FirebaseFirestore.instance.collection('accident_report').add({
-        'A': draftData['A'],
-        'E': draftData['E'],
-        'C': draftData['C'],
-        'O': draftData['O'],
-        'officerID': widget.officerID,
-        'createdAt': draftData['createdAt'],
-        'submittedAt': FieldValue.serverTimestamp(),
-      });
-
-      // Delete the draft after successful submission
-      await draftRef.delete();
-
+    if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Report submitted successfully')),
+        const SnackBar(content: Text('Please correct the errors in the form')),
       );
-    } else {
-      // Handle the case where the draft does not exist
+      return;
+    }
+
+    String draftID = '${widget.uniqueIdNo}';
+    DocumentReference draftRef =
+        FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
+
+    try {
+      DocumentSnapshot draftSnapshot = await draftRef.get();
+      if (draftSnapshot.exists) {
+        Map<String, dynamic> draftData =
+            draftSnapshot.data() as Map<String, dynamic>;
+
+        // Add the draft data to the accident_report collection
+        await FirebaseFirestore.instance.collection('accident_report').add({
+          'A': draftData['A'],
+          'E': draftData['E'],
+          'C': draftData['C'],
+          'O': draftData['O'],
+          'officerID': widget.officerID,
+          'createdAt': draftData['createdAt'],
+          'submittedAt': FieldValue.serverTimestamp(),
+          'oicApp': 0,
+          'headApp': 0,
+          'submit': 0,
+        });
+
+        // Delete the draft after successful submission
+        await draftRef.delete();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Report submitted successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Draft data not found')),
+        );
+      }
+    } catch (e) {
+      print('Failed to submit report: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Draft data not found')),
+        SnackBar(content: Text('Failed to submit report: $e')),
       );
     }
-  } catch (e) {
-    print('Failed to submit report: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to submit report: $e')),
-    );
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -455,7 +459,7 @@ class TabOtherState extends State<TabOther> {
                           onPressed: saveOtherDraft,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromARGB(255, 208, 208, 208),
-                           /* shape: const RoundedRectangleBorder(
+                            /* shape: const RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10)),
                             ),*/

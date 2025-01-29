@@ -9,6 +9,7 @@ class TabCasualty extends StatefulWidget {
   final String officerID; // Accept officerID
   final Map<String, dynamic>? draftData; //Accept draft data
   final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier
+  final String uniqueIdNo;
 
   // Pass officerID via the constructor
   const TabCasualty({
@@ -16,6 +17,7 @@ class TabCasualty extends StatefulWidget {
     required this.officerID,
     this.draftData,
     required this.uniqueIdNotifier,
+    required this.uniqueIdNo,
   });
 
   @override
@@ -24,7 +26,8 @@ class TabCasualty extends StatefulWidget {
 
 class _TabCasualtyState extends State<TabCasualty> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  bool _saveAttempted = false;
+  
   // Declare the casultyData map to store all form values
   Map<String, dynamic> casualtyData = {};
 
@@ -230,8 +233,7 @@ class _TabCasualtyState extends State<TabCasualty> {
   }
 
   Future<void> saveCasualtyDraft() async {
-    String draftID =
-        "$widget.uniqueIdNotifier.value"; // Use the passed officerID
+    String draftID = '${widget.uniqueIdNo}'; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);

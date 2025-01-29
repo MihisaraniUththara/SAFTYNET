@@ -135,7 +135,7 @@ class SingleChoiceCheckboxInputState extends State<SingleChoiceCheckboxInput> {
                   style: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
               ),
-            if (widget.validator != null) // Add validation feedback if applicable
+           /* if (widget.validator != null) // Add validation feedback if applicable
               Builder(
                 builder: (context) {
                   final error = widget.validator!();
@@ -150,7 +150,7 @@ class SingleChoiceCheckboxInputState extends State<SingleChoiceCheckboxInput> {
                   }
                   return SizedBox.shrink();
                 },
-              ),
+              ),*/
           ],
         );
       },
@@ -158,14 +158,13 @@ class SingleChoiceCheckboxInputState extends State<SingleChoiceCheckboxInput> {
   }
 }
 
-
-
 class FormSection extends StatefulWidget {
   final String topic;
   final List<String> labels;
   final List<List<bool>> checkboxStates;
   final int columnsCount;
   final Function(int, String, int) onCheckboxChanged;
+  final String? Function()? validator; // Optional validator callback
 
   const FormSection({
     Key? key,
@@ -174,6 +173,7 @@ class FormSection extends StatefulWidget {
     required this.checkboxStates,
     required this.columnsCount,
     required this.onCheckboxChanged,
+    this.validator, // Pass validator callback if needed
   }) : super(key: key);
 
   @override
@@ -183,67 +183,84 @@ class FormSection extends StatefulWidget {
 class _FormSectionState extends State<FormSection> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.topic,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
+    return FormField<List<List<bool>>>(
+      initialValue: widget.checkboxStates,
+      validator: (_) => widget.validator?.call(),
+      builder: (FormFieldState<List<List<bool>>> state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Expanded(flex: 2, child: SizedBox()), // Space for labels
-            ...List.generate(widget.columnsCount, (index) {
-              return Expanded(
-                flex: 1,
-                child: Center(
-                  child: Text(
-                    String.fromCharCode(65 + index),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+            Text(
+              widget.topic,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Expanded(flex: 2, child: SizedBox()), // Space for labels
+                ...List.generate(widget.columnsCount, (index) {
+                  return Expanded(
+                    flex: 1,
+                    child: Center(
+                      child: Text(
+                        String.fromCharCode(65 + index),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  );
+                }),
+              ],
+            ),
+            ...List.generate(widget.labels.length, (rowIndex) {
+              String label = widget.labels[rowIndex];
+              String prefix = label.split(' ')[0];
+
+              return Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Text(label),
                   ),
-                ),
+                  ...List.generate(widget.columnsCount, (columnIndex) {
+                    bool isChecked = widget.checkboxStates[rowIndex].length >
+                            columnIndex
+                        ? widget.checkboxStates[rowIndex][columnIndex]
+                        : false;
+
+                    return Expanded(
+                      flex: 1,
+                      child: Center(
+                        child: Checkbox(
+                          value: isChecked,
+                          onChanged: (bool? value) {
+                            if (value == true) {
+                              widget.onCheckboxChanged(
+                                  rowIndex, prefix, columnIndex);
+                              state.didChange(widget.checkboxStates);
+                            }
+                          },
+                        ),
+                      ),
+                    );
+                  }),
+                ],
               );
             }),
-          ],
-        ),
-        ...List.generate(widget.labels.length, (rowIndex) {
-          String label = widget.labels[rowIndex];
-          String prefix = label.split(' ')[0];
-          
-          return Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: Text(label),
+            if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
               ),
-              ...List.generate(widget.columnsCount, (columnIndex) {
-                bool isChecked = widget.checkboxStates[rowIndex].length > columnIndex 
-                    ? widget.checkboxStates[rowIndex][columnIndex] 
-                    : false;
-                    
-                return Expanded(
-                  flex: 1,
-                  child: Center(
-                    child: Checkbox(
-                      value: isChecked,
-                      onChanged: (bool? value) {
-                        if (value == true) {
-                          widget.onCheckboxChanged(rowIndex, prefix, columnIndex);
-                        }
-                      },
-                    ),
-                  ),
-                );
-              }),
-            ],
-          );
-        }),
-        const SizedBox(height: 16),
-      ],
+            const SizedBox(height: 16),
+          ],
+        );
+      },
     );
   }
 }
@@ -254,6 +271,7 @@ class TopicTextFields extends StatelessWidget {
   final int columnsCount;
   final List<TextEditingController> controllers;
   final Function(String, String) onChanged;
+  final String? Function(String)? validator; // Validator callback for individual fields
 
   const TopicTextFields({
     Key? key,
@@ -262,6 +280,7 @@ class TopicTextFields extends StatelessWidget {
     required this.columnsCount,
     required this.controllers,
     required this.onChanged,
+    this.validator, // Optionally pass a validator
   }) : super(key: key);
 
   String _extractPrefix(String topic) {
@@ -272,57 +291,73 @@ class TopicTextFields extends StatelessWidget {
   Widget build(BuildContext context) {
     final prefix = _extractPrefix(topic);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          topic,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: List.generate(columnsCount, (index) {
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Column(
-                  children: [
-                    Text(
-                      String.fromCharCode(65 + index),
-                      style: const TextStyle(fontSize: 16.0),
+    return FormField<List<TextEditingController>>(
+      initialValue: controllers,
+      validator: (_) {
+        for (var controller in controllers) {
+          final error = validator?.call(controller.text);
+          if (error != null) return error; // Return first validation error
+        }
+        return null; // All fields are valid
+      },
+      builder: (FormFieldState<List<TextEditingController>> state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              topic,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: List.generate(columnsCount, (index) {
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          String.fromCharCode(65 + index),
+                          style: const TextStyle(fontSize: 16.0),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: controllers[index],
+                          maxLength: maxChars,
+                          maxLines: 1,
+                          decoration: const InputDecoration(
+                            counterText: '',
+                            border: InputBorder.none,
+                            filled: true,
+                          ),
+                          onChanged: (value) {
+                            final key =
+                                '$prefix${String.fromCharCode(65 + index)}';
+                            onChanged(key, value);
+                            state.didChange(controllers);
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: controllers[index],
-                      maxLength: maxChars,
-                      maxLines: 1,
-                      decoration: const InputDecoration(
-                        counterText: '',
-                        border: InputBorder.none,
-                        filled: true,
-                      ),
-                      onChanged: (value) {
-                        final key = '$prefix${String.fromCharCode(65 + index)}';
-                        onChanged(key, value);
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
+                  ),
+                );
+              }),
+            ),
+            if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
               ),
-            );
-          }),
-        ),
-        const SizedBox(height: 16),
-      ],
+            const SizedBox(height: 16),
+          ],
+        );
+      },
     );
   }
 }
@@ -333,6 +368,7 @@ class IntegerInputFields extends StatelessWidget {
   final int columnsCount;
   final List<TextEditingController> controllers;
   final Function(String, String) onChanged;
+  final String? Function(String)? validator; // Validator callback for each field
 
   const IntegerInputFields({
     Key? key,
@@ -341,6 +377,7 @@ class IntegerInputFields extends StatelessWidget {
     required this.columnsCount,
     required this.controllers,
     required this.onChanged,
+    this.validator,
   }) : super(key: key);
 
   String _extractPrefix(String topic) {
@@ -351,62 +388,78 @@ class IntegerInputFields extends StatelessWidget {
   Widget build(BuildContext context) {
     final prefix = _extractPrefix(topic);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          topic,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: List.generate(columnsCount, (index) {
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Column(
-                  children: [
-                    Text(
-                      String.fromCharCode(65 + index),
-                      style: const TextStyle(fontSize: 16.0),
+    return FormField<List<TextEditingController>>(
+      initialValue: controllers,
+      validator: (_) {
+        for (var controller in controllers) {
+          final error = validator?.call(controller.text);
+          if (error != null) return error; // Return the first error found
+        }
+        return null; // No errors found
+      },
+      builder: (FormFieldState<List<TextEditingController>> state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              topic,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: List.generate(columnsCount, (index) {
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          String.fromCharCode(65 + index),
+                          style: const TextStyle(fontSize: 16.0),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: controllers[index],
+                          maxLength: maxChars,
+                          maxLines: 1,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            counterText: '',
+                            border: InputBorder.none,
+                            filled: true,
+                          ),
+                          onChanged: (value) {
+                            final key =
+                                '$prefix${String.fromCharCode(65 + index)}';
+                            onChanged(key, value);
+                            state.didChange(controllers);
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: controllers[index],
-                      maxLength: maxChars,
-                      maxLines: 1,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        counterText: '',
-                        border: InputBorder.none,
-                        filled: true,
-                      ),
-                      onChanged: (value) {
-                        final key = '$prefix${String.fromCharCode(65 + index)}';
-                        onChanged(key, value);
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a number';
-                        }
-                        if (int.tryParse(value) == null) {
-                          return 'Please enter a valid integer';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
+                  ),
+                );
+              }),
+            ),
+            if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
               ),
-            );
-          }),
-        ),
-        const SizedBox(height: 16),
-      ],
+            const SizedBox(height: 16),
+          ],
+        );
+      },
     );
   }
 }
+
+
+
 

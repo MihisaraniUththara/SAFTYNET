@@ -19,6 +19,7 @@ class AcceptedAccidents extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Ensure background blends with the list
       appBar: AppBar(
         title: const Text(
           'Recently Accepted Accidents',
@@ -75,12 +76,14 @@ class AcceptedAccidents extends StatelessWidget {
                   child: Text(
                     'No recently accepted accidents.',
                     style: TextStyle(
-                        fontSize: 18, color: Color.fromARGB(255, 105, 64, 220)),
+                        fontSize: 18, color: Color.fromARGB(255, 56, 56, 57)),
                   ),
                 );
               }
 
               return ListView.builder(
+                physics: const ClampingScrollPhysics(), // Prevent unwanted scrolling
+                shrinkWrap: true, // Ensures no unnecessary space is taken
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
                   var accident = snapshot.data!.docs[index];
@@ -93,58 +96,106 @@ class AcceptedAccidents extends StatelessWidget {
                     builder: (context, locationSnapshot) {
                       String formattedDateTime = 'Unknown time';
                       if (data['date_time'] is Timestamp) {
-                        final dateTime =
-                            (data['date_time'] as Timestamp).toDate();
-                        formattedDateTime =
-                            DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+                        final dateTime = (data['date_time'] as Timestamp).toDate();
+                        formattedDateTime = DateFormat('HH:mm | dd/MM/yyyy').format(dateTime);
                       }
 
-                      final location =
-                          locationSnapshot.data ?? 'Fetching location...';
-
-                      final String uniqueIdNo =
-                          data['unique_id_number']?.toString() ?? 'unknown';
-                      final Timestamp? acceptedTimestamp =
-                          data['accepted_time'] as Timestamp?;
+                      final location = locationSnapshot.data ?? 'Fetching location...';
+                      final String uniqueIdNo = data['unique_id_number']?.toString() ?? 'unknown';
+                      final Timestamp? acceptedTimestamp = data['accepted_time'] as Timestamp?;
                       final String acceptedTime = acceptedTimestamp != null
-                          ? DateFormat('yyyy-MM-dd HH:mm:ss').format(
-                              acceptedTimestamp.toDate(),
-                            )
+                          ? DateFormat('HH:mm | dd/MM/yyyy').format(acceptedTimestamp.toDate())
                           : 'unknown';
 
-                      return Card(
+                      return Container(
                         key: ValueKey(accident.id),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
+                        margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0), // Top margin removed
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
-                        elevation: 10,
-                        child: ListTile(
-                          leading: const Icon(Icons.location_on),
-                          title: Text('Accident at $location'),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
                             children: [
-                              Text(
-                                'Date and Time: $formattedDateTime',
-                                style: const TextStyle(fontSize: 14),
+                              CircleAvatar(
+                                radius: 22,
+                                backgroundColor: Colors.orange.shade100,
+                                child: const Icon(Icons.location_on,
+                                    size: 24, color: Colors.orange),
                               ),
-                              Text('Unique ID No: $uniqueIdNo'),
-                              Text('Accepted Time: $acceptedTime'),
-                            ],
-                          ),
-                          trailing: ElevatedButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return OfficerValidationDialog(
-                                    uniqueIdNo:
-                                        uniqueIdNo, // Pass the accident number here
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Accident at $location',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      formattedDateTime,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color.fromARGB(255, 87, 86, 86),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Unique ID No: $uniqueIdNo',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Accepted Time: $acceptedTime',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return OfficerValidationDialog(
+                                        uniqueIdNo: uniqueIdNo,
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
-                            child: const Text('Add'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color.fromARGB(255, 208, 208, 208),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Add',
+                                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       );
@@ -159,4 +210,3 @@ class AcceptedAccidents extends StatelessWidget {
     );
   }
 }
-

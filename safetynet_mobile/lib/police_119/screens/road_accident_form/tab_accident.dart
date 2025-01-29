@@ -109,7 +109,7 @@ class _TabAccidentState extends State<TabAccident> {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('driver_accidents')
-          .where('unique_id_number', isEqualTo: widget.uniqueIdNo) 
+          .where('unique_id_number', isEqualTo: widget.uniqueIdNo)
           .get();
 
       if (snapshot.docs.isNotEmpty) {
@@ -203,8 +203,7 @@ class _TabAccidentState extends State<TabAccident> {
           true; // Mark the form as submitted when the user clicks save
     });*/
 
-    String draftID =
-        "$widget.uniqueIdNotifier.value"; // Use the passed officerID
+    String draftID = '${widget.uniqueIdNo}'; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
@@ -746,9 +745,6 @@ class _TabAccidentState extends State<TabAccident> {
                   hintText: "if available", maxchars: 10),
               _buildNumericField('A32 B report', _bReportController,
                   hintText: "if available", maxchars: 10),
-              /*_buildNumericField('A33 Casualties', _casualtiesController,
-                  validatorMessage: "No of casualties is required",
-                  maxchars: 2),*/
               Text(
                 'A33 Casualties',
                 style: TextStyle(

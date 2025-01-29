@@ -51,7 +51,7 @@ class _ViewAccidentsCardState extends State<ViewAccidentsCard> {
             elevation: 20,
             color: accidentService.newAccidentAvailable
                 ? Colors.red
-                : Colors.white,
+                : Color.fromARGB(255, 208, 208, 208),
             shadowColor: accidentService.newAccidentAvailable
                 ? Colors.red
                 : Colors.black,
@@ -64,7 +64,7 @@ class _ViewAccidentsCardState extends State<ViewAccidentsCard> {
                     Icons.warning,
                     color: accidentService.newAccidentAvailable
                         ? Colors.white
-                        : const Color.fromARGB(255, 255, 255, 255),
+                        : const Color.fromARGB(255, 208, 208, 208),
                   ),
                   title: Text(
                     accidentService.newAccidentAvailable

@@ -121,16 +121,19 @@ class _AccidentReportFormState extends State<AccidentReportForm> {
                   officerID: widget.officerID,
                   draftData: widget.draftData,
                   uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                  uniqueIdNo: widget.uniqueIDNo,
                 ),
                 TabCasualty(
                   officerID: widget.officerID,
                   draftData: widget.draftData,
                   uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                  uniqueIdNo: widget.uniqueIDNo,
                 ),
                 TabOther(
                   officerID: widget.officerID,
                   draftData: widget.draftData,
                   uniqueIdNotifier: uniqueIdNotifier, // Pass the notifier
+                  uniqueIdNo: widget.uniqueIDNo,
                 ),
               ],
             );

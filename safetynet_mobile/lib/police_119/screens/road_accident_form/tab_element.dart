@@ -7,6 +7,7 @@ class TabElement extends StatefulWidget {
   final String officerID; // Accept officerID
   final Map<String, dynamic>? draftData;
   final ValueNotifier<String?> uniqueIdNotifier; // Shared notifier
+  final String uniqueIdNo;
 
   // Pass officerID via the constructor
   const TabElement({
@@ -14,6 +15,7 @@ class TabElement extends StatefulWidget {
     required this.officerID,
     this.draftData,
     required this.uniqueIdNotifier,
+    required this.uniqueIdNo,
   });
 
   @override
@@ -22,6 +24,7 @@ class TabElement extends StatefulWidget {
 
 class _TabElementState extends State<TabElement> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _saveAttempted = false;
 
   // Declare the elementData map to store all form values
   Map<String, dynamic> elementData = {};
@@ -376,8 +379,7 @@ class _TabElementState extends State<TabElement> {
   }
 
   Future<void> saveElementDraft() async {
-    String draftID =
-        "$widget.uniqueIdNotifier.value"; // Use the passed officerID
+    String draftID = '${widget.uniqueIdNo}'; // Use the passed officerID
 
     DocumentReference draftRef =
         FirebaseFirestore.instance.collection('accident_draft').doc(draftID);
@@ -498,6 +500,15 @@ class _TabElementState extends State<TabElement> {
                 columnsCount: _columnsCount[0],
                 onCheckboxChanged: (rowIndex, labelPrefix, columnIndex) =>
                     _toggleCheckbox('E1', rowIndex, labelPrefix, columnIndex),
+                validator: () {
+                  // Example: Ensure at least one checkbox is selected in each row
+                  bool isAnySelected = _checkboxStates['E1']!
+                      .any((row) => row.any((isSelected) => isSelected));
+                  if (!isAnySelected) {
+                    return 'Please select information for E1';
+                  }
+                  return null;
+                },
               ),
               TopicTextFields(
                 topic: 'E2 Vehicle Registration number',
@@ -506,6 +517,10 @@ class _TabElementState extends State<TabElement> {
                 controllers: _textControllers['E2']!,
                 onChanged: (key, value) {
                   elementData[key] = value; // Store the value in the form state
+                },
+                validator: (value) {
+                  if (value.isEmpty) return 'Please enter a value';
+                  return null;
                 },
               ),
               IntegerInputFields(
@@ -516,6 +531,14 @@ class _TabElementState extends State<TabElement> {
                 onChanged: (key, value) {
                   elementData[key] = value;
                   print(elementData[key]);
+                },
+                validator: (value) {
+                  if (value.isEmpty) return 'Please enter a number';
+                  if (int.tryParse(value) == null) {
+                    return 'Please enter a valid integer';
+                  }
+                  if (value.length != 4) return 'Year must be 4 digits';
+                  return null;
                 },
               ),
               IntegerInputFields(
