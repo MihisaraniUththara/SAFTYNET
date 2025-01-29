@@ -581,7 +581,7 @@ const handleAllocate = async () => {
                 <td className='p-3'>{officer.email}</td>
                 <td className='p-3'>
                   <button
-                    className='bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-1 px-2 rounded text-sm'
+                    className='bg-yellow-button hover:bg-yellow text-black font-semibold py-1 px-2 rounded text-sm'
                     onClick={() => handleDetails(officer)}
                   >
                     Details

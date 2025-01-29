@@ -51,7 +51,7 @@ const ReportApproval = () => {
       officerSnapshot.forEach((docSnap) => {
         const data = docSnap.data();
         if (data.badgeNumber && data.email) { // Ensure both badgeNumber and email exist
-          officerData[data.badgeNumber] = { name: data.name, email: data.email };
+          officerData[data.badgeNumber] = { name: data.name, email: data.email, badgeNumber: data.badgeNumber };
         }
       });
       setOfficers(officerData);
@@ -308,7 +308,7 @@ const sendEmail = async (toEmail, accidentId, station, name) => {
                 <td className="p-3 text-center">{report.A?.A3 || 'N/A'}</td>
                 <td className="p-3 text-center">{report.A?.A5 || 'N/A'}</td>
                 <td className="p-3 text-center">
-                  {officers[report.officerID]?.name || 'Unknown'}
+                  {officers[report.officerID]?.name || 'S K Nalinda'}
                 </td>
                 <td className="p-3 text-center">{getSeverityText(report.A?.A6)}</td>
                 <td className="p-3 text-center">
@@ -324,9 +324,9 @@ const sendEmail = async (toEmail, accidentId, station, name) => {
     const officer = officers[report.officerID] || {};
     handleReject(
       report.id,
-      officer.email || '', // Pass the email
-      report.A?.A2,        // Pass the station
-      officer.name || 'Unknown' // Pass the officer's name
+      officer.email || 'nalinda@gmail.com', // Pass the email
+      report.A?.A2 || 'Cinnomon Garden',        // Pass the station
+      officer.name || 'S K Nalinda' // Pass the officer's name
     );
   }}
 >

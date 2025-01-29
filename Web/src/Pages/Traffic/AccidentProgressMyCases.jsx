@@ -100,6 +100,7 @@ const AccidentProgressMyCases = () => {
     return () => unsubscribe();
   }, [badgeNumber]);
 
+
   const getUrban = (Urban_Rural) => {
     if (Urban_Rural == '1') {
       return (
